@@ -1,0 +1,18 @@
+---
+# Jekyll needs front matter for SCSS files
+---
+
+$sidebar-bg-color: #05496c;
+
+@import "hydeout";
+
+#sidebar {
+  .site-title {
+    font-family: 'Josefin Slab';
+
+    a {
+        text-decoration: none;
+    }
+  }
+}
+
