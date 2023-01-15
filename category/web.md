@@ -1,5 +1,5 @@
 ---
 layout: category
-title: Web Dev
+title: Webdev
 category: Web
 ---

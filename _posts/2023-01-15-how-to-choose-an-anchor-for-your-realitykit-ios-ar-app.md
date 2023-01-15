@@ -5,7 +5,7 @@ description: "Learn how to choose an anchor for your scene instead of placing it
 permalink: /how-to-choose-an-anchor-for-your-realitykit-ios-app.html
 categories:
   - iOS
-  - AR
+  - RealityKit
 tags:
   - RealityKit
   - Swift
