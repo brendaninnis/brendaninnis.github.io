@@ -41,7 +41,9 @@ let boxAnchor = try! Experience.loadBox()
 arView.scene.anchors.append(boxAnchor)
 ```
 
-An `AnchorEntity` is used to attach virtual content to the real world. It is an `Entity` which extists in the hierarchy of your Scene, usually as a direct child of the Scene, meaning that your content will exist as children or descendents of your anchor entity. An `AnchorEntity` anchors itself to the real world using something called an `ARAnchor`. An `ARAnchor` is a fixed place within the real world you can attach content to, such as a hoziontal surface like a table. An
+An `AnchorEntity` is used to attach virtual content to the real world. It is an `Entity` which extists in the hierarchy of your Scene, usually as a direct child of the Scene, meaning that your content will exist as children or descendents of your anchor entity. 
+
+An `AnchorEntity` anchors itself to the real world using something called an `ARAnchor`. An `ARAnchor` is a fixed place within the real world you can attach content to, such as a hoziontal surface like a table. An
 `AnchorEntity` is created with a target describing the type of `ARAnchor` it is looking to attach to:
 
 ```swift
@@ -108,7 +110,9 @@ extension MySceneManager: ARSessionDelegate {
 
 ## Anchoring your scene
 
-Now that you can find anchors, you have many options to place your scene. You can look at the qualities of the anchors, and decide which one to attach your scene to, or you could have some kind of user input guide the placement of your AR content in the real world. When you are ready to attach your content to an anchor, you can create a new `AnchorEntity` using that anchor. You can then simply add your loaded Reality Composer scene as a child of that anchor entity. Remember that an
+Now that you can find anchors, you have many options to place your scene. You can look at the qualities of the anchors, and decide which one to attach your scene to, or you could have some kind of user input guide the placement of your AR content in the real world. 
+
+When you are ready to attach your content to an anchor, you can create a new `AnchorEntity` using that anchor. You can then simply add your loaded Reality Composer scene as a child of that anchor entity. Remember that an
 `AnchorEntity` is just an Entity. It doesn't have to be anchored itself, it can simply be the child of another entity, like the anchor entity you create yourself:
 
 ```swift
