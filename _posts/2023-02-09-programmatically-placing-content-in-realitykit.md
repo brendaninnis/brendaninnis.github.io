@@ -15,6 +15,8 @@ tags:
 
 In this tutorial you will create an iOS app where a user can tap the screen to place 3D content in their physical environment. You will learn how to load 3D resources from files into RealityKit entities and anchor them to phsyical locations in the real world. At the end of this guide there will be a link to download the finished version of the app we are building.
 
+![Tap Makes Cup App](/uploads/dev/tap-makes-cup.gif)
+
 ## Create an augmented reality app
 
 Open Xcode, and select "Create a new Xcode project". A window will open with a list of template to choose from. Select "Augmented Reality App" and press *Next*. Choose a name for your app, select _SwiftUI_ as the value for "Interface" and _RealityKit_ as the value for "Content Technology". Your new project should look like this:
