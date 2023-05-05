@@ -10,13 +10,15 @@ tags:
   - Creativity
 ---
 
-Every time I try to come up with an interesting and unique name for a new project I start drawing blanks. I released a daily fat counter app called Daily Fat Counter for Jobs' sake. There is a tendency to attribute creativity to software engineers because they invent novel solutions to real problems, but I believe that coding makes you less creative, exactly because it forces you to be predictable, clear and objective. An experienced developer has built habits of controlling their
-creativity.
+Every time I try to come up with an interesting and unique name for a new project I start drawing blanks. I released a daily fat counter app called Daily Fat Counter for Jobs' sake. There is a tendency to attribute creativity to software engineers because they invent novel solutions to real problems, but I believe that coding makes you less creative, exactly because it forces you to be predictable, clear and objective. 
+
+An experienced developer has built habits of controlling their creativity.
 
 ## Naming things and predictability
 
-The hallmarks of good code are that it is clear, understandable and does what you expect. This is reflected in the clear naming of things like variables, classes and methods. If you create a class to decode JSON, then it better be called `JSONDecoder`. If your class is called something like `CrockfordsMagicBitMachine` might be fun and at least a little creative, but it doesn't help the user of your class, and in fact it actively hurts them. Want to declare a variable that
-will hold a URL to a resource you are interested in? Then it better be named `url`. Actually, it would be much better if the name was more descriptive, such as including the name of the resource you are pointing to like `dog_ceo_api_url`. 
+The hallmarks of good code are that it is clear, understandable and does what you expect. This is reflected in the clear naming of things like variables, classes and methods. If you create a class to decode JSON, then it better be called `JSONDecoder`. If your class is called something like `CrockfordsMagicBitMachine` might be fun and at least a little creative, but it doesn't help the user of your class, and in fact it actively hurts them. 
+
+Want to declare a variable that will hold a URL to a resource you are interested in? Then it better be named `url`. Actually, it would be much better if the name was more descriptive, such as including the name of the resource you are pointing to like `dog_ceo_api_url`. 
 
 What you are doing here is the opposite of creativity. Instead of trying to relate disparate concepts together in the readers mind, you are trying to fix the same single objective concept in every readers mind. There should be no room for interpretation in your
 code.
