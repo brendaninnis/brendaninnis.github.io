@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Getting started with RealityKit 1: Programmatically placing content in RealityKit</title>
+		<meta name="description" content="In this Getting started with RealityKit tutorial you will learn how to programmatically load and place 3D content into your augmented reality iOS app using RealityKit">
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Brendan Innis">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="Brendan Innis">
+		
+		<style>/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+
+	--horizontal-padding: 3rem;
+}
+@media (max-width: 820px) {
+	:root {
+		--horizontal-padding: 1rem;
+	}
+}
+
+/* Theme colors */
+:root {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #333;
+	--color-gray-95: #000308;
+
+	--background-color: #FFFCF786;
+	--background-image: url(/img/spiration-light.png);
+
+	--theme-background-color: #00030813;
+
+	--text-color: var(--color-gray-95);
+	--text-color-link: #301014;
+	--text-color-link-active: #5f2b48;
+	--text-color-link-visited: #5E555A;
+
+	--syntax-tab-size: 2;
+}
+
+:root[data-theme="dark"] {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #dad8d8;
+	--color-gray-95: #FFFCF7;
+
+	--theme-background-color: #FFFCF713;
+
+	/* --text-color is assigned to --color-gray-_ above */
+	--text-color-link: #b5bad0;
+	--text-color-link-active: #FFDD93;
+	--text-color-link-visited: #8594ad;
+
+	--background-color: #06010a86;
+	--background-image: url(/img/spiration-dark.png);
+}
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	min-height: 100vh;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	background-image: var(--background-image);
+}
+body {
+	max-width: calc(80ch + var(--horizontal-padding) * 2);
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+a > svg:hover {
+	fill: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem var(--horizontal-padding);
+}
+main :first-child {
+	margin-top: 0;
+}
+
+h1 {
+	margin-top: 0.25em;
+}
+
+header {
+	display: flex;
+	border-bottom: 1px dashed var(--color-gray-90);
+}
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+span.spacer {
+	flex-grow: 1;
+}
+
+.links-nextprev {
+	list-style: none;
+	border-top: 1px dashed var(--color-gray-90);
+	margin: 0 calc(-1 * var(--horizontal-padding));
+	padding: 0;
+}
+.links-nextprev li {
+	margin: 1em 0;
+	padding: 0 var(--horizontal-padding);
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+code {
+	word-break: break-all;
+}
+
+img {
+	display: block;
+	margin: 0 auto;
+	max-width: 100%;
+	height: auto;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em var(--horizontal-padding);
+}
+a[href]:visited.home-link,
+.nav-item a[href]:visited {
+	color: var(--text-color-link);
+}
+a[href]:hover.home-link,
+a[href]:active.home-link,
+.nav-item a[href]:hover,
+.nav-item a[href]:active {
+	color: var(--text-color-link-active);
+}
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+#theme {
+	margin: -1em 0 -1em 0;
+	background: none;
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	font-size: 1em; /* 16px /16 */
+	padding: 0;
+	display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+#theme:hover {
+	background: var(--theme-background-color);
+}
+#theme > svg {
+	height: 2em;
+	width: 2em;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 1em;
+}
+.postlist-date {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+#subscribe-link > svg {
+	vertical-align: bottom;
+	margin-bottom: 0.125em;
+}
+
+/* About */
+#sidebar-icon-links {
+	margin-top: 1em;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+h2 {
+	margin-top: 1.5em;
+}
+
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: var(--text-color-link-active);
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}</style>
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-998XX4MGQY"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', 'G-998XX4MGQY');
+		</script>
+
+	</head>
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+
+		<header>
+			<a href="/" class="home-link">Brendan Innis</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/">Posts</a></li>
+					<li class="nav-item"><a href="/tags.html">Tags</a></li>
+					<li class="nav-item"><a href="/about.html">About Me</a></li>
+				</ul>
+			</nav>
+			<span class="spacer"></span>
+			<button id="theme" aria-label="Toggle theme" class="theme-toggle"></button>
+		</header>
+
+		<main id="skip">
+			
+<link id="syntax-theme-css" rel="stylesheet" href="css/prism-one-dark.css" />
+
+<ul class="post-metadata">
+	<li><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-color)" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 0 1 1 1v1h4V3a1 1 0 1 1 2 0v1h3a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V3a1 1 0 0 1 1-1zM8 6H5v3h14V6h-3v1a1 1 0 1 1-2 0V6h-4v1a1 1 0 0 1-2 0V6zm11 5H5v8h14v-8z"/></svg></li>
+	<li><time datetime="2023-02-09">09 February 2023</time></li>
+	<li><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-color)" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 0 1 1-1h8a1 1 0 0 1 .707.293l10 10a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-10-10A1 1 0 0 1 2 11V3zm2 1v6.586l9 9L19.586 13l-9-9H4z" /><path d="M9 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" /></svg></li>
+	<li><a href="/tags/realitykit/" class="post-tag">RealityKit</a>, </li>
+	<li><a href="/tags/swift/" class="post-tag">Swift</a>, </li>
+	<li><a href="/tags/arkit/" class="post-tag">ARKit</a>, </li>
+	<li><a href="/tags/ios/" class="post-tag">iOS</a></li>
+</ul>
+
+<h1>Getting started with RealityKit 1: Programmatically placing content in RealityKit</h1>
+
+<p>In this tutorial you will create an iOS app where a user can tap the screen to place 3D content in their physical environment. You will learn how to load 3D resources from files into RealityKit entities and anchor them to phsyical locations in the real world. At the end of this guide there will be a link to download the finished version of the app we are building.</p>
+<picture >
+			<source type="image/webp" srcset="/img/XrAOcBjJkt-369.webp 369w" sizes="100vw">
+			<img src="/home/runner/work/brendaninnis.github.io/brendaninnis.github.io/content/blog/2023-02-09-programmatically-placing-content-in-realitykit/tap-makes-cup.webp" width="369" height="800" alt="Tap Makes Cup App" loading="lazy" decoding="async">
+		</picture>
+<h2 id="create-an-augmented-reality-app" tabindex="-1">Create an augmented reality app <a class="header-anchor" href="#create-an-augmented-reality-app">#</a></h2>
+<p>Open Xcode, and select &quot;Create a new Xcode project&quot;. A window will open with a list of template to choose from. Select &quot;Augmented Reality App&quot; and press <em>Next</em>. Choose a name for your app, select <em>SwiftUI</em> as the value for &quot;Interface&quot; and <em>RealityKit</em> as the value for &quot;Content Technology&quot;. Your new project should look like this:</p>
+<p><picture><source type="image/avif" srcset="/img/AipvkIqhd_-400.avif 400w, /img/AipvkIqhd_-800.avif 800w" sizes="100vw"><source type="image/webp" srcset="/img/AipvkIqhd_-400.webp 400w, /img/AipvkIqhd_-800.webp 800w" sizes="100vw"><source type="image/jpeg" srcset="/img/AipvkIqhd_-400.jpeg 400w, /img/AipvkIqhd_-800.jpeg 800w" sizes="100vw"><img alt="Create a new RealityKit project" loading="lazy" decoding="async" src="/img/AipvkIqhd_-400.jpeg" width="800" height="575"></picture></p>
+<p>This will create a project containing an <em>AppDelegate.swift</em> file, a <em>ContentView.swift</em> file containing our main SwiftUI layout, a template RealityKit <em>Experience.rcproject</em> file and a set of assets for your project.</p>
+<p><picture><source type="image/avif" srcset="/img/iYprh2TX54-400.avif 400w" sizes="100vw"><source type="image/webp" srcset="/img/iYprh2TX54-400.webp 400w" sizes="100vw"><img alt="New project structure" loading="lazy" decoding="async" src="/img/iYprh2TX54-400.jpeg" width="400" height="315"></picture></p>
+<p>We will not be using the AppDelegate or the RealityKit Experience, so those files should be deleted.</p>
+<p>Create a new Swift file for your SwiftUI App. Create a struct named after you app, implement the SwiftUI.App protocol and then let's track the the scene phase of the environment:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// TapMakesCupApp.swift</span>
+
+<span class="token keyword">import</span> <span class="token class-name">Foundation</span>
+<span class="token keyword">import</span> <span class="token class-name">SwiftUI</span>
+
+<span class="token attribute atrule">@main</span>
+<span class="token keyword">struct</span> <span class="token class-name">TapMakesCupsApp</span><span class="token punctuation">:</span> <span class="token class-name">SwiftUI</span><span class="token punctuation">.</span><span class="token class-name">App</span> <span class="token punctuation">{</span>
+    <span class="token attribute atrule">@Environment</span><span class="token punctuation">(</span><span class="token punctuation">\</span><span class="token punctuation">.</span>scenePhase<span class="token punctuation">)</span> <span class="token keyword">var</span> scenePhase
+
+    <span class="token keyword">var</span> body<span class="token punctuation">:</span> <span class="token keyword">some</span> <span class="token class-name">SwiftUI</span><span class="token punctuation">.</span><span class="token class-name">Scene</span> <span class="token punctuation">{</span>
+        <span class="token class-name">WindowGroup</span> <span class="token punctuation">{</span>
+            <span class="token class-name">ContentView</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">onChange</span><span class="token punctuation">(</span>of<span class="token punctuation">:</span> scenePhase<span class="token punctuation">)</span> <span class="token punctuation">{</span> newPhase <span class="token keyword">in</span>
+                    <span class="token keyword">switch</span> newPhase <span class="token punctuation">{</span>
+                    <span class="token keyword">case</span> <span class="token punctuation">.</span>active<span class="token punctuation">:</span>
+                        <span class="token function">print</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"App did become active"</span></span><span class="token punctuation">)</span>
+                    <span class="token keyword">case</span> <span class="token punctuation">.</span>inactive<span class="token punctuation">:</span>
+                        <span class="token function">print</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"App did become inactive"</span></span><span class="token punctuation">)</span>
+                    <span class="token keyword">default</span><span class="token punctuation">:</span>
+                        <span class="token keyword">break</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Let's also remove the code in <em>ContentView.swift</em> that references the default Experience our project was created with:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// DELETE THESE LINES:</span>
+
+<span class="token comment">// Load the "Box" scene from the "Experience" Reality File</span>
+<span class="token keyword">let</span> boxAnchor <span class="token operator">=</span> <span class="token keyword">try</span><span class="token operator">!</span> <span class="token class-name">Experience</span><span class="token punctuation">.</span><span class="token function">loadBox</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment">// Add the box anchor to the scene</span>
+arView<span class="token punctuation">.</span>scene<span class="token punctuation">.</span>anchors<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>boxAnchor<span class="token punctuation">)</span></code></pre>
+<p>Now we can run the app. There is not much going on right now, since we are just looking at an empty <code>ARView</code>, but notice the app state changes are printed in the console when the app becomes active and when you move the app to the background:</p>
+<pre><code>App did become active
+App did become inactive
+</code></pre>
+<h2 id="load-3d-assets-programmatically-from-usdz-files" tabindex="-1">Load 3D assets programmatically from USDZ files <a class="header-anchor" href="#load-3d-assets-programmatically-from-usdz-files">#</a></h2>
+<p>Since we removed the RealityKit Experience file our template project was created with, we need 3D models to populate our AR experience. You can find a variety of USDZ models available for download in Apple's <a href="https://developer.apple.com/augmented-reality/quick-look/">AR Quick Look gallery</a>. I chose the cup and saucer set for my app. Click any of the models in the gallery to download it.</p>
+<p>Create a new group in your Xcode project called <em>Resources</em> and add the USDZ file to the the group. Then create another group called <em>Entities</em> and create a new Swift file within it called <em>CupEntity.swift</em>. Let's also create another group to contain our SwiftUI files: we will call it <em>UI</em>.</p>
+<p><picture><source type="image/avif" srcset="/img/Oaiuj3fJ4E-325.avif 325w" sizes="100vw"><source type="image/webp" srcset="/img/Oaiuj3fJ4E-325.webp 325w" sizes="100vw"><img alt="Project groups" loading="lazy" decoding="async" src="/img/Oaiuj3fJ4E-325.jpeg" width="325" height="288"></picture></p>
+<p>We are going to use the <code>Entity.loadAsync</code> type method to load the USDZ file as a RealityKit entity. Entities are holder objects for your RealityKit content. They exist within a RealityKit scene hierarchy, where the <code>Scene</code> object created by <code>ARView</code> is the root object. To load the cup and saucer model we pass the name of the file, without the <em>.usdz</em> extension, to <code>Entity.loadAsync</code>. As long as the USDZ file is included in your application main bundle, the entity method will find the file.</p>
+<p>Create a <code>CupEntity</code> struct that inherits from <code>Entity</code> with a <code>static var loadAsync</code> like this:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token keyword">import</span> <span class="token class-name">Foundation</span>
+<span class="token keyword">import</span> <span class="token class-name">Combine</span>
+<span class="token keyword">import</span> <span class="token class-name">RealityKit</span>
+
+<span class="token keyword">final</span> <span class="token keyword">class</span> <span class="token class-name">CupEntity</span><span class="token punctuation">:</span> <span class="token class-name">Entity</span> <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> model<span class="token punctuation">:</span> <span class="token class-name">Entity</span><span class="token operator">?</span>
+
+    <span class="token keyword">static</span> <span class="token keyword">var</span> loadAsync<span class="token punctuation">:</span> <span class="token class-name">AnyPublisher</span><span class="token operator">&lt;</span><span class="token class-name">CupEntity</span><span class="token punctuation">,</span> <span class="token class-name">Error</span><span class="token operator">></span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token class-name">Entity</span><span class="token punctuation">.</span><span class="token function">loadAsync</span><span class="token punctuation">(</span>named<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"cup_saucer_set"</span></span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span>map <span class="token punctuation">{</span> loadedCup <span class="token operator">-></span> <span class="token class-name">CupEntity</span> <span class="token keyword">in</span>
+                <span class="token keyword">let</span> cup <span class="token operator">=</span> <span class="token class-name">CupEntity</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+                loadedCup<span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string-literal"><span class="token string">"Cup"</span></span>
+                cup<span class="token punctuation">.</span>model <span class="token operator">=</span> loadedCup
+                <span class="token keyword">return</span> cup
+            <span class="token punctuation">}</span>
+            <span class="token punctuation">.</span><span class="token function">eraseToAnyPublisher</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>We will get a new instance of CupEntity by using the <code>loadAsync</code> static computed property. It will load the cup and saucer file into an entity, which we will store in a <code>CupEntity</code> object that we will publish. This returns a <code>Publisher</code> object from the <em>Combine</em> framework which will inform our subscriber when the cup is loaded.</p>
+<h2 id="pre-load-3d-resources" tabindex="-1">Pre-load 3D resources <a class="header-anchor" href="#pre-load-3d-resources">#</a></h2>
+<p>Let's create another new file in <em>Entities</em> called <em>ResourceLoader.swift</em>. ResourceLoader will be a class responsible for pre-loading our entities, and making them available to our application. We will create a method called <code>loadResources</code> which will return when our 3D assets are loaded. This method returns an <code>AnyCancellable</code> object from <em>Combine</em> so that we can halt the heavy load task if required.</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// ResourceLoader.swift</span>
+
+<span class="token keyword">import</span> <span class="token class-name">Foundation</span>
+<span class="token keyword">import</span> <span class="token class-name">Combine</span>
+<span class="token keyword">import</span> <span class="token class-name">RealityKit</span>
+
+<span class="token keyword">class</span> <span class="token class-name">ResourceLoader</span> <span class="token punctuation">{</span>
+    <span class="token keyword">typealias</span> <span class="token class-name">LoadCompletion</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">Result</span><span class="token operator">&lt;</span><span class="token class-name">CupEntity</span><span class="token punctuation">,</span> <span class="token class-name">Error</span><span class="token operator">></span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token class-name">Void</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">var</span> loadCancellable<span class="token punctuation">:</span> <span class="token class-name">AnyCancellable</span><span class="token operator">?</span>
+    <span class="token keyword">private</span> <span class="token keyword">var</span> cupEntity<span class="token punctuation">:</span> <span class="token class-name">CupEntity</span><span class="token operator">?</span>
+
+    <span class="token keyword">func</span> <span class="token function-definition function">loadResources</span><span class="token punctuation">(</span>completion<span class="token punctuation">:</span> <span class="token attribute atrule">@escaping</span> <span class="token class-name">LoadCompletion</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token class-name">AnyCancellable</span><span class="token operator">?</span> <span class="token punctuation">{</span>
+        <span class="token keyword">guard</span> <span class="token keyword">let</span> cupEntity <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            loadCancellable <span class="token operator">=</span> <span class="token class-name">CupEntity</span><span class="token punctuation">.</span>loadAsync<span class="token punctuation">.</span>sink <span class="token punctuation">{</span> result <span class="token keyword">in</span>
+                <span class="token keyword">if</span> <span class="token keyword">case</span> <span class="token keyword">let</span> <span class="token punctuation">.</span><span class="token function">failure</span><span class="token punctuation">(</span>error<span class="token punctuation">)</span> <span class="token operator">=</span> result <span class="token punctuation">{</span>
+                    <span class="token function">print</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"Failed to load CupEntity: </span><span class="token interpolation-punctuation punctuation">\(</span><span class="token interpolation">error</span><span class="token interpolation-punctuation punctuation">)</span><span class="token string">"</span></span><span class="token punctuation">)</span>
+                    <span class="token function">completion</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">failure</span><span class="token punctuation">(</span>error<span class="token punctuation">)</span><span class="token punctuation">)</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span> receiveValue<span class="token punctuation">:</span> <span class="token punctuation">{</span> <span class="token punctuation">[</span><span class="token keyword">weak</span> <span class="token keyword">self</span><span class="token punctuation">]</span> cupEntity <span class="token keyword">in</span>
+                <span class="token keyword">guard</span> <span class="token keyword">let</span> <span class="token keyword">self</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                    <span class="token keyword">return</span>
+                <span class="token punctuation">}</span>
+                <span class="token keyword">self</span><span class="token punctuation">.</span>cupEntity <span class="token operator">=</span> cupEntity
+                <span class="token function">completion</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">success</span><span class="token punctuation">(</span>cupEntity<span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">return</span> loadCancellable
+        <span class="token punctuation">}</span>
+        <span class="token function">completion</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">success</span><span class="token punctuation">(</span>cupEntity<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> loadCancellable
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">enum</span> <span class="token class-name">ResourceLoaderError</span><span class="token punctuation">:</span> <span class="token class-name">Error</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> resourceNotLoaded
+<span class="token punctuation">}</span></code></pre>
+<p>Next, we will create a class called <code>ViewModel</code> to manage our data and inform the UI of changes. ViewModel will be an <code>ObservableObject</code> that will load our assets and publish the state of pre-loading for the UI to observe. Create a new file in <em>UI</em> called <em>ViewModel.swift</em>:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token keyword">import</span> <span class="token class-name">Foundation</span>
+<span class="token keyword">import</span> <span class="token class-name">Combine</span>
+<span class="token keyword">import</span> <span class="token class-name">ARKit</span>
+<span class="token keyword">import</span> <span class="token class-name">RealityKit</span>
+
+<span class="token keyword">final</span> <span class="token keyword">class</span> <span class="token class-name">ViewModel</span><span class="token punctuation">:</span> <span class="token class-name">NSObject</span><span class="token punctuation">,</span> <span class="token class-name">ObservableObject</span> <span class="token punctuation">{</span>
+    <span class="token comment">/// Allow loading to take a minimum amount of time, to ease state transitions</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">let</span> loadBuffer<span class="token punctuation">:</span> <span class="token class-name">TimeInterval</span> <span class="token operator">=</span> <span class="token number">2</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">let</span> resourceLoader <span class="token operator">=</span> <span class="token class-name">ResourceLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">private</span> <span class="token keyword">var</span> loadCancellable<span class="token punctuation">:</span> <span class="token class-name">AnyCancellable</span><span class="token operator">?</span>
+
+    <span class="token attribute atrule">@Published</span> <span class="token keyword">var</span> assetsLoaded <span class="token operator">=</span> <span class="token boolean">false</span>
+
+    <span class="token keyword">func</span> <span class="token function-definition function">resume</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token operator">!</span>assetsLoaded <span class="token operator">&amp;&amp;</span> loadCancellable <span class="token operator">==</span> <span class="token nil constant">nil</span> <span class="token punctuation">{</span>
+            <span class="token function">loadAssets</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">func</span> <span class="token function-definition function">pause</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        loadCancellable<span class="token operator">?</span><span class="token punctuation">.</span><span class="token function">cancel</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        loadCancellable <span class="token operator">=</span> <span class="token nil constant">nil</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// MARK: - Private methods</span>
+
+    <span class="token keyword">private</span> <span class="token keyword">func</span> <span class="token function-definition function">loadAssets</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">let</span> beforeTime <span class="token operator">=</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>timeIntervalSince1970
+        loadCancellable <span class="token operator">=</span> resourceLoader<span class="token punctuation">.</span>loadResources <span class="token punctuation">{</span> <span class="token punctuation">[</span><span class="token keyword">weak</span> <span class="token keyword">self</span><span class="token punctuation">]</span> result <span class="token keyword">in</span>
+            <span class="token keyword">guard</span> <span class="token keyword">let</span> <span class="token keyword">self</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">switch</span> result <span class="token punctuation">{</span>
+            <span class="token keyword">case</span> <span class="token keyword">let</span> <span class="token punctuation">.</span><span class="token function">failure</span><span class="token punctuation">(</span>error<span class="token punctuation">)</span><span class="token punctuation">:</span>
+                <span class="token function">print</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"Failed to load assets </span><span class="token interpolation-punctuation punctuation">\(</span><span class="token interpolation">error</span><span class="token interpolation-punctuation punctuation">)</span><span class="token string">"</span></span><span class="token punctuation">)</span>
+            <span class="token keyword">case</span> <span class="token punctuation">.</span>success<span class="token punctuation">:</span>
+                <span class="token keyword">let</span> delta <span class="token operator">=</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>timeIntervalSince1970 <span class="token operator">-</span> beforeTime
+                <span class="token keyword">var</span> buffer <span class="token operator">=</span> <span class="token keyword">Self</span><span class="token punctuation">.</span>loadBuffer <span class="token operator">-</span> delta
+                <span class="token keyword">if</span> buffer <span class="token operator">&lt;</span> <span class="token number">0</span> <span class="token punctuation">{</span>
+                    buffer <span class="token operator">=</span> <span class="token number">0</span>
+                <span class="token punctuation">}</span>
+                <span class="token class-name">DispatchQueue</span><span class="token punctuation">.</span>main<span class="token punctuation">.</span><span class="token function">asyncAfter</span><span class="token punctuation">(</span>deadline<span class="token punctuation">:</span> <span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> buffer<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token keyword">self</span><span class="token punctuation">.</span>assetsLoaded <span class="token operator">=</span> <span class="token boolean">true</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Now we can update our SwiftUI App to assets right away when the app launches. If the app is put into the background, we will cancel loading and begin again once the app comes back into the foreground. Update your app file so it looks like this:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token attribute atrule">@main</span>
+<span class="token keyword">struct</span> <span class="token class-name">TapMakesCupsApp</span><span class="token punctuation">:</span> <span class="token class-name">SwiftUI</span><span class="token punctuation">.</span><span class="token class-name">App</span> <span class="token punctuation">{</span>
+    <span class="token attribute atrule">@Environment</span><span class="token punctuation">(</span><span class="token punctuation">\</span><span class="token punctuation">.</span>scenePhase<span class="token punctuation">)</span> <span class="token keyword">var</span> scenePhase
+
+    <span class="token attribute atrule">@StateObject</span> <span class="token keyword">var</span> viewModel <span class="token operator">=</span> <span class="token class-name">ViewModel</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">var</span> body<span class="token punctuation">:</span> <span class="token keyword">some</span> <span class="token class-name">SwiftUI</span><span class="token punctuation">.</span><span class="token class-name">Scene</span> <span class="token punctuation">{</span>
+        <span class="token class-name">WindowGroup</span> <span class="token punctuation">{</span>
+            <span class="token class-name">ContentView</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">environmentObject</span><span class="token punctuation">(</span>viewModel<span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">onChange</span><span class="token punctuation">(</span>of<span class="token punctuation">:</span> scenePhase<span class="token punctuation">)</span> <span class="token punctuation">{</span> newPhase <span class="token keyword">in</span>
+                    <span class="token keyword">switch</span> newPhase <span class="token punctuation">{</span>
+                    <span class="token keyword">case</span> <span class="token punctuation">.</span>active<span class="token punctuation">:</span>
+                        <span class="token function">print</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"App did become active"</span></span><span class="token punctuation">)</span>
+                        viewModel<span class="token punctuation">.</span><span class="token function">resume</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+                    <span class="token keyword">case</span> <span class="token punctuation">.</span>inactive<span class="token punctuation">:</span>
+                        <span class="token function">print</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"App did become inactive"</span></span><span class="token punctuation">)</span>
+                        viewModel<span class="token punctuation">.</span><span class="token function">pause</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+                    <span class="token keyword">default</span><span class="token punctuation">:</span>
+                        <span class="token keyword">break</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Next, update your <em>ContentView.swift</em> file to include a loading message which will be displayed when the assets have not yet loaded:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token keyword">import</span> <span class="token class-name">SwiftUI</span>
+<span class="token keyword">import</span> <span class="token class-name">RealityKit</span>
+
+<span class="token keyword">struct</span> <span class="token class-name">ContentView</span> <span class="token punctuation">:</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+    <span class="token attribute atrule">@EnvironmentObject</span> <span class="token keyword">var</span> viewModel<span class="token punctuation">:</span> <span class="token class-name">ViewModel</span>
+
+    <span class="token keyword">var</span> body<span class="token punctuation">:</span> <span class="token keyword">some</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+        <span class="token class-name">ZStack</span> <span class="token punctuation">{</span>
+            <span class="token comment">// Fullscreen camera ARView</span>
+            <span class="token class-name">ARViewContainer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">edgesIgnoringSafeArea</span><span class="token punctuation">(</span><span class="token punctuation">.</span>all<span class="token punctuation">)</span>
+
+            <span class="token comment">// Loading screen</span>
+            <span class="token class-name">ZStack</span> <span class="token punctuation">{</span>
+                <span class="token class-name">Color</span><span class="token punctuation">.</span>white
+                <span class="token class-name">Text</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"Loading resources..."</span></span><span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">foregroundColor</span><span class="token punctuation">(</span><span class="token class-name">Color</span><span class="token punctuation">.</span>black<span class="token punctuation">)</span>
+            <span class="token punctuation">}</span>
+            <span class="token punctuation">.</span><span class="token function">opacity</span><span class="token punctuation">(</span>viewModel<span class="token punctuation">.</span>assetsLoaded <span class="token operator">?</span> <span class="token number">0</span> <span class="token punctuation">:</span> <span class="token number">1</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">ignoresSafeArea</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">animation</span><span class="token punctuation">(</span><span class="token class-name">Animation</span><span class="token punctuation">.</span><span class="token keyword">default</span><span class="token punctuation">.</span><span class="token function">speed</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+                       value<span class="token punctuation">:</span> viewModel<span class="token punctuation">.</span>assetsLoaded<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">struct</span> <span class="token class-name">ARViewContainer</span><span class="token punctuation">:</span> <span class="token class-name">UIViewRepresentable</span> <span class="token punctuation">{</span>
+
+    <span class="token keyword">func</span> <span class="token function-definition function">makeUIView</span><span class="token punctuation">(</span>context<span class="token punctuation">:</span> <span class="token class-name">Context</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token class-name">ARView</span> <span class="token punctuation">{</span>
+        <span class="token keyword">let</span> arView <span class="token operator">=</span> <span class="token class-name">ARView</span><span class="token punctuation">(</span>frame<span class="token punctuation">:</span> <span class="token punctuation">.</span>zero<span class="token punctuation">)</span>
+        <span class="token keyword">return</span> arView
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">func</span> <span class="token function-definition function">updateUIView</span><span class="token punctuation">(</span><span class="token omit keyword">_</span> uiView<span class="token punctuation">:</span> <span class="token class-name">ARView</span><span class="token punctuation">,</span> context<span class="token punctuation">:</span> <span class="token class-name">Context</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+<span class="token punctuation">}</span>
+
+<span class="token directive property"><span class="token directive-name">#if</span> DEBUG</span>
+<span class="token keyword">struct</span> <span class="token class-name">ContentView_Previews</span> <span class="token punctuation">:</span> <span class="token class-name">PreviewProvider</span> <span class="token punctuation">{</span>
+    <span class="token attribute atrule">@StateObject</span> <span class="token keyword">static</span> <span class="token keyword">var</span> viewModel<span class="token punctuation">:</span> <span class="token class-name">ViewModel</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token class-name">ViewModel</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">static</span> <span class="token keyword">var</span> previews<span class="token punctuation">:</span> <span class="token keyword">some</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+        <span class="token class-name">ContentView</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">environmentObject</span><span class="token punctuation">(</span>viewModel<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token directive property"><span class="token directive-name">#endif</span></span></code></pre>
+<p>Run the app now. The ViewModel will load the resources when it is resumed on the app launch. You will see a loading message which will disappear after the assets are loaded and 2 seconds have elapsed. If you background the app when you first launch it, asset loading will be cancelled and resumed when you bring the app back to the foreground.</p>
+<h2 id="programmatically-place-content-in-the-real-world" tabindex="-1">Programmatically place content in the real world <a class="header-anchor" href="#programmatically-place-content-in-the-real-world">#</a></h2>
+<p>Now it's time for the fun part. First, we need a way to make new cups to place in the world. Open up the <code>ResourceLoader</code> and add a new method called <code>createCup</code>:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token keyword">func</span> <span class="token function-definition function">createCup</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token operator">-></span> <span class="token class-name">Entity</span> <span class="token punctuation">{</span>
+    <span class="token keyword">guard</span> <span class="token keyword">let</span> cup <span class="token operator">=</span> cupEntity<span class="token operator">?</span><span class="token punctuation">.</span>model <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token keyword">throw</span> <span class="token class-name">ResourceLoaderError</span><span class="token punctuation">.</span>resourceNotLoaded
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> cup<span class="token punctuation">.</span><span class="token function">clone</span><span class="token punctuation">(</span>recursive<span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code></pre>
+<p>The <code>clone</code> method of <code>Entity</code> allows you to create a new copy of an exiting entity, and the recusive option copies all the entities under it in the heirarchy, which we need as well. We use this method to create copies of our cup. We are expecting this method to be called only after pre-loading our assets, so we throw an error if the cup has not been loaded yet. Speaking of which, let's define that error now:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token keyword">enum</span> <span class="token class-name">ResourceLoaderError</span><span class="token punctuation">:</span> <span class="token class-name">Error</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> resourceNotLoaded
+<span class="token punctuation">}</span></code></pre>
+<p>Next, we are going to add code to our <code>ViewModel</code> to manage the state of our cups and ARSession. First, create a dictionary variable to hold on to the anchors that will anchor our cups to the real world:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift">    <span class="token keyword">private</span> <span class="token keyword">var</span> anchors <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token constant">UUID</span><span class="token punctuation">:</span> <span class="token class-name">AnchorEntity</span><span class="token punctuation">]</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>Then we can create a new method called <code>addCup</code> to add cups to the scene. It will take 3 arguments:</p>
+<ol>
+<li><code>anchor</code> is the <code>ARAnchor</code> that will anchor the cup to a surface in the real world.</li>
+<li><code>worldTransform</code> is a matrix which describes the position to place the cup in the world.</li>
+<li><code>view</code> is the <code>ARView</code> of our app. We need to pass it to this method to add content to the ARScene.</li>
+</ol>
+<p>Create the method like this:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift">    <span class="token keyword">func</span> <span class="token function-definition function">addCup</span><span class="token punctuation">(</span>anchor<span class="token punctuation">:</span> <span class="token class-name">ARAnchor</span><span class="token punctuation">,</span>
+                at worldTransform<span class="token punctuation">:</span> simd_float4x4<span class="token punctuation">,</span>
+                <span class="token keyword">in</span> view<span class="token punctuation">:</span> <span class="token class-name">ARView</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// Create a new cup to place at the tap location</span>
+        <span class="token keyword">let</span> cup<span class="token punctuation">:</span> <span class="token class-name">Entity</span>
+        <span class="token keyword">do</span> <span class="token punctuation">{</span>
+            cup <span class="token operator">=</span> <span class="token keyword">try</span> resourceLoader<span class="token punctuation">.</span><span class="token function">createCup</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token keyword">let</span> error <span class="token punctuation">{</span>
+            <span class="token function">print</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"Failed to create cup: </span><span class="token interpolation-punctuation punctuation">\(</span><span class="token interpolation">error</span><span class="token interpolation-punctuation punctuation">)</span><span class="token string">"</span></span><span class="token punctuation">)</span>
+            <span class="token keyword">return</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token keyword">defer</span> <span class="token punctuation">{</span>
+            <span class="token comment">// Get translation from transform</span>
+            <span class="token keyword">let</span> column <span class="token operator">=</span> worldTransform<span class="token punctuation">.</span>columns<span class="token punctuation">.</span><span class="token number">3</span>
+            <span class="token keyword">let</span> translation <span class="token operator">=</span> SIMD3<span class="token operator">&lt;</span><span class="token class-name">Float</span><span class="token operator">></span><span class="token punctuation">(</span>column<span class="token punctuation">.</span>x<span class="token punctuation">,</span> column<span class="token punctuation">.</span>y<span class="token punctuation">,</span> column<span class="token punctuation">.</span>z<span class="token punctuation">)</span>
+
+            <span class="token comment">// Move the cup to the tap location</span>
+            cup<span class="token punctuation">.</span><span class="token function">setPosition</span><span class="token punctuation">(</span>translation<span class="token punctuation">,</span> relativeTo<span class="token punctuation">:</span> <span class="token nil constant">nil</span><span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// If there is not already an anchor here, create one</span>
+        <span class="token keyword">guard</span> <span class="token keyword">let</span> anchorEntity <span class="token operator">=</span> anchors<span class="token punctuation">[</span>anchor<span class="token punctuation">.</span>identifier<span class="token punctuation">]</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token keyword">let</span> anchorEntity <span class="token operator">=</span> <span class="token class-name">AnchorEntity</span><span class="token punctuation">(</span>anchor<span class="token punctuation">:</span> anchor<span class="token punctuation">)</span>
+            anchorEntity<span class="token punctuation">.</span><span class="token function">addChild</span><span class="token punctuation">(</span>cup<span class="token punctuation">)</span>
+            view<span class="token punctuation">.</span>scene<span class="token punctuation">.</span><span class="token function">addAnchor</span><span class="token punctuation">(</span>anchorEntity<span class="token punctuation">)</span>
+            anchors<span class="token punctuation">[</span>anchor<span class="token punctuation">.</span>identifier<span class="token punctuation">]</span> <span class="token operator">=</span> anchorEntity
+            <span class="token keyword">return</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// Add the cup to the existing anchor</span>
+        anchorEntity<span class="token punctuation">.</span><span class="token function">addChild</span><span class="token punctuation">(</span>cup<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span></code></pre>
+<p>For each anchor that we wish to attach content to, we need an <code>AnchorEntity</code> which will act as the parent for our cup entities and tether them to the real world. If we don't have an <code>AnchorEntity</code> for the anchor we are interested in, we create one. We create a new cup and add it as a child of our anchor entity.</p>
+<p>Finally, in the <code>defer</code> block, we set the position of the cup to the desired real world position. The transform includes a size, position and orientation, but since we are only interested in the position we get the translation from the transform and apply it to the cup with <code>setPosition</code>.</p>
+<p>There is one more thing we have to do before we can place cups in the real world.</p>
+<h2 id="configure-arsession" tabindex="-1">Configure ARSession <a class="header-anchor" href="#configure-arsession">#</a></h2>
+<p>We want to place cups on horizontal surfaces in the real world. To do this, we will configure our <code>ARSession</code> for horizontal plane detection. Create a new method in <code>ViewModel</code> called <code>configureSession</code>:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token keyword">func</span> <span class="token function-definition function">configureSession</span><span class="token punctuation">(</span>forView arView<span class="token punctuation">:</span> <span class="token class-name">ARView</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> config <span class="token operator">=</span> <span class="token class-name">ARWorldTrackingConfiguration</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    config<span class="token punctuation">.</span>planeDetection <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">.</span>horizontal<span class="token punctuation">]</span>
+    arView<span class="token punctuation">.</span>session<span class="token punctuation">.</span><span class="token function">run</span><span class="token punctuation">(</span>config<span class="token punctuation">)</span>
+    arView<span class="token punctuation">.</span>session<span class="token punctuation">.</span>delegate <span class="token operator">=</span> <span class="token keyword">self</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Now horizontal surfaces will be automatically detected for our <code>ARSession</code>. Additionally, we set the <code>ViewModel</code> as the delegate for our session. It will be informed of updates to our anchors. We are going to conform to the <code>ARSessionDelegate</code> and implement a method to be informed when anchors are no longer detected and removed, so we can removed the orphaned cups associated with them:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// MARK: - ARSessionDelegate</span>
+
+<span class="token keyword">extension</span> <span class="token class-name">ViewModel</span><span class="token punctuation">:</span> <span class="token class-name">ARSessionDelegate</span> <span class="token punctuation">{</span>
+    <span class="token keyword">func</span> <span class="token function-definition function">session</span><span class="token punctuation">(</span><span class="token omit keyword">_</span> session<span class="token punctuation">:</span> <span class="token class-name">ARSession</span><span class="token punctuation">,</span> didRemove anchors<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token class-name">ARAnchor</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        anchors<span class="token punctuation">.</span>forEach <span class="token punctuation">{</span> anchor <span class="token keyword">in</span>
+            <span class="token keyword">guard</span> <span class="token keyword">let</span> anchorEntity <span class="token operator">=</span> <span class="token keyword">self</span><span class="token punctuation">.</span>anchors<span class="token punctuation">[</span>anchor<span class="token punctuation">.</span>identifier<span class="token punctuation">]</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span>
+            <span class="token punctuation">}</span>
+            <span class="token comment">// Lost an anchor, remove the AnchorEntity from the Scene</span>
+            anchorEntity<span class="token punctuation">.</span>scene<span class="token operator">?</span><span class="token punctuation">.</span><span class="token function">removeAnchor</span><span class="token punctuation">(</span>anchorEntity<span class="token punctuation">)</span>
+            <span class="token keyword">self</span><span class="token punctuation">.</span>anchors<span class="token punctuation">.</span><span class="token function">removeValue</span><span class="token punctuation">(</span>forKey<span class="token punctuation">:</span> anchor<span class="token punctuation">.</span>identifier<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Good, now we can keep track of only the anchors that are holding cups in the real world. Let's finish this app so we can see our AR content in action!</p>
+<h2 id="translate-tap-locations-into-real-world-positions" tabindex="-1">Translate tap locations into real world positions <a class="header-anchor" href="#translate-tap-locations-into-real-world-positions">#</a></h2>
+<p>Open up <em>ContentView.swift</em>. Edit <code>ARViewContainer</code> so that it looks like this:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token keyword">struct</span> <span class="token class-name">ARViewContainer</span><span class="token punctuation">:</span> <span class="token class-name">UIViewRepresentable</span> <span class="token punctuation">{</span>
+    <span class="token attribute atrule">@EnvironmentObject</span> <span class="token keyword">var</span> viewModel<span class="token punctuation">:</span> <span class="token class-name">ViewModel</span>
+
+    <span class="token keyword">func</span> <span class="token function-definition function">makeUIView</span><span class="token punctuation">(</span>context<span class="token punctuation">:</span> <span class="token class-name">Context</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token class-name">ARView</span> <span class="token punctuation">{</span>
+        <span class="token keyword">let</span> arView <span class="token operator">=</span> <span class="token class-name">ARView</span><span class="token punctuation">(</span>frame<span class="token punctuation">:</span> <span class="token punctuation">.</span>zero<span class="token punctuation">)</span>
+
+        <span class="token comment">// Configure the session</span>
+        viewModel<span class="token punctuation">.</span><span class="token function">configureSession</span><span class="token punctuation">(</span>forView<span class="token punctuation">:</span> arView<span class="token punctuation">)</span>
+
+        <span class="token comment">// Capture taps into the ARView</span>
+        context<span class="token punctuation">.</span>coordinator<span class="token punctuation">.</span>arView <span class="token operator">=</span> arView
+        <span class="token keyword">let</span> tapRecognizer <span class="token operator">=</span> <span class="token class-name">UITapGestureRecognizer</span><span class="token punctuation">(</span>target<span class="token punctuation">:</span> context<span class="token punctuation">.</span>coordinator<span class="token punctuation">,</span>
+                                                   action<span class="token punctuation">:</span> <span class="token other-directive property">#selector</span><span class="token punctuation">(</span><span class="token class-name">Coordinator</span><span class="token punctuation">.</span><span class="token function">viewTapped</span><span class="token punctuation">(</span><span class="token omit keyword">_</span><span class="token punctuation">:</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        tapRecognizer<span class="token punctuation">.</span>name <span class="token operator">=</span> <span class="token string-literal"><span class="token string">"ARView Tap"</span></span>
+        arView<span class="token punctuation">.</span><span class="token function">addGestureRecognizer</span><span class="token punctuation">(</span>tapRecognizer<span class="token punctuation">)</span>
+
+        <span class="token keyword">return</span> arView
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">func</span> <span class="token function-definition function">updateUIView</span><span class="token punctuation">(</span><span class="token omit keyword">_</span> uiView<span class="token punctuation">:</span> <span class="token class-name">ARView</span><span class="token punctuation">,</span> context<span class="token punctuation">:</span> <span class="token class-name">Context</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+
+    <span class="token keyword">class</span> <span class="token class-name">Coordinator</span><span class="token punctuation">:</span> <span class="token class-name">NSObject</span> <span class="token punctuation">{</span>
+        <span class="token keyword">weak</span> <span class="token keyword">var</span> arView<span class="token punctuation">:</span> <span class="token class-name">ARView</span><span class="token operator">?</span>
+        <span class="token keyword">let</span> parent<span class="token punctuation">:</span> <span class="token class-name">ARViewContainer</span>
+
+        <span class="token keyword">init</span><span class="token punctuation">(</span>parent<span class="token punctuation">:</span> <span class="token class-name">ARViewContainer</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">self</span><span class="token punctuation">.</span>parent <span class="token operator">=</span> parent
+        <span class="token punctuation">}</span>
+
+        <span class="token attribute atrule">@objc</span> <span class="token keyword">func</span> <span class="token function-definition function">viewTapped</span><span class="token punctuation">(</span><span class="token omit keyword">_</span> gesture<span class="token punctuation">:</span> <span class="token class-name">UITapGestureRecognizer</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">let</span> point <span class="token operator">=</span> gesture<span class="token punctuation">.</span><span class="token function">location</span><span class="token punctuation">(</span><span class="token keyword">in</span><span class="token punctuation">:</span> gesture<span class="token punctuation">.</span>view<span class="token punctuation">)</span>
+            <span class="token keyword">guard</span> <span class="token keyword">let</span> arView<span class="token punctuation">,</span>
+                  <span class="token keyword">let</span> result <span class="token operator">=</span> arView<span class="token punctuation">.</span><span class="token function">raycast</span><span class="token punctuation">(</span>from<span class="token punctuation">:</span> point<span class="token punctuation">,</span>
+                                              allowing<span class="token punctuation">:</span> <span class="token punctuation">.</span>existingPlaneGeometry<span class="token punctuation">,</span>
+                                              alignment<span class="token punctuation">:</span> <span class="token punctuation">.</span>horizontal<span class="token punctuation">)</span><span class="token punctuation">.</span>first<span class="token punctuation">,</span>
+                  <span class="token keyword">let</span> anchor <span class="token operator">=</span> result<span class="token punctuation">.</span>anchor
+            <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span>
+            <span class="token punctuation">}</span>
+            parent<span class="token punctuation">.</span>viewModel<span class="token punctuation">.</span><span class="token function">addCup</span><span class="token punctuation">(</span>anchor<span class="token punctuation">:</span> anchor<span class="token punctuation">,</span>
+                                    at<span class="token punctuation">:</span> result<span class="token punctuation">.</span>worldTransform<span class="token punctuation">,</span>
+                                    <span class="token keyword">in</span><span class="token punctuation">:</span> arView<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">func</span> <span class="token function-definition function">makeCoordinator</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token class-name">ARViewContainer</span><span class="token punctuation">.</span><span class="token class-name">Coordinator</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token class-name">Coordinator</span><span class="token punctuation">(</span>parent<span class="token punctuation">:</span> <span class="token keyword">self</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>This will configure our <code>ARSession</code> when it is created. Taps on the view will be captured. We can use the touch point in our ARView to project a ray that will intersect with detected horizontal planes. The first result will be the first plane intersected by that ray, this is the location where we want to place our cup. We pass the anchor for the intersected plane and the transform of the intersection to <code>ViewModel.addCup</code>.</p>
+<p>Run the app! When you tap on detected horizontal planes, it will place a cup there. If you want more help visualizing anchors and detected planes, you can add debug options to the ARView:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// debug options are powerful tools for understanding RealityKit</span>
+arView<span class="token punctuation">.</span>debugOptions <span class="token operator">=</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">.</span>showAnchorOrigins<span class="token punctuation">,</span>
+    <span class="token punctuation">.</span>showAnchorGeometry
+<span class="token punctuation">]</span></code></pre>
+<h2 id="complete-project" tabindex="-1">Complete project <a class="header-anchor" href="#complete-project">#</a></h2>
+<p>The complete TapMakesCup cap is available as a guide and starting app template on my GitHub <a href="https://github.com/brendaninnis/programmatic-content-realitykit">here</a>.</p>
+
+<ul class="links-nextprev"><li>Previous: <a href="/how-to-choose-an-anchor-for-your-realitykit-ios-app.html">How to choose an anchor for your RealityKit iOS AR app</a></li><li>Next: <a href="/coding-makes-you-less-creative.html">Coding Makes You Less Creative</a></li>
+</ul>
+
+		</main>
+
+		<footer></footer>
+
+		<!-- This page `/programmatically-placing-content-in-realitykit.html` was built on 2024-08-31T04:23:36.296Z -->
+
+		<!-- Theme toggle -->
+		<script defer>
+			// Theme toggle icons
+			const sun = "<svg enable-background=\"new 0 0 512 512\" height=\"512px\" id=\"Layer_1\" version=\"1.1\" viewBox=\"0 0 512 512\" width=\"512px\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><g><g><path d=\"M256,144c-61.75,0-112,50.25-112,112s50.25,112,112,112s112-50.25,112-112S317.75,144,256,144z M256,336    c-44.188,0-80-35.812-80-80c0-44.188,35.812-80,80-80c44.188,0,80,35.812,80,80C336,300.188,300.188,336,256,336z M256,112    c8.833,0,16-7.167,16-16V64c0-8.833-7.167-16-16-16s-16,7.167-16,16v32C240,104.833,247.167,112,256,112z M256,400    c-8.833,0-16,7.167-16,16v32c0,8.833,7.167,16,16,16s16-7.167,16-16v-32C272,407.167,264.833,400,256,400z M380.438,154.167    l22.625-22.625c6.25-6.25,6.25-16.375,0-22.625s-16.375-6.25-22.625,0l-22.625,22.625c-6.25,6.25-6.25,16.375,0,22.625    S374.188,160.417,380.438,154.167z M131.562,357.834l-22.625,22.625c-6.25,6.249-6.25,16.374,0,22.624s16.375,6.25,22.625,0    l22.625-22.624c6.25-6.271,6.25-16.376,0-22.625C147.938,351.583,137.812,351.562,131.562,357.834z M112,256    c0-8.833-7.167-16-16-16H64c-8.833,0-16,7.167-16,16s7.167,16,16,16h32C104.833,272,112,264.833,112,256z M448,240h-32    c-8.833,0-16,7.167-16,16s7.167,16,16,16h32c8.833,0,16-7.167,16-16S456.833,240,448,240z M131.541,154.167    c6.251,6.25,16.376,6.25,22.625,0c6.251-6.25,6.251-16.375,0-22.625l-22.625-22.625c-6.25-6.25-16.374-6.25-22.625,0    c-6.25,6.25-6.25,16.375,0,22.625L131.541,154.167z M380.459,357.812c-6.271-6.25-16.376-6.25-22.625,0    c-6.251,6.25-6.271,16.375,0,22.625l22.625,22.625c6.249,6.25,16.374,6.25,22.624,0s6.25-16.375,0-22.625L380.459,357.812z\" fill=\"var(--text-color)\"/></g></g></svg>";
+			const moon = "<svg enable-background=\"new 0 0 512 512\" height=\"512px\" id=\"Layer_1\" version=\"1.1\" viewBox=\"0 0 512 512\" width=\"512px\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><path d=\"M349.852,343.15c-49.875,49.916-131.083,49.916-181,0c-49.916-49.918-49.916-131.125,0-181.021  c13.209-13.187,29.312-23.25,47.832-29.812c5.834-2.042,12.293-0.562,16.625,3.792c4.376,4.375,5.855,10.833,3.793,16.625  c-12.542,35.375-4,73.666,22.25,99.917c26.209,26.228,64.5,34.75,99.916,22.25c5.792-2.062,12.271-0.582,16.625,3.793  c4.376,4.332,5.834,10.812,3.771,16.625C373.143,313.838,363.06,329.941,349.852,343.15z M191.477,184.754  c-37.438,37.438-37.438,98.354,0,135.771c40,40.021,108.125,36.416,143-8.168c-35.959,2.25-71.375-10.729-97.75-37.084  c-26.375-26.354-39.333-61.771-37.084-97.729C196.769,179.796,194.039,182.192,191.477,184.754z\" fill=\"var(--text-color)\"/></svg>";
+
+			// Check for default theme
+			if (!("theme" in localStorage)) {
+				localStorage.theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+			}
+
+			// Apply theme
+			function applyTheme() {
+				document.documentElement.setAttribute("data-theme", localStorage.theme);
+
+				let syntaxThemeCSS = document.getElementById("syntax-theme-css");
+
+				if (localStorage.theme === "dark") {
+					document.getElementById("theme").innerHTML = moon;
+					if (syntaxThemeCSS !== null) {
+						syntaxThemeCSS.href = "/css/prism-one-dark.css";
+					}
+				} else {
+					document.getElementById("theme").innerHTML = sun;
+					if (syntaxThemeCSS !== null) {
+						syntaxThemeCSS.href = "/css/prism-one-light.css";
+					}
+				}
+			}
+			applyTheme();
+
+			// Toggle theme
+			document.getElementById("theme").addEventListener("click", function () {
+				if (localStorage.theme === "dark") {
+					localStorage.theme = "light";
+				} else {
+					localStorage.theme = "dark";
+				}
+				applyTheme();
+			});
+		</script>
+	</body>
+</html>

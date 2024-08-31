@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Functions: Why Smaller is Not Always Better</title>
+		<meta name="description" content="A commentary on Robert C. Matin&#39;s Clean Code Chapter 3.">
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Brendan Innis">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="Brendan Innis">
+		
+		<style>/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+
+	--horizontal-padding: 3rem;
+}
+@media (max-width: 820px) {
+	:root {
+		--horizontal-padding: 1rem;
+	}
+}
+
+/* Theme colors */
+:root {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #333;
+	--color-gray-95: #000308;
+
+	--background-color: #FFFCF786;
+	--background-image: url(/img/spiration-light.png);
+
+	--theme-background-color: #00030813;
+
+	--text-color: var(--color-gray-95);
+	--text-color-link: #301014;
+	--text-color-link-active: #5f2b48;
+	--text-color-link-visited: #5E555A;
+
+	--syntax-tab-size: 2;
+}
+
+:root[data-theme="dark"] {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #dad8d8;
+	--color-gray-95: #FFFCF7;
+
+	--theme-background-color: #FFFCF713;
+
+	/* --text-color is assigned to --color-gray-_ above */
+	--text-color-link: #b5bad0;
+	--text-color-link-active: #FFDD93;
+	--text-color-link-visited: #8594ad;
+
+	--background-color: #06010a86;
+	--background-image: url(/img/spiration-dark.png);
+}
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	min-height: 100vh;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	background-image: var(--background-image);
+}
+body {
+	max-width: calc(80ch + var(--horizontal-padding) * 2);
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+a > svg:hover {
+	fill: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem var(--horizontal-padding);
+}
+main :first-child {
+	margin-top: 0;
+}
+
+h1 {
+	margin-top: 0.25em;
+}
+
+header {
+	display: flex;
+	border-bottom: 1px dashed var(--color-gray-90);
+}
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+span.spacer {
+	flex-grow: 1;
+}
+
+.links-nextprev {
+	list-style: none;
+	border-top: 1px dashed var(--color-gray-90);
+	margin: 0 calc(-1 * var(--horizontal-padding));
+	padding: 0;
+}
+.links-nextprev li {
+	margin: 1em 0;
+	padding: 0 var(--horizontal-padding);
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+code {
+	word-break: break-all;
+}
+
+img {
+	display: block;
+	margin: 0 auto;
+	max-width: 100%;
+	height: auto;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em var(--horizontal-padding);
+}
+a[href]:visited.home-link,
+.nav-item a[href]:visited {
+	color: var(--text-color-link);
+}
+a[href]:hover.home-link,
+a[href]:active.home-link,
+.nav-item a[href]:hover,
+.nav-item a[href]:active {
+	color: var(--text-color-link-active);
+}
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+#theme {
+	margin: -1em 0 -1em 0;
+	background: none;
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	font-size: 1em; /* 16px /16 */
+	padding: 0;
+	display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+#theme:hover {
+	background: var(--theme-background-color);
+}
+#theme > svg {
+	height: 2em;
+	width: 2em;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 1em;
+}
+.postlist-date {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+#subscribe-link > svg {
+	vertical-align: bottom;
+	margin-bottom: 0.125em;
+}
+
+/* About */
+#sidebar-icon-links {
+	margin-top: 1em;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+h2 {
+	margin-top: 1.5em;
+}
+
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: var(--text-color-link-active);
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}</style>
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-998XX4MGQY"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', 'G-998XX4MGQY');
+		</script>
+
+	</head>
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+
+		<header>
+			<a href="/" class="home-link">Brendan Innis</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/">Posts</a></li>
+					<li class="nav-item"><a href="/tags.html">Tags</a></li>
+					<li class="nav-item"><a href="/about.html">About Me</a></li>
+				</ul>
+			</nav>
+			<span class="spacer"></span>
+			<button id="theme" aria-label="Toggle theme" class="theme-toggle"></button>
+		</header>
+
+		<main id="skip">
+			
+<link id="syntax-theme-css" rel="stylesheet" href="css/prism-one-dark.css" />
+
+<ul class="post-metadata">
+	<li><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-color)" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 0 1 1 1v1h4V3a1 1 0 1 1 2 0v1h3a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V3a1 1 0 0 1 1-1zM8 6H5v3h14V6h-3v1a1 1 0 1 1-2 0V6h-4v1a1 1 0 0 1-2 0V6zm11 5H5v8h14v-8z"/></svg></li>
+	<li><time datetime="2022-01-24">24 January 2022</time></li>
+	<li><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-color)" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 0 1 1-1h8a1 1 0 0 1 .707.293l10 10a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-10-10A1 1 0 0 1 2 11V3zm2 1v6.586l9 9L19.586 13l-9-9H4z" /><path d="M9 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" /></svg></li>
+	<li><a href="/tags/software-engineering/" class="post-tag">Software Engineering</a></li>
+</ul>
+
+<h1>Functions: Why Smaller is Not Always Better</h1>
+
+<p>Throughout my career as a software engineer, I have come across many simple heuristics that developers use to guide their design decisions and inform their coding style. One such rule-of-thumb I have heard quoted is that &quot;small functions are better&quot;. Those following this rule-of-thumb assert that writing small functions enforces good coding principals and makes for better software. While I would like my functions to be no larger than they need to be, I find the &quot;small functions
+are better&quot; rule tends to create more problems than it solves.</p>
+<p>Within Robert C. Martin's seminal work Clean Code, chapter 3 is dedicated to discussing the principals of clean code in relation to functions. Martin references the &quot;small functions are better&quot; rule within the chapter, and uses it, among other techniques, to refactor a function which is an example of code that could be cleaner. The function is as follows:</p>
+<h2 id="the-function-to-be-refactored-listing-3-1" tabindex="-1">The function to be refactored (Listing 3-1) <a class="header-anchor" href="#the-function-to-be-refactored-listing-3-1">#</a></h2>
+<p><em>HtmlUtil.java</em></p>
+<pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token function">testableHtml</span><span class="token punctuation">(</span>
+        <span class="token class-name">PageData</span> pageData<span class="token punctuation">,</span>
+        <span class="token keyword">boolean</span> includeSuiteSetup
+<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+    <span class="token class-name">WikiPage</span> wikiPage <span class="token operator">=</span> pageData<span class="token punctuation">.</span><span class="token function">getWikiPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token class-name">StringBuffer</span> buffer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">StringBuffer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>pageData<span class="token punctuation">.</span><span class="token function">hasAttribute</span><span class="token punctuation">(</span><span class="token string">"Test"</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>includeSuiteSetup<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token class-name">WikiPage</span> suiteSetup <span class="token operator">=</span>
+                    <span class="token class-name">PageCrawlerImpl</span><span class="token punctuation">.</span><span class="token function">getInheritedPage</span><span class="token punctuation">(</span>
+                            <span class="token class-name">SuiteResponder</span><span class="token punctuation">.</span><span class="token constant">SUITE_SETUP_NAME</span><span class="token punctuation">,</span> wikiPage
+                    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>suiteSetup <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token class-name">WikiPagePath</span> pagePath <span class="token operator">=</span>
+                        suiteSetup<span class="token punctuation">.</span><span class="token function">getPageCrawler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getFullPath</span><span class="token punctuation">(</span>suiteSetup<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token class-name">String</span> pagePathName <span class="token operator">=</span> <span class="token class-name">PathParser</span><span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span>pagePath<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                buffer<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"!include -setup ."</span><span class="token punctuation">)</span>
+                        <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>pagePathName<span class="token punctuation">)</span>
+                        <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        <span class="token class-name">WikiPage</span> setup <span class="token operator">=</span>
+                <span class="token class-name">PageCrawlerImpl</span><span class="token punctuation">.</span><span class="token function">getInheritedPage</span><span class="token punctuation">(</span><span class="token string">"SetUp"</span><span class="token punctuation">,</span> wikiPage<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>setup <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token class-name">WikiPagePath</span> setupPath <span class="token operator">=</span>
+                    wikiPage<span class="token punctuation">.</span><span class="token function">getPageCrawler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getFullPath</span><span class="token punctuation">(</span>setup<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">String</span> setupPathName <span class="token operator">=</span> <span class="token class-name">PathParser</span><span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span>setupPath<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            buffer<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"!include -setup ."</span><span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>setupPathName<span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    buffer<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>pageData<span class="token punctuation">.</span><span class="token function">getContent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>pageData<span class="token punctuation">.</span><span class="token function">hasAttribute</span><span class="token punctuation">(</span><span class="token string">"Test"</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">WikiPage</span> teardown <span class="token operator">=</span>
+                <span class="token class-name">PageCrawlerImpl</span><span class="token punctuation">.</span><span class="token function">getInheritedPage</span><span class="token punctuation">(</span><span class="token string">"TearDown"</span><span class="token punctuation">,</span> wikiPage<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>teardown <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token class-name">WikiPagePath</span> tearDownPath <span class="token operator">=</span>
+                    wikiPage<span class="token punctuation">.</span><span class="token function">getPageCrawler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getFullPath</span><span class="token punctuation">(</span>teardown<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">String</span> tearDownPathName <span class="token operator">=</span> <span class="token class-name">PathParser</span><span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span>tearDownPath<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            buffer<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"!include -teardown ."</span><span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>tearDownPathName<span class="token punctuation">)</span>
+                    <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>includeSuiteSetup<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token class-name">WikiPage</span> suiteTeardown <span class="token operator">=</span>
+                    <span class="token class-name">PageCrawlerImpl</span><span class="token punctuation">.</span><span class="token function">getInheritedPage</span><span class="token punctuation">(</span>
+                            <span class="token class-name">SuiteResponder</span><span class="token punctuation">.</span><span class="token constant">SUITE_TEARDOWN_NAME</span><span class="token punctuation">,</span>
+                            wikiPage
+                    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>suiteTeardown <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token class-name">WikiPagePath</span> pagePath <span class="token operator">=</span>
+                        suiteTeardown<span class="token punctuation">.</span><span class="token function">getPageCrawler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>getFullPath <span class="token punctuation">(</span>suiteTeardown<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token class-name">String</span> pagePathName <span class="token operator">=</span> <span class="token class-name">PathParser</span><span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span>pagePath<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                buffer<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"!include -teardown ."</span><span class="token punctuation">)</span>
+                        <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>pagePathName<span class="token punctuation">)</span>
+                        <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    pageData<span class="token punctuation">.</span><span class="token function">setContent</span><span class="token punctuation">(</span>buffer<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> pageData<span class="token punctuation">.</span><span class="token function">getHtml</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>My first and most immediate problem with the above code is the control flow resulting in many branching blocks which may or may not be executed during the course of this function. We end up with blocks which are nested many levels deep. This makes the function difficult to read since I have to keep track of which block of control flow I am in at a time, but more importantly, it is hard for me to keep the exponentially increasing paths through the logic in my head at once. Crucially, this function is also difficult to test, because it requires an exponentially increasing set of test cases in order to cover all of the possible branches.</p>
+<p>The above function is not &quot;bad&quot; code. It does a good job of hiding away the implementation details of the task to render some HTML from the page data which is passed in as an argument. Some one line comments throughout the function describing what each step does would do a lot of work to make this function more readable and comprehensible.</p>
+<p>It is an error to believe that all the problems of control flow required for branching logic can be solved by clean code. The fact is if your application requires branching logic, then your implementation will require some form of control flow and you can't get around that. How well your implementation is able to be comprehended and tested is what matters.</p>
+<p>Martin eventually refactors the function using the principals of clean code, which results in a class with a static <code>render</code> function:</p>
+<h2 id="matin-s-refactor-according-to-the-principals-of-clean-code-listing-3-7" tabindex="-1">Matin's refactor according to the principals of clean code (Listing 3-7) <a class="header-anchor" href="#matin-s-refactor-according-to-the-principals-of-clean-code-listing-3-7">#</a></h2>
+<p><em>SetupTeardownIncluder.java</em></p>
+<pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">fitnesse<span class="token punctuation">.</span>html</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">fitnesse<span class="token punctuation">.</span>responders<span class="token punctuation">.</span>run<span class="token punctuation">.</span></span><span class="token class-name">SuiteResponder</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">fitnesse<span class="token punctuation">.</span>wiki<span class="token punctuation">.</span></span><span class="token operator">*</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SetupTeardownIncluder</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> <span class="token class-name">PageData</span> pageData<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">boolean</span> isSuite<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token class-name">WikiPage</span> testPage<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token class-name">StringBuffer</span> newPageContent<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token class-name">PageCrawler</span> pageCrawler<span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token function">render</span><span class="token punctuation">(</span><span class="token class-name">PageData</span> pageData<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token function">render</span><span class="token punctuation">(</span>pageData<span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token function">render</span><span class="token punctuation">(</span><span class="token class-name">PageData</span> pageData<span class="token punctuation">,</span> <span class="token keyword">boolean</span> isSuite<span class="token punctuation">)</span>
+            <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">SetupTeardownIncluder</span><span class="token punctuation">(</span>pageData<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span>isSuite<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token class-name">SetupTeardownIncluder</span><span class="token punctuation">(</span><span class="token class-name">PageData</span> pageData<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>pageData <span class="token operator">=</span> pageData<span class="token punctuation">;</span>
+        testPage <span class="token operator">=</span> pageData<span class="token punctuation">.</span><span class="token function">getWikiPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        pageCrawler <span class="token operator">=</span> testPage<span class="token punctuation">.</span><span class="token function">getPageCrawler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        newPageContent <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">StringBuffer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> <span class="token function">render</span><span class="token punctuation">(</span><span class="token keyword">boolean</span> isSuite<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>isSuite <span class="token operator">=</span> isSuite<span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isTestPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token function">includeSetupAndTeardownPages</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> pageData<span class="token punctuation">.</span><span class="token function">getHtml</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">boolean</span> <span class="token function">isTestPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> pageData<span class="token punctuation">.</span><span class="token function">hasAttribute</span><span class="token punctuation">(</span><span class="token string">"Test"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">includeSetupAndTeardownPages</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token function">includeSetupPages</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">includePageContent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">includeTeardownPages</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">updatePageContent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">includeSetupPages</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>isSuite<span class="token punctuation">)</span>
+            <span class="token function">includeSuiteSetupPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">includeSetupPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">includeSuiteSetupPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token function">include</span><span class="token punctuation">(</span><span class="token class-name">SuiteResponder</span><span class="token punctuation">.</span><span class="token constant">SUITE_SETUP_NAME</span><span class="token punctuation">,</span> <span class="token string">"-setup"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">includeSetupPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token function">include</span><span class="token punctuation">(</span><span class="token string">"SetUp"</span><span class="token punctuation">,</span> <span class="token string">"-setup"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">includePageContent</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        newPageContent<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>pageData<span class="token punctuation">.</span><span class="token function">getContent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">includeTeardownPages</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token function">includeTeardownPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>isSuite<span class="token punctuation">)</span>
+            <span class="token function">includeSuiteTeardownPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">includeTeardownPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token function">include</span><span class="token punctuation">(</span><span class="token string">"TearDown"</span><span class="token punctuation">,</span> <span class="token string">"-teardown"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">includeSuiteTeardownPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token function">include</span><span class="token punctuation">(</span><span class="token class-name">SuiteResponder</span><span class="token punctuation">.</span><span class="token constant">SUITE_TEARDOWN_NAME</span><span class="token punctuation">,</span> <span class="token string">"-teardown"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">updatePageContent</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        pageData<span class="token punctuation">.</span><span class="token function">setContent</span><span class="token punctuation">(</span>newPageContent<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">include</span><span class="token punctuation">(</span><span class="token class-name">String</span> pageName<span class="token punctuation">,</span> <span class="token class-name">String</span> arg<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token class-name">WikiPage</span> inheritedPage <span class="token operator">=</span> <span class="token function">findInheritedPage</span><span class="token punctuation">(</span>pageName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>inheritedPage <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token class-name">String</span> pagePathName <span class="token operator">=</span> <span class="token function">getPathNameForPage</span><span class="token punctuation">(</span>inheritedPage<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">buildIncludeDirective</span><span class="token punctuation">(</span>pagePathName<span class="token punctuation">,</span> arg<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token class-name">WikiPage</span> <span class="token function">findInheritedPage</span><span class="token punctuation">(</span><span class="token class-name">String</span> pageName<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token class-name">PageCrawlerImpl</span><span class="token punctuation">.</span><span class="token function">getInheritedPage</span><span class="token punctuation">(</span>pageName<span class="token punctuation">,</span> testPage<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> <span class="token function">getPathNameForPage</span><span class="token punctuation">(</span><span class="token class-name">WikiPage</span> page<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token class-name">WikiPagePath</span> pagePath <span class="token operator">=</span> pageCrawler<span class="token punctuation">.</span><span class="token function">getFullPath</span><span class="token punctuation">(</span>page<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token class-name">PathParser</span><span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span>pagePath<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">buildIncludeDirective</span><span class="token punctuation">(</span><span class="token class-name">String</span> pagePathName<span class="token punctuation">,</span> <span class="token class-name">String</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        newPageContent
+                <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n!include "</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>arg<span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">" ."</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>pagePathName<span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Martin says that &quot;the first rule of functions is that they should be small.&quot; The heuristic seems to follow from the principals that functions should do one thing, not have side-effects and not mix levels of abstraction. While I agree with all of these principals, all can be adhered to without strictly sticking to a certain function size. Martin even goes so far as to suggest an upper limit of 20 lines.</p>
+<p>A function should be as large as it needs to be in order to fulfill it's obligation. Functions can nicely hide away the implementation details of a single task, which may be numerous or cumbersome. As long as you are mostly just invoking the function, rather than operating on it's internals, why would it matter how large the function is? I would rather not look at the body of the function at all! Rather the function name and it's context in the code should cleanly express it's purpose. Further, if the function is well designed and written in the first place, then it's internals should not need much modification in the future.</p>
+<p>The problems that I observe when developers religiously stick to the &quot;smaller is better&quot; rule are:</p>
+<ul>
+<li>lots of small functions lead to deep call stacks,</li>
+<li>implementation details get hidden in functions which are only called from one place,</li>
+<li>and functions become redundent wrappers for other function calls.</li>
+</ul>
+<p>Let's discuss each of these points in relation to the above code (Listing 3-7) and refactor it again to be even cleaner.</p>
+<h2 id="lots-of-small-functions-lead-to-deep-call-stacks" tabindex="-1">Lots of small functions lead to deep call stacks <a class="header-anchor" href="#lots-of-small-functions-lead-to-deep-call-stacks">#</a></h2>
+<p>When we take a large function and refactor it into many smaller functions, we often do it in a way where those smaller functions become nested within each other. The problem this leads to is that the smaller, deeply-nested functions are only called within the context of a call stack many levels deep.</p>
+<p>Let's say I have never seen this code before, but I am tasked with changing something in the <code>buildIncludeDirective</code> function. In order to understand the context the function is called within I go back through the call stack, and I have to unnest each layer of it and understand them individually, in order to piece together what this function does in context. The call stack may end up looking like this:</p>
+<pre><code>SetupTeardownIncluder.render(PageData)
+  SetupTeardownIncluder.render(PageData,boolean)
+    SetupTeardownIncluder.render(boolean)
+      SetupTeardownIncluder.includeSetupAndTeardownPages()
+        SetupTeardownIncluder.includeSetupPages()
+          SetupTeardownIncluder.includeSuiteSetupPage()
+            SetupTeardownIncluder.include(String,String)
+              SetupTeardownIncluder.buildIncludeDirective(String,String)
+</code></pre>
+<p>While breaking the original <code>testableHtml</code> (Listing 3-1) function into many smaller pieces does clean it up, it introduces the problem of deep call stacks that are difficult and time consuming to trace through. The problem is amplified in larger projects where the call stacks may be much deeper, and spread out across multiple classes or even packages.</p>
+<h2 id="implementation-details-get-hidden-in-functions-which-are-only-called-from-one-place" tabindex="-1">Implementation details get hidden in functions which are only called from one place <a class="header-anchor" href="#implementation-details-get-hidden-in-functions-which-are-only-called-from-one-place">#</a></h2>
+<p>While separating levels of abstraction is a useful principle that does help the original monolithic <code>testableHtml</code> function become cleaner, the refactor introduces a new problem. The <code>buildIncludeDirective</code> function is only called from <code>include</code>. It is not reused anywhere else and so it should just be a part of the include function. Indeed it is just a part of the <code>include</code> function, but the implementation details are hidden away from <code>include</code> so that you have to look a level
+deeper to understand what <code>include</code> actually does.</p>
+<pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">include</span><span class="token punctuation">(</span><span class="token class-name">String</span> pageName<span class="token punctuation">,</span> <span class="token class-name">String</span> arg<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+    <span class="token class-name">WikiPage</span> inheritedPage <span class="token operator">=</span> <span class="token function">findInheritedPage</span><span class="token punctuation">(</span>pageName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>inheritedPage <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">String</span> pagePathName <span class="token operator">=</span> <span class="token function">getPathNameForPage</span><span class="token punctuation">(</span>inheritedPage<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">buildIncludeDirective</span><span class="token punctuation">(</span>pagePathName<span class="token punctuation">,</span> arg<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// . . .</span>
+
+<span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">buildIncludeDirective</span><span class="token punctuation">(</span><span class="token class-name">String</span> pagePathName<span class="token punctuation">,</span> <span class="token class-name">String</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    newPageContent
+            <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n!include "</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>arg<span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">" ."</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>pagePathName<span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>There are other problems that <code>buildIncludeDirective</code> introduces in relation to clean code. It violates the &quot;no side-effects&quot; rule. The instance variable <code>newPageContent</code> is modified by the function and the only way to know that would be to look into the implementation details. In this case I would favour passing in the <code>StringBuffer</code> as an argument and let the function the modify it. This would make the intention of <code>buildIncludeDirective</code> clearer from the method
+signature, as well as making the function more portable if it were to be reused elsewhere.</p>
+<pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">buildIncludeDirective</span><span class="token punctuation">(</span><span class="token class-name">StringBuffer</span> content<span class="token punctuation">,</span>
+                                   <span class="token class-name">String</span> pagePathName<span class="token punctuation">,</span>
+                                   <span class="token class-name">String</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    content
+            <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n!include "</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>arg<span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">" ."</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>pagePathName<span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>A good rule-of-thumb for when it makes sense to break a piece of logic into it's own function is when it will be called in multiple places, or if the same logic is called with multiple variable arguments, like the <code>include</code> function for example. This, of course, would also be an example of the DRY (don't repeat yourself) rule.</p>
+<h2 id="functions-become-redundant-wrappers-for-other-function-calls" tabindex="-1">Functions become redundant wrappers for other function calls <a class="header-anchor" href="#functions-become-redundant-wrappers-for-other-function-calls">#</a></h2>
+<p>One common symptom of the &quot;smaller functions are better&quot; mentality is functions which only call another function. They are, in essense, just a wrapper for another function, and are often redundent and simply clutter up your codebase and make it needlessly complicated. The <code>findInheritedPage</code> function from Listing 3-7 is an example of this problem as well as another function that is only called from one place.</p>
+<pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">include</span><span class="token punctuation">(</span><span class="token class-name">String</span> pageName<span class="token punctuation">,</span> <span class="token class-name">String</span> arg<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+    <span class="token class-name">WikiPage</span> inheritedPage <span class="token operator">=</span> <span class="token function">findInheritedPage</span><span class="token punctuation">(</span>pageName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>inheritedPage <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">String</span> pagePathName <span class="token operator">=</span> <span class="token function">getPathNameForPage</span><span class="token punctuation">(</span>inheritedPage<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">buildIncludeDirective</span><span class="token punctuation">(</span>pagePathName<span class="token punctuation">,</span> arg<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">private</span> <span class="token class-name">WikiPage</span> <span class="token function">findInheritedPage</span><span class="token punctuation">(</span><span class="token class-name">String</span> pageName<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token class-name">PageCrawlerImpl</span><span class="token punctuation">.</span><span class="token function">getInheritedPage</span><span class="token punctuation">(</span>pageName<span class="token punctuation">,</span> testPage<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>What you might say in defence of <code>findInheritedPage</code> is that it does abstract away the implemntation details of how the <code>WikiPage</code> object is found from the page name, but in this case since this function is only called from one place and is essentially just a wrapper for the <code>PageCrawlerImpl.getInheritedPage</code> function I would rather the implementation just be a part of the <code>include</code> function.</p>
+<p>These problems may seem not so bad in this small example, but it is in larger, real world projects these issues become amplified and add a large amount of complexity to a codebase, despite the intention to follow the principles of clean code.</p>
+<h2 id="comments-are-superior-to-many-small-functions" tabindex="-1">Comments are superior to many small functions <a class="header-anchor" href="#comments-are-superior-to-many-small-functions">#</a></h2>
+<p>The small functions in the above examples were introduced in order to make the code more readable and understandable. They have descriptive names and focused tasks which help to make it clear what the code does, but they introduce the problems I have already outlined. A simpler approach to this refactor would be to just introduce some comments.</p>
+<p>Comments will explain the purpose and function of each part of the implementation, just like a descriptively named function would, but without nesting logic another layer deep in the call stack or adding redundant wrappers to other function calls. Additionally, when reading through the large function, you will be able to read each step in order and understand the implementation details, rather than having to seach down through the function calls to the operation actually being
+performed.</p>
+<h2 id="let-s-make-the-code-cleaner" tabindex="-1">Let's make the code cleaner <a class="header-anchor" href="#let-s-make-the-code-cleaner">#</a></h2>
+<p>After understanding the problems introduced by developers religiously following the &quot;small is better&quot; rule, let's refactor the refactor from Clean Code and make it even cleaner.</p>
+<pre class="language-java" tabindex="0"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">fitnesse<span class="token punctuation">.</span>html</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">fitnesse<span class="token punctuation">.</span>responders<span class="token punctuation">.</span>run<span class="token punctuation">.</span></span><span class="token class-name">SuiteResponder</span></span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token import"><span class="token namespace">fitnesse<span class="token punctuation">.</span>wiki<span class="token punctuation">.</span></span><span class="token operator">*</span></span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SetupTeardownIncluder</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> <span class="token class-name">PageData</span> pageData<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token class-name">WikiPage</span> testPage<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token class-name">PageCrawler</span> pageCrawler<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token class-name">StringBuffer</span> newPageContent<span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token function">render</span><span class="token punctuation">(</span><span class="token class-name">PageData</span> pageData<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token function">render</span><span class="token punctuation">(</span>pageData<span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token function">render</span><span class="token punctuation">(</span><span class="token class-name">PageData</span> pageData<span class="token punctuation">,</span> <span class="token keyword">boolean</span> isSuite<span class="token punctuation">)</span>
+            <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">SetupTeardownIncluder</span><span class="token punctuation">(</span>pageData<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span>isSuite<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token class-name">SetupTeardownIncluder</span><span class="token punctuation">(</span><span class="token class-name">PageData</span> pageData<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>pageData <span class="token operator">=</span> pageData<span class="token punctuation">;</span>
+        testPage <span class="token operator">=</span> pageData<span class="token punctuation">.</span><span class="token function">getWikiPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        pageCrawler <span class="token operator">=</span> testPage<span class="token punctuation">.</span><span class="token function">getPageCrawler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        newPageContent <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">StringBuffer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> <span class="token function">render</span><span class="token punctuation">(</span><span class="token keyword">boolean</span> isSuite<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token comment">// If this is a test page, include the setup and teardown pages</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>pageData<span class="token punctuation">.</span><span class="token function">hasAttribute</span><span class="token punctuation">(</span><span class="token string">"Test"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+            <span class="token function">includeSetupAndTeardownPages</span><span class="token punctuation">(</span>isSuite<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> pageData<span class="token punctuation">.</span><span class="token function">getHtml</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">includeSetupAndTeardownPages</span><span class="token punctuation">(</span><span class="token keyword">boolean</span> isSuite<span class="token punctuation">)</span>
+            <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token comment">// Include setup pages</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>isSuite<span class="token punctuation">)</span>
+            <span class="token function">include</span><span class="token punctuation">(</span><span class="token class-name">SuiteResponder</span><span class="token punctuation">.</span><span class="token constant">SUITE_SETUP_NAME</span><span class="token punctuation">,</span> <span class="token string">"-setup"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">include</span><span class="token punctuation">(</span><span class="token string">"SetUp"</span><span class="token punctuation">,</span> <span class="token string">"-setup"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// Include page content</span>
+        newPageContent<span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>pageData<span class="token punctuation">.</span><span class="token function">getContent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// Include teardown pages</span>
+        <span class="token function">include</span><span class="token punctuation">(</span><span class="token string">"TearDown"</span><span class="token punctuation">,</span> <span class="token string">"-teardown"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>isSuite<span class="token punctuation">)</span>
+            <span class="token function">include</span><span class="token punctuation">(</span><span class="token class-name">SuiteResponder</span><span class="token punctuation">.</span><span class="token constant">SUITE_TEARDOWN_NAME</span><span class="token punctuation">,</span> <span class="token string">"-teardown"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// Update the page content</span>
+        pageData<span class="token punctuation">.</span><span class="token function">setContent</span><span class="token punctuation">(</span>newPageContent<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">include</span><span class="token punctuation">(</span><span class="token class-name">String</span> pageName<span class="token punctuation">,</span> <span class="token class-name">String</span> arg<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">{</span>
+        <span class="token comment">// Get The inherited page for the page name</span>
+        <span class="token class-name">WikiPage</span> inheritedPage <span class="token operator">=</span> <span class="token class-name">PageCrawlerImpl</span>
+            <span class="token punctuation">.</span><span class="token function">getInheritedPage</span><span class="token punctuation">(</span>pageName<span class="token punctuation">,</span> testPage<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// Avoid nesting ifs with early returns</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>inheritedPage <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// Get the path name for the inherited page</span>
+        <span class="token class-name">WikiPagePath</span> pagePath <span class="token operator">=</span> pageCrawler<span class="token punctuation">.</span><span class="token function">getFullPath</span><span class="token punctuation">(</span>inheritedPage<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> pagePathName <span class="token operator">=</span> <span class="token class-name">PathParser</span><span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span>pagePath<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token comment">// Build the include directive</span>
+        newPageContent
+                <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n!include "</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>arg<span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">" ."</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span>pagePathName<span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">append</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>While I do think that this logic could just be a simple function as in it's original form (Listing 3-1), I don't hate the class-based approach Martin used for the refactor. In the spirit of doing only the work necessary to accomplish the task, I have only refactored Listing 3-7 enough to remove the problems I highlighted above. The call stack necessary to trace through in order to understand the code has been greatly reduced, the implementation details of each function are easy to see in one place and there are no redundent wrapper functions contributing to clutter and complexity. I also added comments to make up for the &quot;self-documenting&quot; nature of the &quot;many small functions&quot; approach.</p>
+<p>We should work on the code cleaning which provides the most benefit first, and stop before we reach the point of dimishing returns. With heuristics, we must remember that they are useful only until they are not. You must understand why the rule is useful, so that you can know when it is not.</p>
+<p>I have compromised on some of the principals discussed by Martin in chapter 3 of Clean Code, such as the rule of keeping different levels of abstraction in different functions (e.g. in the <code>includeSetupAndTeardownPages</code>), however clean code is all about trade-offs. Clean code is best when we trade a small bit of extra effort for cleanliness today in order to save much more effort in the future, but it is easy to reach a point of diminishing returns or worse still to make your
+code less clean by blindly applying heuristics.</p>
+
+<ul class="links-nextprev"><li>Previous: <a href="/connect-nearby-devices-part-2.html">Connect Nearby Devices Part 2: Local Networking Android</a></li><li>Next: <a href="/make-an-app-icon-with-swift-ui.html">Make an App Icon With Swift UI</a></li>
+</ul>
+
+		</main>
+
+		<footer></footer>
+
+		<!-- This page `/functions-why-smaller-is-not-always-better.html` was built on 2024-08-31T04:23:36.295Z -->
+
+		<!-- Theme toggle -->
+		<script defer>
+			// Theme toggle icons
+			const sun = "<svg enable-background=\"new 0 0 512 512\" height=\"512px\" id=\"Layer_1\" version=\"1.1\" viewBox=\"0 0 512 512\" width=\"512px\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><g><g><path d=\"M256,144c-61.75,0-112,50.25-112,112s50.25,112,112,112s112-50.25,112-112S317.75,144,256,144z M256,336    c-44.188,0-80-35.812-80-80c0-44.188,35.812-80,80-80c44.188,0,80,35.812,80,80C336,300.188,300.188,336,256,336z M256,112    c8.833,0,16-7.167,16-16V64c0-8.833-7.167-16-16-16s-16,7.167-16,16v32C240,104.833,247.167,112,256,112z M256,400    c-8.833,0-16,7.167-16,16v32c0,8.833,7.167,16,16,16s16-7.167,16-16v-32C272,407.167,264.833,400,256,400z M380.438,154.167    l22.625-22.625c6.25-6.25,6.25-16.375,0-22.625s-16.375-6.25-22.625,0l-22.625,22.625c-6.25,6.25-6.25,16.375,0,22.625    S374.188,160.417,380.438,154.167z M131.562,357.834l-22.625,22.625c-6.25,6.249-6.25,16.374,0,22.624s16.375,6.25,22.625,0    l22.625-22.624c6.25-6.271,6.25-16.376,0-22.625C147.938,351.583,137.812,351.562,131.562,357.834z M112,256    c0-8.833-7.167-16-16-16H64c-8.833,0-16,7.167-16,16s7.167,16,16,16h32C104.833,272,112,264.833,112,256z M448,240h-32    c-8.833,0-16,7.167-16,16s7.167,16,16,16h32c8.833,0,16-7.167,16-16S456.833,240,448,240z M131.541,154.167    c6.251,6.25,16.376,6.25,22.625,0c6.251-6.25,6.251-16.375,0-22.625l-22.625-22.625c-6.25-6.25-16.374-6.25-22.625,0    c-6.25,6.25-6.25,16.375,0,22.625L131.541,154.167z M380.459,357.812c-6.271-6.25-16.376-6.25-22.625,0    c-6.251,6.25-6.271,16.375,0,22.625l22.625,22.625c6.249,6.25,16.374,6.25,22.624,0s6.25-16.375,0-22.625L380.459,357.812z\" fill=\"var(--text-color)\"/></g></g></svg>";
+			const moon = "<svg enable-background=\"new 0 0 512 512\" height=\"512px\" id=\"Layer_1\" version=\"1.1\" viewBox=\"0 0 512 512\" width=\"512px\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><path d=\"M349.852,343.15c-49.875,49.916-131.083,49.916-181,0c-49.916-49.918-49.916-131.125,0-181.021  c13.209-13.187,29.312-23.25,47.832-29.812c5.834-2.042,12.293-0.562,16.625,3.792c4.376,4.375,5.855,10.833,3.793,16.625  c-12.542,35.375-4,73.666,22.25,99.917c26.209,26.228,64.5,34.75,99.916,22.25c5.792-2.062,12.271-0.582,16.625,3.793  c4.376,4.332,5.834,10.812,3.771,16.625C373.143,313.838,363.06,329.941,349.852,343.15z M191.477,184.754  c-37.438,37.438-37.438,98.354,0,135.771c40,40.021,108.125,36.416,143-8.168c-35.959,2.25-71.375-10.729-97.75-37.084  c-26.375-26.354-39.333-61.771-37.084-97.729C196.769,179.796,194.039,182.192,191.477,184.754z\" fill=\"var(--text-color)\"/></svg>";
+
+			// Check for default theme
+			if (!("theme" in localStorage)) {
+				localStorage.theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+			}
+
+			// Apply theme
+			function applyTheme() {
+				document.documentElement.setAttribute("data-theme", localStorage.theme);
+
+				let syntaxThemeCSS = document.getElementById("syntax-theme-css");
+
+				if (localStorage.theme === "dark") {
+					document.getElementById("theme").innerHTML = moon;
+					if (syntaxThemeCSS !== null) {
+						syntaxThemeCSS.href = "/css/prism-one-dark.css";
+					}
+				} else {
+					document.getElementById("theme").innerHTML = sun;
+					if (syntaxThemeCSS !== null) {
+						syntaxThemeCSS.href = "/css/prism-one-light.css";
+					}
+				}
+			}
+			applyTheme();
+
+			// Toggle theme
+			document.getElementById("theme").addEventListener("click", function () {
+				if (localStorage.theme === "dark") {
+					localStorage.theme = "light";
+				} else {
+					localStorage.theme = "dark";
+				}
+				applyTheme();
+			});
+		</script>
+	</body>
+</html>

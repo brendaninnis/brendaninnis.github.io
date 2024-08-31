@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>What I Learned Publishing My First App</title>
+		<meta name="description" content="Lessons I learned about how to publish an app to the iOS App Store and Google Play Console by publishing my first app, Daily Fat Counter.">
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Brendan Innis">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="Brendan Innis">
+		
+		<style>/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+.token.deleted {
+	background-color: hsl(0, 51%, 37%);
+	color: inherit;
+}
+.token.inserted {
+	background-color: hsl(126, 31%, 39%);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: rgba(0,0,0,.2);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+
+	--horizontal-padding: 3rem;
+}
+@media (max-width: 820px) {
+	:root {
+		--horizontal-padding: 1rem;
+	}
+}
+
+/* Theme colors */
+:root {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #333;
+	--color-gray-95: #000308;
+
+	--background-color: #FFFCF786;
+	--background-image: url(/img/spiration-light.png);
+
+	--theme-background-color: #00030813;
+
+	--text-color: var(--color-gray-95);
+	--text-color-link: #301014;
+	--text-color-link-active: #5f2b48;
+	--text-color-link-visited: #5E555A;
+
+	--syntax-tab-size: 2;
+}
+
+:root[data-theme="dark"] {
+	--color-gray-20: #e0e0e0;
+	--color-gray-50: #C0C0C0;
+	--color-gray-90: #dad8d8;
+	--color-gray-95: #FFFCF7;
+
+	--theme-background-color: #FFFCF713;
+
+	/* --text-color is assigned to --color-gray-_ above */
+	--text-color-link: #b5bad0;
+	--text-color-link-active: #FFDD93;
+	--text-color-link-visited: #8594ad;
+
+	--background-color: #06010a86;
+	--background-image: url(/img/spiration-dark.png);
+}
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	min-height: 100vh;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	background-image: var(--background-image);
+}
+body {
+	max-width: calc(80ch + var(--horizontal-padding) * 2);
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+a > svg:hover {
+	fill: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem var(--horizontal-padding);
+}
+main :first-child {
+	margin-top: 0;
+}
+
+h1 {
+	margin-top: 0.25em;
+}
+
+header {
+	display: flex;
+	border-bottom: 1px dashed var(--color-gray-90);
+}
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+span.spacer {
+	flex-grow: 1;
+}
+
+.links-nextprev {
+	list-style: none;
+	border-top: 1px dashed var(--color-gray-90);
+	margin: 0 calc(-1 * var(--horizontal-padding));
+	padding: 0;
+}
+.links-nextprev li {
+	margin: 1em 0;
+	padding: 0 var(--horizontal-padding);
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+code {
+	word-break: break-all;
+}
+
+img {
+	display: block;
+	margin: 0 auto;
+	max-width: 100%;
+	height: auto;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em var(--horizontal-padding);
+}
+a[href]:visited.home-link,
+.nav-item a[href]:visited {
+	color: var(--text-color-link);
+}
+a[href]:hover.home-link,
+a[href]:active.home-link,
+.nav-item a[href]:hover,
+.nav-item a[href]:active {
+	color: var(--text-color-link-active);
+}
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+#theme {
+	margin: -1em 0 -1em 0;
+	background: none;
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	font-size: 1em; /* 16px /16 */
+	padding: 0;
+	display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+#theme:hover {
+	background: var(--theme-background-color);
+}
+#theme > svg {
+	height: 2em;
+	width: 2em;
+}
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 1em;
+}
+.postlist-date {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+#subscribe-link > svg {
+	vertical-align: bottom;
+	margin-bottom: 0.125em;
+}
+
+/* About */
+#sidebar-icon-links {
+	margin-top: 1em;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+h2 {
+	margin-top: 1.5em;
+}
+
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: var(--text-color-link-active);
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}</style>
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-998XX4MGQY"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', 'G-998XX4MGQY');
+		</script>
+
+	</head>
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+
+		<header>
+			<a href="/" class="home-link">Brendan Innis</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/">Posts</a></li>
+					<li class="nav-item"><a href="/tags.html">Tags</a></li>
+					<li class="nav-item"><a href="/about.html">About Me</a></li>
+				</ul>
+			</nav>
+			<span class="spacer"></span>
+			<button id="theme" aria-label="Toggle theme" class="theme-toggle"></button>
+		</header>
+
+		<main id="skip">
+			
+<link id="syntax-theme-css" rel="stylesheet" href="css/prism-one-dark.css" />
+
+<ul class="post-metadata">
+	<li><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-color)" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 0 1 1 1v1h4V3a1 1 0 1 1 2 0v1h3a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V3a1 1 0 0 1 1-1zM8 6H5v3h14V6h-3v1a1 1 0 1 1-2 0V6h-4v1a1 1 0 0 1-2 0V6zm11 5H5v8h14v-8z"/></svg></li>
+	<li><time datetime="2022-09-10">10 September 2022</time></li>
+	<li><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-color)" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 0 1 1-1h8a1 1 0 0 1 .707.293l10 10a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-10-10A1 1 0 0 1 2 11V3zm2 1v6.586l9 9L19.586 13l-9-9H4z" /><path d="M9 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" /></svg></li>
+	<li><a href="/tags/ios/" class="post-tag">iOS</a>, </li>
+	<li><a href="/tags/android/" class="post-tag">Android</a></li>
+</ul>
+
+<h1>What I Learned Publishing My First App</h1>
+
+<p>As a mobile developer, I have built many apps as side projects in my spare time. These are usually for the purpose of learning some new peice of technology, or prototyping some quick idea I had in my head, but somehow I've gone my entire career without publishing an app that I owned. I decided recently that should change, so I developed and published by first app under my name to the Apple App Store and Google Play Store, <a href="https://dailyfatcounter.brendaninnis.ca">Daily Fat Counter</a>.</p>
+<p>There were many considerations to account for and tasks to accomplish beyond just developing the app, so here are a list of them that may be helpful for you when you decided to publish your first app.</p>
+<h2 id="consider-creating-accounts-for-your-developer-self" tabindex="-1">Consider creating accounts for your developer self. <a class="header-anchor" href="#consider-creating-accounts-for-your-developer-self">#</a></h2>
+<p>You will need to provide contact information in various places and to various parties in the process of publishing your app. It will be in your Apple and Google Developer accounts, your contact information for your app listing, required for feedback during testing and others. In my case, I ended up using personal emails for these, however it is probably a good idea to setup an email account for use with your development work. That way you can publish these contact details widely without mixing your personal contacts with your development work.</p>
+<h2 id="you-need-a-developer-account" tabindex="-1">You need a developer account. <a class="header-anchor" href="#you-need-a-developer-account">#</a></h2>
+<p>The Apple Developer Program and Google Play Developer Accounts both require paying a fee. For Apple, this is $99USD yearly, and for Google it is a one-time fee of $25USD. Be careful with your Google Developer Account. If you don't use it after 1 year it will be expired permenantly and you will not be refunded. This happened to me because I signed up for the program with the intention to publish an app, but it took me much longer than I expected.</p>
+<p>You should create your account early, since it will require some identity verification that will take some time before you will be able to publish any apps. There are also likely a few forms you will have to fill out for legal and tax purposes, so be prepared to spend some time reading and familiarizing yourself with them.</p>
+<h2 id="what-os-versions-should-i-support" tabindex="-1">What OS Versions Should I Support? <a class="header-anchor" href="#what-os-versions-should-i-support">#</a></h2>
+<p>When building side projects for learning and fun, it is easy to simply develop only against whatever device you are planning to use to run your app. When you consider releasing your app in the wild, however, you suddenly must concern yourself with supporting a wide variety of devices.</p>
+<p>The two main considerations when deciding what OS versions to support are what operating systems the ideal users of your app are using, and the amount of development effort required to support each version. For Daily Fat Counter, I wanted the app to be accessible to many people and the app is also small and not very complex, so the effort to support a wide array of operating systems is minimal and the payoff for doing so is well worth it.</p>
+<p>On iOS I developed the entire app against iOS 15, which was preselected as the latest major iOS version. I was having fun learning Swift UI, and I was mainly considering my wife as the sole user. When it came time for release though, I decided to support back to iOS 14.0 so I could wouldn't leave out too many users on launch. There was a bit of effort to refactor the code to be compatible with 14.0, so it would have been a good idea to develop against this version from the start.</p>
+<p>Considering Android, the backwards compatibility is quite good, especially with the Jetpack components. I ended up supporting all the way back to Android 5.1 (API 22) which covers 98% of devices according to Google. For a small app without a lot of complexity like Daily Fat Counter this turned out to be very easy. There is only one place where the code is different before Android 8.0, and that is concerning the datetime libraries.</p>
+<h2 id="you-need-an-app-icon" tabindex="-1">You need an app icon. <a class="header-anchor" href="#you-need-an-app-icon">#</a></h2>
+<p>I'm an amateur graphic designer at best, so for my app icon I got creative and ended up using code to create it. I wrote a whole <a href="https://dailyfatcounter.brendaninnis.ca/make-an-app-icon-with-swift-ui.html">blog post</a> about it, in case you want to try this yourself. Alternatively, there are free programs like GIMP which you can use to easily make a basic app icon. Be creative and don't fuss too much over it. The important thing is to make it simple and eye catching.</p>
+<h2 id="you-need-screenshots" tabindex="-1">You need screenshots. <a class="header-anchor" href="#you-need-screenshots">#</a></h2>
+<p>The worst thing you could do for your app listing is to simply screenshot the app and post the minimum number of those images directly into your listing. You must at least put in the effort to show your screenshot running in a device frame, with some text describing the functionality of your app. For me, since I'm an amateur graphic designer, I ended up using a free Sketch template that I found using a Google search like: &quot;Sketch template app store screenshots.&quot; I found one that
+was suitable for my purpose, and I used it to create 40 screenshots (10 per device size factor and 2 size factors per platform) as well as using it to learn how to create and modify such a template in Sketch. Those same skills will be useful even in other design programs, and it was a great opportunity to learn more by following the example of others. This is always how I learn best.</p>
+<p>This is the point in development when I decided not to support tablets. I realized that I had not put effort into making my UI appealing on large-form devices, and I was unwilling to show that UI in a screenshot. In the future, if I decide large-form device support is important, I will take the time to create a beautiful UI for those devices and spend the time to craft enticing screenshots for tablets.</p>
+<h2 id="you-need-a-website" tabindex="-1">You need a website. <a class="header-anchor" href="#you-need-a-website">#</a></h2>
+<p>This was something I did not consider during development of my app, and it only hit me once I started putting together my app listing on Apple and Google for publishing. I put together a basic page with a description of the app, a screenshot and a link to the App Store and Play Store listings. I used already use Linode for hosting my personal blog, so I created a subdomain for my app and hosted it there. To supply an SSL certificate to enable HTTPS I used Cloudflare. I needed a website for 3 main reasons:</p>
+<ol>
+<li>There is a URL field in your app listing that will be shown to users browsing the App Store or Play Store.</li>
+<li>You need a place for your users to submit feedback during testing.</li>
+<li>A privacy policy for your app must be hosted somewhere so it can be linked to in your app listing.</li>
+</ol>
+<p>Speaking of privacy policies...</p>
+<h2 id="you-need-a-privacy-policy" tabindex="-1">You need a privacy policy. <a class="header-anchor" href="#you-need-a-privacy-policy">#</a></h2>
+<p>The Apple App Store and Google Play Console both require you to declare and describe what user data your app collects and transmits to your backend. In order to comply with this declaration, a privacy policy is required. It is worth considering early on what user data your app will collect. This can easily affect you simply by inlcuding an analytics library such as Google Analytics. Consider all the third party libraries you include as well as any data which is persisted by your app.</p>
+<p>For Daily Fat Counter, this was relatively simple. The app does not transmit any user data, and the only data which is collected is the daily fat records the user creates which is kept on device and able to be deleted at any time. The privacy policy simply states this.</p>
+<h2 id="plan-to-spend-a-good-amount-of-time-on-your-app-listing" tabindex="-1">Plan to spend a good amount of time on your app listing. <a class="header-anchor" href="#plan-to-spend-a-good-amount-of-time-on-your-app-listing">#</a></h2>
+<p>Your app store listing can contain a lot of information, and it is prudent for you to invest a good amount of time working on your app's title, description and metadata. As a side-project, Daily Fat Counter will not be heavily promoted, and so one of the only ways for people to know about it will be through the app listing. You will want to consider how to use your title and subtitle to describe your app in short and semi-short terms. Your description can be quite long, and it is a good
+opportunity for you to go in depth about your application and how user's can benefit from it. It may also not be immediately obvious which category your app fits into, so spend some time browsing through categories you think may be applicable to your app and see which category has apps that are the most similar to yours.</p>
+<p>There are many great articles regarding app store optimization (ASO) and a quick Google search should give you many ideas and insights about how to tailor your app listing for optimal visibility.</p>
+<h2 id="organic-growth-is-not-dead" tabindex="-1">Organic growth is not dead. <a class="header-anchor" href="#organic-growth-is-not-dead">#</a></h2>
+<p>I developed Daily Fat Counter for my wife. She was required to be on a fat-restricted diet, meaning she had to track the grams of dietary fat she consumed throughout each day. Daily Fat Counter helps users track the amount of fat they consume each day, as well as see a history of their fat consumption in relation to their goal. My ideal user story was Danielle's, and so it made the app easy to design as well as gave it a clear goal for success. If it is useful to her then it is a
+success.</p>
+<p>Now, if it can be useful to her, then surely there must be more people in the world like her who could benefit from it. If just one more person downloads and uses Daily Fat Counter, then it's impact has been doubled. That is how I define success for the app. I maintain a developer account already so I can publish other apps, and I maintain my website already in order to publish my blog, so Daily Fat Counter doesn't cost me anything beyond the occasional bit of development time to maintain
+it and update it for newer OS versions (a non-trivial bit of effort.)</p>
+<p>As far as the apps performance, though, it has garnered over 1000 impressions on the Apple App Store, resulting in over 100 installs, just over 2 months after release. On Google, the app has received about 300 impressions, resulting in 25 aquisitions in the same time, and it reports 9 active devices at present. I am very happy with these results. I have not done any paid promotion, or even any promotion at all of this app, beyond telling my wife that it's done and she can install it.</p>
+<p>To me, each person that is positively impacted by the app is a blessing and I am grateful for each of them.</p>
+<h2 id="don-t-hoard-your-effort-and-talent-to-yourself-share-it-with-the-world" tabindex="-1">Don't hoard your effort and talent to yourself, share it with the world. <a class="header-anchor" href="#don-t-hoard-your-effort-and-talent-to-yourself-share-it-with-the-world">#</a></h2>
+<p>Many people in the world can benefit from your unique gifts and your time on this earth. The thing I learned most from publishing my first app is that your time is valuable, and if you spend it all working on projects that only you ever see because you never publish them, then you've done a nice thing for yourself but no one else can benefit from what you've done.</p>
+<p>If you are making something that is useful to you, then it will be useful to someone else, so share it with the world and let others benefit from your creations.</p>
+
+<ul class="links-nextprev"><li>Previous: <a href="/make-an-app-icon-with-swift-ui.html">Make an App Icon With Swift UI</a></li><li>Next: <a href="/you-should-be-using-cloudflare-for-your-website.html">You Should Be Using Cloudflare For Your Website</a></li>
+</ul>
+
+		</main>
+
+		<footer></footer>
+
+		<!-- This page `/what-i-learned-publishing-my-first-app.html` was built on 2024-08-31T04:23:36.295Z -->
+
+		<!-- Theme toggle -->
+		<script defer>
+			// Theme toggle icons
+			const sun = "<svg enable-background=\"new 0 0 512 512\" height=\"512px\" id=\"Layer_1\" version=\"1.1\" viewBox=\"0 0 512 512\" width=\"512px\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><g><g><path d=\"M256,144c-61.75,0-112,50.25-112,112s50.25,112,112,112s112-50.25,112-112S317.75,144,256,144z M256,336    c-44.188,0-80-35.812-80-80c0-44.188,35.812-80,80-80c44.188,0,80,35.812,80,80C336,300.188,300.188,336,256,336z M256,112    c8.833,0,16-7.167,16-16V64c0-8.833-7.167-16-16-16s-16,7.167-16,16v32C240,104.833,247.167,112,256,112z M256,400    c-8.833,0-16,7.167-16,16v32c0,8.833,7.167,16,16,16s16-7.167,16-16v-32C272,407.167,264.833,400,256,400z M380.438,154.167    l22.625-22.625c6.25-6.25,6.25-16.375,0-22.625s-16.375-6.25-22.625,0l-22.625,22.625c-6.25,6.25-6.25,16.375,0,22.625    S374.188,160.417,380.438,154.167z M131.562,357.834l-22.625,22.625c-6.25,6.249-6.25,16.374,0,22.624s16.375,6.25,22.625,0    l22.625-22.624c6.25-6.271,6.25-16.376,0-22.625C147.938,351.583,137.812,351.562,131.562,357.834z M112,256    c0-8.833-7.167-16-16-16H64c-8.833,0-16,7.167-16,16s7.167,16,16,16h32C104.833,272,112,264.833,112,256z M448,240h-32    c-8.833,0-16,7.167-16,16s7.167,16,16,16h32c8.833,0,16-7.167,16-16S456.833,240,448,240z M131.541,154.167    c6.251,6.25,16.376,6.25,22.625,0c6.251-6.25,6.251-16.375,0-22.625l-22.625-22.625c-6.25-6.25-16.374-6.25-22.625,0    c-6.25,6.25-6.25,16.375,0,22.625L131.541,154.167z M380.459,357.812c-6.271-6.25-16.376-6.25-22.625,0    c-6.251,6.25-6.271,16.375,0,22.625l22.625,22.625c6.249,6.25,16.374,6.25,22.624,0s6.25-16.375,0-22.625L380.459,357.812z\" fill=\"var(--text-color)\"/></g></g></svg>";
+			const moon = "<svg enable-background=\"new 0 0 512 512\" height=\"512px\" id=\"Layer_1\" version=\"1.1\" viewBox=\"0 0 512 512\" width=\"512px\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><path d=\"M349.852,343.15c-49.875,49.916-131.083,49.916-181,0c-49.916-49.918-49.916-131.125,0-181.021  c13.209-13.187,29.312-23.25,47.832-29.812c5.834-2.042,12.293-0.562,16.625,3.792c4.376,4.375,5.855,10.833,3.793,16.625  c-12.542,35.375-4,73.666,22.25,99.917c26.209,26.228,64.5,34.75,99.916,22.25c5.792-2.062,12.271-0.582,16.625,3.793  c4.376,4.332,5.834,10.812,3.771,16.625C373.143,313.838,363.06,329.941,349.852,343.15z M191.477,184.754  c-37.438,37.438-37.438,98.354,0,135.771c40,40.021,108.125,36.416,143-8.168c-35.959,2.25-71.375-10.729-97.75-37.084  c-26.375-26.354-39.333-61.771-37.084-97.729C196.769,179.796,194.039,182.192,191.477,184.754z\" fill=\"var(--text-color)\"/></svg>";
+
+			// Check for default theme
+			if (!("theme" in localStorage)) {
+				localStorage.theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+			}
+
+			// Apply theme
+			function applyTheme() {
+				document.documentElement.setAttribute("data-theme", localStorage.theme);
+
+				let syntaxThemeCSS = document.getElementById("syntax-theme-css");
+
+				if (localStorage.theme === "dark") {
+					document.getElementById("theme").innerHTML = moon;
+					if (syntaxThemeCSS !== null) {
+						syntaxThemeCSS.href = "/css/prism-one-dark.css";
+					}
+				} else {
+					document.getElementById("theme").innerHTML = sun;
+					if (syntaxThemeCSS !== null) {
+						syntaxThemeCSS.href = "/css/prism-one-light.css";
+					}
+				}
+			}
+			applyTheme();
+
+			// Toggle theme
+			document.getElementById("theme").addEventListener("click", function () {
+				if (localStorage.theme === "dark") {
+					localStorage.theme = "light";
+				} else {
+					localStorage.theme = "dark";
+				}
+				applyTheme();
+			});
+		</script>
+	</body>
+</html>
