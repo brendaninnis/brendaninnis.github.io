@@ -19,6 +19,7 @@
 	--color-gray-95: #000308;
 
 	--background-color: #FFFCF786;
+	--background-color-solid: #FFFCF7;
 	--background-image: url(/img/spiration-light.png);
 
 	--theme-background-color: #00030813;
@@ -45,6 +46,7 @@
 	--text-color-link-visited: #8594ad;
 
 	--background-color: #06010a86;
+	--background-color-solid: #06010a;
 	--background-image: url(/img/spiration-dark.png);
 }
 
@@ -311,7 +313,17 @@ a[href]:active.home-link,
 
 /* Direct Links / Markdown Headers */
 h2 {
+    position: sticky;
+    top: 0;
 	margin-top: 1.5em;
+}
+
+h2.sticky {
+    background-color: var(--background-color-solid);
+}
+
+h2.sticky.passed {
+    opacity: 0;
 }
 
 .header-anchor {

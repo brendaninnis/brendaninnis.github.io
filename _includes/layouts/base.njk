@@ -111,5 +111,39 @@
 				applyTheme();
 			});
 		</script>
+
+        <!-- Sticky Headers -->
+        <script defer>
+            const headers = document.querySelectorAll('h2:not(.visually-hidden)');
+            let stickyHeaders = [];
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    const header = entry.target;
+                    if (entry.isIntersecting) {
+                        stickyHeaders.forEach(header => {
+                            header.classList.add('passed');
+                        });
+                        stickyHeaders.push(header);
+                        header.classList.add('sticky');
+                    } else {
+                        header.classList.remove('sticky');
+                        stickyHeaders.pop();
+                        if (stickyHeaders.length > 0) {
+                            stickyHeaders[stickyHeaders.length - 1].classList.remove('passed');
+                        }
+                    }
+
+                    console.log(stickyHeaders);
+                });
+            }, {
+                rootMargin: '0px 0px -100% 0px',
+                threshold: 0
+            });
+
+            headers.forEach(header => {
+                observer.observe(header);
+            });
+        </script>
 	</body>
 </html>
