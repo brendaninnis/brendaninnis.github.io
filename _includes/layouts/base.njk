@@ -112,6 +112,11 @@
 			});
 		</script>
 
+        <!-- Scroll to anchor -->
+        <script defer>
+            
+        </script>
+
         <!-- Sticky Headers -->
         <script defer>
             const headers = document.querySelectorAll('h2:not(.visually-hidden)');
@@ -125,10 +130,18 @@
                             header.classList.add('passed');
                         });
                         stickyHeaders.push(header);
+                        let offset = header.nextElementSibling.offsetTop - header.offsetHeight - 16; // 16px is the margin
+                        header.querySelector('a').addEventListener('click', function (e) {
+                            window.scrollTo({
+                                top: offset,
+                                behavior: 'smooth'
+                            });
+                        });
                         header.classList.add('sticky');
                     } else {
                         header.classList.remove('sticky');
                         stickyHeaders.pop();
+                        header.querySelector('a').removeEventListener('click', function () {});
                         if (stickyHeaders.length > 0) {
                             stickyHeaders[stickyHeaders.length - 1].classList.remove('passed');
                         }
@@ -144,6 +157,7 @@
             headers.forEach(header => {
                 observer.observe(header);
             });
+
         </script>
 	</body>
 </html>
