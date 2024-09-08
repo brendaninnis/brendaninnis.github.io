@@ -112,14 +112,24 @@
 			});
 		</script>
 
-        <!-- Scroll to anchor -->
+        <!-- Scroll to anchors -->
         <script defer>
-            
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.hash = e.target.hash;
+                    let header = e.target.parentElement
+                    let offset = header.nextElementSibling.offsetTop - header.offsetHeight - 16; // 16px is the margin
+                    window.scrollTo({
+                        top: offset,
+                        behavior: 'smooth'
+                    });
+                });
+            });
         </script>
 
         <!-- Sticky Headers -->
         <script defer>
-            const headers = document.querySelectorAll('h2:not(.visually-hidden)');
             let stickyHeaders = [];
 
             const observer = new IntersectionObserver(entries => {
@@ -130,18 +140,10 @@
                             header.classList.add('passed');
                         });
                         stickyHeaders.push(header);
-                        let offset = header.nextElementSibling.offsetTop - header.offsetHeight - 16; // 16px is the margin
-                        header.querySelector('a').addEventListener('click', function (e) {
-                            window.scrollTo({
-                                top: offset,
-                                behavior: 'smooth'
-                            });
-                        });
                         header.classList.add('sticky');
                     } else {
                         header.classList.remove('sticky');
                         stickyHeaders.pop();
-                        header.querySelector('a').removeEventListener('click', function () {});
                         if (stickyHeaders.length > 0) {
                             stickyHeaders[stickyHeaders.length - 1].classList.remove('passed');
                         }
@@ -152,10 +154,11 @@
                 threshold: 0
             });
 
+            const headers = document.querySelectorAll('h2:not(.visually-hidden)');
             headers.forEach(header => {
                 observer.observe(header);
             });
-
         </script>
+
 	</body>
 </html>

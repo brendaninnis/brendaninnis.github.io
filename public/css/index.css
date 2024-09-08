@@ -61,6 +61,7 @@ body {
 	margin: 0 auto;
 	min-height: 100vh;
 	font-family: var(--font-family);
+    scroll-behavior: smooth;
 	color: var(--text-color);
 	background-color: var(--background-color);
 }
@@ -321,10 +322,12 @@ h2 {
 
 h2.sticky {
     background-color: var(--background-color-solid);
+    z-index: 999;
 }
 
 h2.sticky.passed {
     opacity: 0;
+    z-index: 998;
 }
 
 .header-anchor {
