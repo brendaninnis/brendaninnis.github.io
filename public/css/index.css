@@ -61,12 +61,12 @@ body {
 	margin: 0 auto;
 	min-height: 100vh;
 	font-family: var(--font-family);
-    scroll-behavior: smooth;
 	color: var(--text-color);
 	background-color: var(--background-color);
 }
 html {
 	background-image: var(--background-image);
+    scroll-behavior: smooth;
 }
 body {
 	max-width: calc(80ch + var(--horizontal-padding) * 2);
