@@ -32,22 +32,24 @@
 	--syntax-tab-size: 2;
 }
 
-:root[data-theme="dark"] {
-	--color-gray-20: #e0e0e0;
-	--color-gray-50: #C0C0C0;
-	--color-gray-90: #dad8d8;
-	--color-gray-95: #FFFCF7;
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-gray-20: #e0e0e0;
+        --color-gray-50: #C0C0C0;
+        --color-gray-90: #dad8d8;
+        --color-gray-95: #FFFCF7;
 
-	--theme-background-color: #FFFCF713;
+        --theme-background-color: #FFFCF713;
 
-	/* --text-color is assigned to --color-gray-_ above */
-	--text-color-link: #b5bad0;
-	--text-color-link-active: #FFDD93;
-	--text-color-link-visited: #8594ad;
+        /* --text-color is assigned to --color-gray-_ above */
+        --text-color-link: #b5bad0;
+        --text-color-link-active: #FFDD93;
+        --text-color-link-visited: #8594ad;
 
-	--background-color: #06010a86;
-	--background-color-solid: #06010a;
-	--background-image: url(/img/spiration-dark.png);
+        --background-color: #06010a86;
+        --background-color-solid: #06010a;
+        --background-image: url(/img/spiration-dark.png);
+    }
 }
 
 /* Global stylesheet */
@@ -228,25 +230,6 @@ a[href]:active.home-link,
 	text-decoration: underline;
 }
 
-#theme {
-	margin: -1em 0 -1em 0;
-	background: none;
-	border: none;
-	border-radius: 50%;
-	cursor: pointer;
-	font-size: 1em; /* 16px /16 */
-	padding: 0;
-	display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-#theme:hover {
-	background: var(--theme-background-color);
-}
-#theme > svg {
-	height: 2em;
-	width: 2em;
-}
 
 /* Posts list */
 .postlist {
