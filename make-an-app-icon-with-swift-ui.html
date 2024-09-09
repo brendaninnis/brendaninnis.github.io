@@ -1305,7 +1305,12 @@ h2 + .header-anchor {
 
 <h1>Make an App Icon With Swift UI</h1>
 
-<p><picture><source type="image/avif" srcset="/img/KIDXV7szHg-365.avif 365w" sizes="100vw"><source type="image/webp" srcset="/img/KIDXV7szHg-365.webp 365w" sizes="100vw"><img alt="Paraideas App Icon" loading="lazy" decoding="async" src="/img/KIDXV7szHg-365.jpeg" width="365" height="349"></picture></p>
+<picture>
+			<source type="image/avif" srcset="/img/KIDXV7szHg-365.avif 365w" sizes="100vw">
+<source type="image/webp" srcset="/img/KIDXV7szHg-365.webp 365w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/KIDXV7szHg-365.jpeg 365w" sizes="100vw">
+			<img src="/img/KIDXV7szHg-365.avif" width="365" height="349" alt="Paraideas App Icon" loading="lazy" decoding="async">
+		</picture>
 <p>It's very easy to create an app icon for your iOS app using Swift UI, but this process is not a native part of Apple development and you will need to use a few tricks to get image assets that can be used for you Xcode project and the App Store.</p>
 <h2 id="why-use-swift-ui-to-create-your-app-icon" tabindex="-1">Why use Swift UI to create your app icon <a class="header-anchor" href="#why-use-swift-ui-to-create-your-app-icon">#</a></h2>
 <p>As a developer, I have been getting joy from learning Swift UI and trying out a new framework. I have been developing my app, Paraideas, exclusively in Swift UI and I created some nice custom view components that look beautiful on the iPhone. When I started thinking about the app icon I was inspired by the UI I was working on, and I started searching for a way to create an app icon using Swift UI. I was unable to find a concise and complete guide, so I developed this one.</p>
@@ -1424,9 +1429,19 @@ h2 + .header-anchor {
 <h2 id="create-the-reference-icon-image" tabindex="-1">Create the reference icon image <a class="header-anchor" href="#create-the-reference-icon-image">#</a></h2>
 <p>Now that we have our icon designed in Swift UI, we need to create an image asset which can be sized appropriately for our icons. At the time of writing, running a live preview in Xcode will not provide a surface with the fixed width and height layout we have set, so we will need to run this on an iPad simulator.</p>
 <p>Modify your Swift UI app to simply display only your app icon and run your app on the iPad Pro simulator. I am running on an iPad so I have a display big enough to fit the entire app icon on the screen. Once the app is running and you can see your app icon displayed on the screen, take a screenshot of the simulator.</p>
-<p><picture><source type="image/avif" srcset="/img/T0K9dAhWXd-400.avif 400w" sizes="100vw"><source type="image/webp" srcset="/img/T0K9dAhWXd-400.webp 400w" sizes="100vw"><img alt="Simulator Screenshot" loading="lazy" decoding="async" src="/img/T0K9dAhWXd-400.jpeg" width="400" height="347"></picture></p>
+<picture>
+			<source type="image/avif" srcset="/img/T0K9dAhWXd-400.avif 400w" sizes="100vw">
+<source type="image/webp" srcset="/img/T0K9dAhWXd-400.webp 400w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/T0K9dAhWXd-400.jpeg 400w" sizes="100vw">
+			<img src="/img/T0K9dAhWXd-400.avif" width="400" height="347" alt="Simulator Screenshot" loading="lazy" decoding="async">
+		</picture>
 <p>Open the screenshot in Preview, toggle edit mode and use the rectangle select to draw a rectangle over your app icon. You can zoom in to a very high value in preview to line up the rectangle with the corners of your app icon. The rectangle select should display a value of 1024x1024 when selected. Now you can use the &quot;Crop to Selection&quot; command to trim the images to exactly 1024x1024 pixels and save the image. Congratulations! You have the reference image for your app icon.</p>
-<p><picture><source type="image/avif" srcset="/img/QPdNlsgjvY-400.avif 400w" sizes="100vw"><source type="image/webp" srcset="/img/QPdNlsgjvY-400.webp 400w" sizes="100vw"><img alt="Trim in Preview" loading="lazy" decoding="async" src="/img/QPdNlsgjvY-400.jpeg" width="400" height="252"></picture></p>
+<picture>
+			<source type="image/avif" srcset="/img/QPdNlsgjvY-400.avif 400w" sizes="100vw">
+<source type="image/webp" srcset="/img/QPdNlsgjvY-400.webp 400w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/QPdNlsgjvY-400.jpeg 400w" sizes="100vw">
+			<img src="/img/QPdNlsgjvY-400.avif" width="400" height="252" alt="Trim in Preview" loading="lazy" decoding="async">
+		</picture>
 <h2 id="resize-the-reference-image-to-required-icon-sizes" tabindex="-1">Resize the reference image to required icon sizes <a class="header-anchor" href="#resize-the-reference-image-to-required-icon-sizes">#</a></h2>
 <p>Once you have your 1024*1024 image, you can down resize it down to all the various sizes you will need for Xcode and the App Store. For me, I was lazy so I used this <a href="https://appicon.co/">App Icon Generator</a> which I found by doing a search for &quot;app icon generator&quot;. You can easily resize the image yourself in Photoshop, Sketch, Gimp and many other programs.</p>
 <p>To create an Android app icon you can simply use the image asset creation tool in Android Studio, select your image and let the masks apply to the reference. When designing for Android though you may want to create a foreground layer and background layer. This is out of the scope of this guide.</p>
@@ -1441,7 +1456,7 @@ h2 + .header-anchor {
 
 		<footer></footer>
 
-		<!-- This page `/make-an-app-icon-with-swift-ui.html` was built on 2024-09-08T16:49:25.958Z -->
+		<!-- This page `/make-an-app-icon-with-swift-ui.html` was built on 2024-09-09T16:12:18.012Z -->
 
         <!-- Scroll to anchors -->
         <script defer>

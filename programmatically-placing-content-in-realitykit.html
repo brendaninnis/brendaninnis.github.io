@@ -1308,13 +1308,23 @@ h2 + .header-anchor {
 <p>In this tutorial you will create an iOS app where a user can tap the screen to place 3D content in their physical environment. You will learn how to load 3D resources from files into RealityKit entities and anchor them to phsyical locations in the real world. At the end of this guide there will be a link to download the finished version of the app we are building.</p>
 <picture >
 			<source type="image/webp" srcset="/img/XrAOcBjJkt-369.webp 369w" sizes="100vw">
-			<img src="/home/runner/work/brendaninnis.github.io/brendaninnis.github.io/content/blog/2023-02-09-programmatically-placing-content-in-realitykit/tap-makes-cup.webp" width="369" height="800" alt="Tap Makes Cup App" loading="lazy" decoding="async">
+			<img src="/img/XrAOcBjJkt-369.webp" width="369" height="800" alt="Tap Makes Cup App" loading="lazy" decoding="async">
 		</picture>
 <h2 id="create-an-augmented-reality-app" tabindex="-1">Create an augmented reality app <a class="header-anchor" href="#create-an-augmented-reality-app">#</a></h2>
 <p>Open Xcode, and select &quot;Create a new Xcode project&quot;. A window will open with a list of template to choose from. Select &quot;Augmented Reality App&quot; and press <em>Next</em>. Choose a name for your app, select <em>SwiftUI</em> as the value for &quot;Interface&quot; and <em>RealityKit</em> as the value for &quot;Content Technology&quot;. Your new project should look like this:</p>
-<p><picture><source type="image/avif" srcset="/img/AipvkIqhd_-400.avif 400w, /img/AipvkIqhd_-800.avif 800w" sizes="100vw"><source type="image/webp" srcset="/img/AipvkIqhd_-400.webp 400w, /img/AipvkIqhd_-800.webp 800w" sizes="100vw"><source type="image/jpeg" srcset="/img/AipvkIqhd_-400.jpeg 400w, /img/AipvkIqhd_-800.jpeg 800w" sizes="100vw"><img alt="Create a new RealityKit project" loading="lazy" decoding="async" src="/img/AipvkIqhd_-400.jpeg" width="800" height="575"></picture></p>
+<picture>
+			<source type="image/avif" srcset="/img/AipvkIqhd_-400.avif 400w, /img/AipvkIqhd_-800.avif 800w" sizes="100vw">
+<source type="image/webp" srcset="/img/AipvkIqhd_-400.webp 400w, /img/AipvkIqhd_-800.webp 800w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/AipvkIqhd_-400.jpeg 400w, /img/AipvkIqhd_-800.jpeg 800w" sizes="100vw">
+			<img src="/img/AipvkIqhd_-800.avif" width="800" height="575" alt="Create a new RealityKit project" loading="lazy" decoding="async">
+		</picture>
 <p>This will create a project containing an <em>AppDelegate.swift</em> file, a <em>ContentView.swift</em> file containing our main SwiftUI layout, a template RealityKit <em>Experience.rcproject</em> file and a set of assets for your project.</p>
-<p><picture><source type="image/avif" srcset="/img/iYprh2TX54-400.avif 400w" sizes="100vw"><source type="image/webp" srcset="/img/iYprh2TX54-400.webp 400w" sizes="100vw"><img alt="New project structure" loading="lazy" decoding="async" src="/img/iYprh2TX54-400.jpeg" width="400" height="315"></picture></p>
+<picture>
+			<source type="image/avif" srcset="/img/iYprh2TX54-400.avif 400w" sizes="100vw">
+<source type="image/webp" srcset="/img/iYprh2TX54-400.webp 400w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/iYprh2TX54-400.jpeg 400w" sizes="100vw">
+			<img src="/img/iYprh2TX54-400.avif" width="400" height="315" alt="New project structure" loading="lazy" decoding="async">
+		</picture>
 <p>We will not be using the AppDelegate or the RealityKit Experience, so those files should be deleted.</p>
 <p>Create a new Swift file for your SwiftUI App. Create a struct named after you app, implement the SwiftUI.App protocol and then let's track the the scene phase of the environment:</p>
 <pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// TapMakesCupApp.swift</span>
@@ -1357,7 +1367,12 @@ App did become inactive
 <h2 id="load-3d-assets-programmatically-from-usdz-files" tabindex="-1">Load 3D assets programmatically from USDZ files <a class="header-anchor" href="#load-3d-assets-programmatically-from-usdz-files">#</a></h2>
 <p>Since we removed the RealityKit Experience file our template project was created with, we need 3D models to populate our AR experience. You can find a variety of USDZ models available for download in Apple's <a href="https://developer.apple.com/augmented-reality/quick-look/">AR Quick Look gallery</a>. I chose the cup and saucer set for my app. Click any of the models in the gallery to download it.</p>
 <p>Create a new group in your Xcode project called <em>Resources</em> and add the USDZ file to the the group. Then create another group called <em>Entities</em> and create a new Swift file within it called <em>CupEntity.swift</em>. Let's also create another group to contain our SwiftUI files: we will call it <em>UI</em>.</p>
-<p><picture><source type="image/avif" srcset="/img/Oaiuj3fJ4E-325.avif 325w" sizes="100vw"><source type="image/webp" srcset="/img/Oaiuj3fJ4E-325.webp 325w" sizes="100vw"><img alt="Project groups" loading="lazy" decoding="async" src="/img/Oaiuj3fJ4E-325.jpeg" width="325" height="288"></picture></p>
+<picture>
+			<source type="image/avif" srcset="/img/Oaiuj3fJ4E-325.avif 325w" sizes="100vw">
+<source type="image/webp" srcset="/img/Oaiuj3fJ4E-325.webp 325w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/Oaiuj3fJ4E-325.jpeg 325w" sizes="100vw">
+			<img src="/img/Oaiuj3fJ4E-325.avif" width="325" height="288" alt="Project groups" loading="lazy" decoding="async">
+		</picture>
 <p>We are going to use the <code>Entity.loadAsync</code> type method to load the USDZ file as a RealityKit entity. Entities are holder objects for your RealityKit content. They exist within a RealityKit scene hierarchy, where the <code>Scene</code> object created by <code>ARView</code> is the root object. To load the cup and saucer model we pass the name of the file, without the <em>.usdz</em> extension, to <code>Entity.loadAsync</code>. As long as the USDZ file is included in your application main bundle, the entity method will find the file.</p>
 <p>Create a <code>CupEntity</code> struct that inherits from <code>Entity</code> with a <code>static var loadAsync</code> like this:</p>
 <pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token keyword">import</span> <span class="token class-name">Foundation</span>
@@ -1692,7 +1707,7 @@ arView<span class="token punctuation">.</span>debugOptions <span class="token op
 
 		<footer></footer>
 
-		<!-- This page `/programmatically-placing-content-in-realitykit.html` was built on 2024-09-08T16:49:25.958Z -->
+		<!-- This page `/programmatically-placing-content-in-realitykit.html` was built on 2024-09-09T16:12:18.012Z -->
 
         <!-- Scroll to anchors -->
         <script defer>
