@@ -8,7 +8,7 @@ eleventyNavigation:
 ---
 
 <div style="display: inline-block;">
-{% image "./me.jpg", "Brendan Innis", "100vw", [360] %}
+{% image "./me.jpg", "Brendan Innis", null, "100vw", [360] %}
 </div>
 
 I am a software engineer working at Workday in Victoria, BC.
