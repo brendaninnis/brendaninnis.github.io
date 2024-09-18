@@ -98,6 +98,23 @@ module.exports = function(eleventyConfig) {
 		return (new Date()).toISOString();
 	})
 
+        console.log("Node env: ", process.env.NODE_ENV);
+    eleventyConfig.addShortcode("googleTag", () => {
+        if (process.env.NODE_ENV === 'production') {
+            return `
+            <!-- Google tag (gtag.js) -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id=G-998XX4MGQY"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+
+                gtag('config', 'G-998XX4MGQY');
+            </script>
+            `;
+        }
+    })
+
 	// Features to make your build faster (when you need them)
 
 	// If your passthrough copy gets heavy and cumbersome, add this line
