@@ -3,16 +3,28 @@
  */
 
 pre[class*="language-diff-"] {
+    --token-inserted-color: hsl(126, 80.5%, 92%);
+    --token-deleted-color: hsl(0 100% 95.7%);
+    --token-prefix-background-color: rgba(0,0,0,.1);
 	--eleventy-code-padding: 1.25em;
 	padding-left: var(--eleventy-code-padding);
 	padding-right: var(--eleventy-code-padding);
 }
+
+@media (prefers-color-scheme: dark) {
+    pre[class*="language-diff-"] {
+        --token-inserted-color: hsl(126, 22%, 22%);
+        --token-prefix-background-color: rgba(0,0,0,.2);
+        --token-deleted-color: hsl(0, 40%, 26%);
+    }
+}
+
 .token.deleted {
-	background-color: hsl(0, 40%, 26%);
+	background-color: var(--token-deleted-color);
 	color: inherit;
 }
 .token.inserted {
-	background-color: hsl(126, 22%, 22%);
+	background-color: var(--token-inserted-color);
 	color: inherit;
 }
 
@@ -31,7 +43,7 @@ pre[class*="language-diff-"] {
 .token.prefix.inserted,
 .token.prefix.deleted {
 	width: var(--eleventy-code-padding);
-	background-color: rgba(0,0,0,.2);
+	background-color: var(--token-prefix-background-color);
 }
 
 /* Optional: full-width background color */
