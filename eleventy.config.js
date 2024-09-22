@@ -98,7 +98,6 @@ module.exports = function(eleventyConfig) {
 		return (new Date()).toISOString();
 	})
 
-        console.log("Node env: ", process.env.NODE_ENV);
     eleventyConfig.addShortcode("googleTag", () => {
         if (process.env.NODE_ENV === 'production') {
             return `

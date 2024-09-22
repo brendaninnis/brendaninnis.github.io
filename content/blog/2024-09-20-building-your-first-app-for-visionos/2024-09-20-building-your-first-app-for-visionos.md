@@ -1,6 +1,6 @@
 ---
 title: "Building Your First App for VisionOS: Part 1"
-description: "In part 1 of this tutorial we learn how to build an app for visionOS called 3D Charts"
+description: "In part 1 of this tutorial you'll learn how to build an interface for visionOS using SwiftUI and display content in a volumetric window using RealityKit."
 permalink: /building-your-first-app-for-visionos-part-1.html
 date: 2024-09-20
 tags:
