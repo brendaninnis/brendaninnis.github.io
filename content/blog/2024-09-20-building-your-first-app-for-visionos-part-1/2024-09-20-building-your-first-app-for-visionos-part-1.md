@@ -1,40 +1,39 @@
 ---
-title: "Building Your First App for VisionOS: Part 1"
+title: "Building Your First App for visionOS: Part 1"
 description: "In part 1 of this tutorial you'll learn how to build an interface for visionOS using SwiftUI and display content in a volumetric window using RealityKit."
 permalink: /building-your-first-app-for-visionos-part-1.html
 date: 2024-09-20
 tags:
   - visionOS
-  - Swift
   - RealityKit
   - SwiftUI
 draft: true
 ---
 
-In this tutorial series you will learn how to build a complete app for visionOS using SwiftUI and RealityKit. We will build a spreadsheet app that displays 3D charts. You will learn how to create a new visionOS project, how to build an interface for visionOS using SwiftUI and how to display and animate 3D content using RealityKit. This tutorial will get you started building apps for visionOS right away and provide a solid foundation to learn from.
+In this tutorial series you will learn how to build a complete app for **visionOS** using **SwiftUI** and **RealityKit**. We will build a spreadsheet app that displays 3D charts. You will learn how to create a new **visionOS** project, how to build an interface for **visionOS** using **SwiftUI** and how to display and animate 3D content using **RealityKit**. This tutorial will get you started building apps for **visionOS** right away and provide a solid foundation to learn from.
 
 ## New visionOS project
 
-To create a new visionOS project, open Xcode and select *File/New/Project* (⇧⌘N). Select the “visionOS” tab and choose the “App” template.
+To create a new **visionOS** project, open Xcode and select *File/New/Project* (⇧⌘N). Select the “visionOS” tab and choose the “App” template.
 
-{% image "./new-visionos-project.png", "New VisionOS Project", "./new-visionos-project-dark.png", "100vw", [400, 600] %}
+{% image "./new-visionos-project.png", "New visionOS Project", "./new-visionos-project-dark.png", "100vw", [400, 600] %}
 
 Click “Next” and then choose options for your new project:
 
-{% image "./project-options.png", "New VisionOS Project", "./project-options-dark.png", "100vw", [400, 600] %}
+{% image "./project-options.png", "New visionOS Project", "./project-options-dark.png", "100vw", [400, 600] %}
 
 * *Product Name*: **3D Charts** (This will be the name of your app)
 * *Team*: **[Your Team]** (You will need to sign in with your Apple ID if you haven't already)
 * *Organization Identifier*: **[Your reversed domain]** (To uniquely identify your app)
-* *Initial Scene*: **Window** (We'll display our spreadsheet using SwiftUI)
+* *Initial Scene*: **Window** (We'll display our spreadsheet using **SwiftUI**)
 * *Immersive Space Renderer*: **None** (We're going to display our 3D content in a Volumetric Window)
 * *Immersive Space*: **Mixed** (We can introduce a mixed reality space later in the project)
 
 ## Exploring the new visionOS project
 
-The template visionOS project creates an app that shows a 3D model in a window using SwiftUI. The project also includes a **Reality Composer Pro** package called *RealityKitContent* that includes a scene with a 3D model and texture. **Reality Composer Pro** is a standard way to include 3D content in your visionOS app. It can be found by selecting *Xcode/Open Developer Tool/Reality Composer Pro*.
+The template **visionOS** project creates an app that shows a 3D model in a window using **SwiftUI**. The project also includes a **Reality Composer Pro** package called *RealityKitContent* that includes a scene with a 3D model and texture. **Reality Composer Pro** is a standard way to include 3D content in your **visionOS** app. It can be found by selecting *Xcode/Open Developer Tool/Reality Composer Pro*.
 
-The first thing you should do when you create a new project is to run it and understand how the code works. Press “Run” and let Xcode boot up the visionOS simulator and launch the app. Once you've launched the app and confirmed that it runs, we can start making changes.
+The first thing you should do when you create a new project is to run it and understand how the code works. Press “Run” and let Xcode boot up the **visionOS simulator** and launch the app. Once you've launched the app and confirmed that it runs, we can start making changes.
 
 ## Starting from scratch
 
@@ -134,7 +133,7 @@ enum Constants {
 }
 ```
 
-6. Now switch back to *ContentView.swift* and enable the Canvas by selecting it from the “Adjust Editor Options” menu in the top right corner of the Xcode window (⌥⌘↩). The Canvas is useful for previewing changes to your SwiftUI code as you write it. You can also interact with the “Chart Title” `TextField` and change it's value.
+6. Now switch back to *ContentView.swift* and enable the Canvas by selecting it from the “Adjust Editor Options” menu in the top right corner of the Xcode window (⌥⌘↩). The Canvas is useful for previewing changes to your **SwiftUI** code as you write it. You can also interact with the “Chart Title” `TextField` and change it's value.
 
 {% image "./basic-ui-preview.png", "Basic UI Preview", "./basic-ui-preview-dark.png", "100vw", [400, 600] %}
 
@@ -226,7 +225,7 @@ extension AppState {
 #endif
 ```
 
-3. Let's build the spreadsheet UI. Create a new SwiftUI View file called *Spreadsheet.swift*. We're going to display our chart content in a SwiftUI `Grid` with the cells as editable `TextField` views so we can make changes to the data in our chart. We'll also add a divider after the first row to separate the headings from the data. Finally, we'll extend `Constants` with values that will only be used in the `Spreadsheet` view and set up a `#Preview` with our sample data along with some padding and background effect for readability.
+3. Let's build the spreadsheet UI. Create a new **SwiftUI** View file called *Spreadsheet.swift*. We're going to display our chart content in a **SwiftUI** `Grid` with the cells as editable `TextField` views so we can make changes to the data in our chart. We'll also add a divider after the first row to separate the headings from the data. Finally, we'll extend `Constants` with values that will only be used in the `Spreadsheet` view and set up a `#Preview` with our sample data along with some padding and background effect for readability.
 
 ```swift
 // Spreadsheet.swift
@@ -289,7 +288,7 @@ fileprivate extension Constants {
 
 ## Showing 3D content in a volumetric window
 
-You can use **RealityKit** to display 3D content in the user's phsyical space. We're going to use a volumetric window to show our 3D chart alongside other running application windows. We'll use a `RealityView` to display **RealityKit** content in our SwiftUI app.
+You can use **RealityKit** to display 3D content in the user's phsyical space. We're going to use a volumetric window to show our 3D chart alongside other running application windows. We'll use a `RealityView` to display **RealityKit** content in our **SwiftUI** app.
 
 1. First, we need to keep track of wether the 3D chart is showing. Add a property called `isShowingChart` to *AppState.swift*.
 
@@ -393,7 +392,7 @@ You can use **RealityKit** to display 3D content in the user's phsyical space. W
 +}
 ```
 
-4. Finally, we'll create one more SwiftUI View file called *ChartView.swift*. Here, we'll import **RealityKit** as well as our **RealityKitContent** package. For now, we'll just create a `RealityView` and add the 3D model we still have in our content package to the scene. We will also add a toolbar window ornament to display the chart title. We also need to add an `.onDisappear` block to track when the 3D chart is hidden.
+4. Finally, we'll create one more **SwiftUI** `View` file called *ChartView.swift*. Here, we'll import **RealityKit** as well as our **RealityKitContent** package. For now, we'll just create a `RealityView` and add the 3D model we still have in our content package to the scene. We will also add a toolbar window ornament to display the chart title. We also need to add an `.onDisappear` block to track when the 3D chart is hidden.
 
 ```swift
 
