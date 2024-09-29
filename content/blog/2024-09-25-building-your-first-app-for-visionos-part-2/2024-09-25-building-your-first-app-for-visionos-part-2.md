@@ -129,7 +129,7 @@ extension AppState {
     /// The height of a bar in meters
     private var barHeight: Float { barSize * 5 }
     /// The size of the gutters in between the bars
-    private var barPadding: Float { barSize * 0.5 }
+    private var barPadding: Float { barSize * 0.8 }
     /// The minimum height of a bar
     private var minBarScale: Float { 0.042 }
     
@@ -264,4 +264,241 @@ Run the app and you should see a 3D bar chart in the volumetric window. Make cha
 ## Drawing a base plate
 
 The next thing we want is to be able to label the chart. We'll start by adding a base plate to the chart so our text will stand out and the chart will feel more cohesive.
+
+First, modify the *AppState.swift* file to include a new stored property for our base plate:
+
+```diff-swift
+ // AppState.swift
+ public class AppState {
+     var chartTitle = ""
+     var chartContent: ChartContent = []
+     var chart = Entity()
++    var basePlate: Entity?
+
+     init() {
+         // Position the chart near the bottom of the volume
+```
+
+Next, we'll make a few modifications to *AppState+ChartDrawing.swift*. 
+
+First we add new properties to the `AppState` extension for the base plate:
+
+```diff-swift
+ // AppState+ChartDrawing.swift
+     private var barPadding: Float { barSize * 0.8 }
+     /// The minimum height of a bar
+     private var minBarScale: Float { 0.042 }
++    /// The distance between the edge of the base plate and the chart content
++    private var basePlatePadding: Float { 0.1 }
++    /// The thickness of the base plate
++    private var basePlateHeight: Float { 0.02 }
+
+     private enum ChartColors {
+         case red
+```
+
+Then we'll call a new method in `updateChart` when the chart bounds change to draw the base plate:
+
+```diff-swift
+         if chartBoundsDidChange {
++            basePlate?.removeFromParent()
+
+             let bounds = chart.visualBounds(relativeTo: nil).extents
+
++            drawBasePlate(inBounds: bounds)
++
+             // Position the middle of the chart in the middle of the volumne
+             chart.transform.translation.x = -1 * bounds.x * 0.5
+             chart.transform.translation.z = -1 * bounds.z * 0.5
+```
+
+We have to remove the base plate from the chart before we calculate the chart bounds, otherwise the base plate will include itself and grow each time the chart bounds change.
+
+Finally, we'll implement the `drawBasePlate` method:
+
+```swift
+private func drawBasePlate(inBounds bounds: SIMD3<Float>) {
+    // Add padding to the chart bounds
+    let basePlateBounds = bounds + SIMD3<Float>(repeating: basePlatePadding)
+
+    let mesh = MeshResource.generateBox(width: basePlateBounds.x,
+                                        height: basePlateHeight,
+                                        depth: basePlateBounds.z,
+                                        cornerRadius: basePlateHeight * 0.5)
+    let colorMaterial = SimpleMaterial(color: .white,
+                                       roughness: 0.1,
+                                       isMetallic: false)
+    let basePlate = ModelEntity(mesh: mesh, materials: [colorMaterial])
+    chart.addChild(basePlate)
+
+    // Position the middle of the base plate in the middle of the chart
+    basePlate.transform.translation.x += bounds.x * 0.5
+    basePlate.transform.translation.z += bounds.z * 0.5
+
+    self.basePlate = basePlate
+}
+```
+
+We use the `chart` bounds to calculate the size of the base plate based on the content of the 3D chart. The bounds of the chart include the bounds all it's descendants, so it is convenient to use this to calculate the size required for the base plate.
+
+## Labelling the rows
+
+We want to draw 3D text on our chart to label the axes. Remember we are considering the first row of the chart to be the headings for one axis and the first column in each row to be the headings for the other axis. We'll draw the headings for the first row after the other rows so it is toward the user in the z-direction. We'll draw the headings for each row after each row in the x-direction because it makes the chart positions easy to calculate.
+
+Call a new method called `drawHeading` for each chart row:
+
+```diff-swift
+ // AppState+ChartDrawing.swift
+     private func draw(chartRow row: ChartRow,
+                       maxChartValue: Float,
+                       rowIndex: Int) {
+         let color = ChartColors.all[rowIndex].uiColor
+
+         row.data.dropFirst().enumerated().forEach { colIndex, data in
+             // Determines the height of the bar
+             let scale = max(data.floatValue / maxChartValue, minBarScale)
+
+             drawCell(data: data,
+                      scale: scale,
+                      color: color,
+                      rowIndex: rowIndex,
+                      colIndex: colIndex)
+         }
++
++        drawHeading(forChartRow: row, rowIndex: rowIndex)
+     }
+```
+
+Implement the new method to draw the headings:
+
+```swift
+private func drawHeading(forChartRow row: ChartRow, rowIndex: Int) {
+    guard let heading = row.data.first else {
+        assertionFailure("ChartRow should have a heading")
+        return
+    }
+
+    // If the heading value changed, remove the entity and redraw it
+    if let entity = heading.entity,
+       entity.name != heading.value
+    {
+        chart.removeChild(entity)
+        heading.entity = nil
+    }
+
+    // Create a new heading entity if needed
+    _ = heading.entity ?? {
+        chartBoundsDidChange = true
+        
+        let entity = createLabelEntity(forHeading: heading)
+        chart.addChild(entity)
+
+        // Position the heading after the row
+        let bounds = entity.visualBounds(relativeTo: nil).extents
+        let cellSize = barSize + barPadding
+        let rowMaxX = cellSize * Float(row.data.count - 1) - barPadding
+        let rowZ = cellSize * Float(rowIndex)
+        entity.transform.translation.y = basePlateHeight * 0.5
+        entity.transform.translation.x = rowMaxX + basePlatePadding * 0.25
+        entity.transform.translation.z = rowZ + barSize - bounds.y
+            
+        return entity
+    }()
+}
+    
+private func createLabelEntity(forHeading heading: ChartData) -> Entity {
+    let mesh = MeshResource.generateText(heading.value,
+                                         extrusionDepth: 2)
+    let colorMaterial = SimpleMaterial(color: .black,
+                                       isMetallic: false)
+    let entity = ModelEntity(mesh: mesh, materials: [colorMaterial])
+
+    // Store the heading value in the name to compare later
+    entity.name = heading.value
+    // Size the text appropriately for the chart
+    entity.scale *= 0.002
+    // Rotate the text by 90 degrees to lay flat
+    entity.orientation = simd_quatf(angle: -1 * .pi * 0.5,
+                                    axis: [1, 0, 0])
+    // Store the new entity in this ChartData
+    heading.entity = entity
+
+    return entity
+}
+```
+
+When we create text mesh using `MeshResource.generateText` the text will be vertically oriented along the y-axis from the user's perspective. We rotate the text by 90 degrees around the x-axis to lay it flat on the base plate. This can be done in a few ways but here we use a simple quaternion to set the appropriate orientation. When we position the text along the z-axis we are using the y bounds of the text entity since we rotated it.
+
+Now run the app and you should see the headings appear after each row on the base plate. When you make a change to the row label the 3D chart should update and redraw.
+
+## Labelling the columns
+
+Now we're going to draw the headings for the columns contained in the first row of chart data. We'll draw the column headings after the data rows. First, call a new method after the chart rows are drawn:
+
+```diff-swift
+ // AppState+ChartDrawing.swift
+     func updateChart() {
+         // Calculate the greatest value to determine the height of the chart
+         let maxChartValue = chartContent.maxChartValue
+
+         chartContent.dropFirst().enumerated().forEach { rowIndex, row in
+             draw(chartRow: row,
+                  maxChartValue: maxChartValue,
+                  rowIndex: rowIndex)
+         }
+
++        drawChartHeadings()
++
+         if chartBoundsDidChange {
+             basePlate?.removeFromParent()
+```
+
+Next we'll draw the column headings, reusing the existing `createLabelEntity` method:
+
+```swift
+private func drawChartHeadings() {
+    guard let headingsRow = chartContent.first else {
+        assertionFailure("A chart should always have at least one row")
+        return
+    }
+        
+    let rowCount = chartContent.count - 1
+    headingsRow.data.dropFirst().enumerated().forEach { colIndex, column in
+        // If the heading value changed, remove the entity and redraw
+        if let entity = column.entity, 
+           entity.name != column.value
+        {
+            chart.removeChild(entity)
+            column.entity = nil
+        }
+            
+        // Create a new heading entity if needed
+        _ = column.entity ?? {
+            chartBoundsDidChange = true
+            let entity = createLabelEntity(forHeading: column)
+            chart.addChild(entity)
+
+            // Position the heading row after the other rows
+            let bounds = entity.visualBounds(relativeTo: nil).extents
+            let cellSize = barSize + barPadding
+            let colX = cellSize * Float(colIndex) + barSize * 0.5
+            let colMaxZ = cellSize * Float(rowCount) - barPadding
+            let y = basePlateHeight * 0.5
+            let x = colX - bounds.x * 0.5
+            let z = colMaxZ + barSize * 0.5 + basePlatePadding * 0.25
+            entity.transform.translation.y = y
+            entity.transform.translation.x = x
+            entity.transform.translation.z = z
+                
+            return entity
+        }()
+    }
+}
+```
+
+## Testing the 3D chart
+
+We now have a functional labelled 3D bar chart that updates when the data changes. Run the app and see what the chart looks like. Play around with it and trying changing various values to see how it behaves. At this point the chart should look like this:
+
+{% image "./functional-chart.png", "Functional 3D Chart" %}
 
