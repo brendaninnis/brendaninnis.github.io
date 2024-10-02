@@ -2,7 +2,7 @@
 title: "Building Your First App for visionOS: Part 2"
 description: "In part 2 of this tutorial you'll learn how to use RealityKit and SwiftUI to display and animate a 3D bar chart in a visionOS app."
 permalink: /building-your-first-app-for-visionos-part-2.html
-date: 2024-09-25
+date: 2024-09-29
 tags:
     - visionOS
     - RealityKit
@@ -501,4 +501,12 @@ private func drawChartHeadings() {
 We now have a functional labelled 3D bar chart that updates when the data changes. Run the app and see what the chart looks like. Play around with it and trying changing various values to see how it behaves. At this point the chart should look like this:
 
 {% image "./functional-chart.png", "Functional 3D Chart" %}
+
+You might notice some limitations of the chart. For example, the column headings will quickly run into each other if they contain too much text. If you create a very long row label, then the chart will become too large to fit in the 3D volume and will be clipped by the window. The chart also would represent values very well if one value is much larger than the others. It would also be nice to have a mechanism to add and delete rows and columns from the chart.
+
+## Next Steps
+
+You've now learned everything you need to know to create a basic **visionOS** app. You've learned how to create flat and volumetric windows and populate them using **SwiftUI** views and **RealityKit** entities. You've learned how to represent your data as app state to keep your UI in sync and animate updates. You've also learned how to create basic meshes and materials and how to manipulate them in a 3D scene. Further tutorials in this series will expand on the capabilites of **visionOS** and add depth to your app.
+
+You can download the finished project from part 2 of the tutorial [here](https://github.com/brendaninnis/3D-Charts-Tutorial/raw/main/part-2.zip). In part 3 we will add functionality to the app and improve the visuals of the 3D chart.
 

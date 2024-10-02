@@ -2,7 +2,7 @@
 title: "Building Your First App for visionOS: Part 1"
 description: "In part 1 of this tutorial you'll learn how to build an interface for visionOS using SwiftUI and display content in a volumetric window using RealityKit."
 permalink: /building-your-first-app-for-visionos-part-1.html
-date: 2024-09-20
+date: 2024-09-27
 tags:
   - visionOS
   - RealityKit
@@ -10,7 +10,11 @@ tags:
 draft: true
 ---
 
-In this tutorial series you will learn how to build a complete app for **visionOS** using **SwiftUI** and **RealityKit**. We will build a spreadsheet app that displays 3D charts. You will learn how to create a new **visionOS** project, how to build an interface for **visionOS** using **SwiftUI** and how to display and animate 3D content using **RealityKit**. This tutorial will get you started building apps for **visionOS** right away and provide a solid foundation to learn from.
+In this tutorial series you will learn how to build a complete app for **visionOS** using **SwiftUI** and **RealityKit**. You will learn how to create a new **visionOS** project, how to build an interface for **visionOS** using **SwiftUI** and how to display and animate 3D content using **RealityKit**. This tutorial will get you started building apps for **visionOS** right away and provide a solid foundation to learn from.
+
+We will build a spreadsheet app that displays 3D charts. The app will include a spreadsheet like interface and a 3D bar chart. It will look something like this:
+
+<img src="/img/3d-charts-preview.gif" alt="3D Charts App" />
 
 ## New visionOS project
 
