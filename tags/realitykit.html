@@ -8,7 +8,7 @@
 		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Brendan Innis">
 		<link rel="alternate" href="/feed/feed.json" type="application/json" title="Brendan Innis">
 		
-		<style>.postlist { counter-reset: start-from 3 }
+		<style>.postlist { counter-reset: start-from 5 }
 * { box-sizing: border-box; }
 /* Defaults */
 :root {
@@ -25,10 +25,9 @@
 
 /* Theme colors */
 :root {
-	--color-gray-20: #e0e0e0;
-	--color-gray-50: #C0C0C0;
-	--color-gray-90: #333;
-	--color-gray-95: #000308;
+	--color-gray-95: #0d0d0d;
+	--color-gray-90: #1a1a1a;
+    --color-gray-15: #d9d9d9;
 
 	--background-color: #FFFCF786;
 	--background-color-solid: #FFFCF7;
@@ -46,10 +45,9 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --color-gray-20: #e0e0e0;
-        --color-gray-50: #C0C0C0;
-        --color-gray-90: #dad8d8;
-        --color-gray-95: #FFFCF7;
+        --color-gray-95: #f2f2f2;
+        --color-gray-90: #e6e6e6;
+        --color-gray-15: #262626;
 
         --theme-background-color: #FFFCF713;
 
@@ -187,7 +185,9 @@ pre:not([class*="language-"]) {
 	word-break: normal;
 }
 code {
-	word-break: break-all;
+    background-color: var(--color-gray-15);
+    padding: 0.15ch 0.5ch;
+    border-radius: 0.5ch;
 }
 
 img {
@@ -347,16 +347,7 @@ a[href].header-anchor:focus,
 h2 + .header-anchor {
 	font-size: 1.5em;
 }</style>
-		<!-- Google tag (gtag.js) -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-998XX4MGQY"></script>
-		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-
-			gtag('config', 'G-998XX4MGQY');
-		</script>
-
+        
 	</head>
 	<body>
 		<a href="#skip" class="visually-hidden">Skip to main content</a>
@@ -382,6 +373,16 @@ h2 + .header-anchor {
 <ol reversed class="postlist">
 
 	<li class="postlist-item">
+		<a href="/building-your-first-app-for-visionos-part-2.html" class="postlist-link">Building Your First App for visionOS: Part 2</a>
+		<time class="postlist-date" datetime="2024-09-25">September 2024</time>
+	</li>
+
+	<li class="postlist-item">
+		<a href="/building-your-first-app-for-visionos-part-1.html" class="postlist-link">Building Your First App for visionOS: Part 1</a>
+		<time class="postlist-date" datetime="2024-09-20">September 2024</time>
+	</li>
+
+	<li class="postlist-item">
 		<a href="/programmatically-placing-content-in-realitykit.html" class="postlist-link">Getting started with RealityKit 1: Programmatically placing content in RealityKit</a>
 		<time class="postlist-date" datetime="2023-02-09">February 2023</time>
 	</li>
@@ -400,7 +401,7 @@ h2 + .header-anchor {
 
 		<footer></footer>
 
-		<!-- This page `/tags/realitykit.html` was built on 2024-09-09T16:12:17.992Z -->
+		<!-- This page `/tags/realitykit.html` was built on 2024-10-03T04:00:53.541Z -->
 
         <!-- Scroll to anchors -->
         <script defer>

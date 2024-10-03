@@ -8,52 +8,7 @@
 		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Brendan Innis">
 		<link rel="alternate" href="/feed/feed.json" type="application/json" title="Brendan Innis">
 		
-		<style>/*
- * New diff- syntax
- */
-
-pre[class*="language-diff-"] {
-	--eleventy-code-padding: 1.25em;
-	padding-left: var(--eleventy-code-padding);
-	padding-right: var(--eleventy-code-padding);
-}
-.token.deleted {
-	background-color: hsl(0, 51%, 37%);
-	color: inherit;
-}
-.token.inserted {
-	background-color: hsl(126, 31%, 39%);
-	color: inherit;
-}
-
-/* Make the + and - characters unselectable for copy/paste */
-.token.prefix.unchanged,
-.token.prefix.inserted,
-.token.prefix.deleted {
-	-webkit-user-select: none;
-	user-select: none;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	padding-top: 2px;
-	padding-bottom: 2px;
-}
-.token.prefix.inserted,
-.token.prefix.deleted {
-	width: var(--eleventy-code-padding);
-	background-color: rgba(0,0,0,.2);
-}
-
-/* Optional: full-width background color */
-.token.inserted:not(.prefix),
-.token.deleted:not(.prefix) {
-	display: block;
-	margin-left: calc(-1 * var(--eleventy-code-padding));
-	margin-right: calc(-1 * var(--eleventy-code-padding));
-	text-decoration: none; /* override del, ins, mark defaults */
-	color: inherit; /* override del, ins, mark defaults */
-}
-/**
+		<style>/**
  * One Light theme for prism.js
  * Based on Atom's One Light theme: https://github.com/atom/atom/tree/master/packages/one-light-syntax
  */
@@ -925,6 +880,63 @@ pre > code.diff-highlight .token.token.inserted:not(.prefix) *::selection {
         fill: transparent;
     }
 }
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+    --token-inserted-color: hsl(126, 80.5%, 92%);
+    --token-deleted-color: hsl(0 100% 95.7%);
+    --token-prefix-background-color: rgba(0,0,0,.1);
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+
+@media (prefers-color-scheme: dark) {
+    pre[class*="language-diff-"] {
+        --token-inserted-color: hsl(126, 22%, 22%);
+        --token-prefix-background-color: rgba(0,0,0,.2);
+        --token-deleted-color: hsl(0, 40%, 26%);
+    }
+}
+
+.token.deleted {
+	background-color: var(--token-deleted-color);
+	color: inherit;
+}
+.token.inserted {
+	background-color: var(--token-inserted-color);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: var(--token-prefix-background-color);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
 * { box-sizing: border-box; }
 /* Defaults */
 :root {
@@ -941,10 +953,9 @@ pre > code.diff-highlight .token.token.inserted:not(.prefix) *::selection {
 
 /* Theme colors */
 :root {
-	--color-gray-20: #e0e0e0;
-	--color-gray-50: #C0C0C0;
-	--color-gray-90: #333;
-	--color-gray-95: #000308;
+	--color-gray-95: #0d0d0d;
+	--color-gray-90: #1a1a1a;
+    --color-gray-15: #d9d9d9;
 
 	--background-color: #FFFCF786;
 	--background-color-solid: #FFFCF7;
@@ -962,10 +973,9 @@ pre > code.diff-highlight .token.token.inserted:not(.prefix) *::selection {
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --color-gray-20: #e0e0e0;
-        --color-gray-50: #C0C0C0;
-        --color-gray-90: #dad8d8;
-        --color-gray-95: #FFFCF7;
+        --color-gray-95: #f2f2f2;
+        --color-gray-90: #e6e6e6;
+        --color-gray-15: #262626;
 
         --theme-background-color: #FFFCF713;
 
@@ -1103,7 +1113,9 @@ pre:not([class*="language-"]) {
 	word-break: normal;
 }
 code {
-	word-break: break-all;
+    background-color: var(--color-gray-15);
+    padding: 0.15ch 0.5ch;
+    border-radius: 0.5ch;
 }
 
 img {
@@ -1263,16 +1275,7 @@ a[href].header-anchor:focus,
 h2 + .header-anchor {
 	font-size: 1.5em;
 }</style>
-		<!-- Google tag (gtag.js) -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-998XX4MGQY"></script>
-		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-
-			gtag('config', 'G-998XX4MGQY');
-		</script>
-
+        
 	</head>
 	<body>
 		<a href="#skip" class="visually-hidden">Skip to main content</a>
@@ -1327,7 +1330,7 @@ can't help but think that's to blame every time I can't think of a cool name for
 
 		<footer></footer>
 
-		<!-- This page `/coding-makes-you-less-creative.html` was built on 2024-09-09T16:12:18.012Z -->
+		<!-- This page `/coding-makes-you-less-creative.html` was built on 2024-10-03T04:00:53.556Z -->
 
         <!-- Scroll to anchors -->
         <script defer>

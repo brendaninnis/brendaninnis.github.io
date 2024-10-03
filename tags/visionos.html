@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Tagged “visionOS”</title>
+		<meta name="description" content="I write about what I&#39;ve learned, projects I&#39;m working on and the philosophy of software craft.">
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Brendan Innis">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="Brendan Innis">
+		
+		<style>.postlist { counter-reset: start-from 3 }
+* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+
+	--horizontal-padding: 3rem;
+}
+@media (max-width: 820px) {
+	:root {
+		--horizontal-padding: 1rem;
+	}
+}
+
+/* Theme colors */
+:root {
+	--color-gray-95: #0d0d0d;
+	--color-gray-90: #1a1a1a;
+    --color-gray-15: #d9d9d9;
+
+	--background-color: #FFFCF786;
+	--background-color-solid: #FFFCF7;
+	--background-image: url(/img/spiration-light.png);
+
+	--theme-background-color: #00030813;
+
+	--text-color: var(--color-gray-95);
+	--text-color-link: #301014;
+	--text-color-link-active: #5f2b48;
+	--text-color-link-visited: #5E555A;
+
+	--syntax-tab-size: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-gray-95: #f2f2f2;
+        --color-gray-90: #e6e6e6;
+        --color-gray-15: #262626;
+
+        --theme-background-color: #FFFCF713;
+
+        /* --text-color is assigned to --color-gray-_ above */
+        --text-color-link: #b5bad0;
+        --text-color-link-active: #FFDD93;
+        --text-color-link-visited: #8594ad;
+
+        --background-color: #06010a86;
+        --background-color-solid: #06010a;
+        --background-image: url(/img/spiration-dark.png);
+    }
+}
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	min-height: 100vh;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	background-image: var(--background-image);
+    scroll-behavior: smooth;
+}
+body {
+	max-width: calc(80ch + var(--horizontal-padding) * 2);
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+a > svg:hover {
+	fill: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem var(--horizontal-padding);
+}
+main :first-child {
+	margin-top: 0;
+}
+
+h1 {
+	margin-top: 0.25em;
+}
+
+header {
+	display: flex;
+	border-bottom: 1px dashed var(--color-gray-90);
+}
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+span.spacer {
+	flex-grow: 1;
+}
+
+.links-nextprev {
+	list-style: none;
+	border-top: 1px dashed var(--color-gray-90);
+	margin: 0 calc(-1 * var(--horizontal-padding));
+	padding: 0;
+}
+.links-nextprev li {
+	margin: 1em 0;
+	padding: 0 var(--horizontal-padding);
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+code {
+    background-color: var(--color-gray-15);
+    padding: 0.15ch 0.5ch;
+    border-radius: 0.5ch;
+}
+
+img {
+	display: block;
+	margin: 0 auto;
+	max-width: 100%;
+	height: auto;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em var(--horizontal-padding);
+}
+a[href]:visited.home-link,
+.nav-item a[href]:visited {
+	color: var(--text-color-link);
+}
+a[href]:hover.home-link,
+a[href]:active.home-link,
+.nav-item a[href]:hover,
+.nav-item a[href]:active {
+	color: var(--text-color-link-active);
+}
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 1em;
+}
+.postlist-date {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+#subscribe-link > svg {
+	vertical-align: bottom;
+	margin-bottom: 0.125em;
+}
+
+/* About */
+#sidebar-icon-links {
+	margin-top: 1em;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+h2 {
+    position: sticky;
+    top: 0;
+	margin-top: 1.5em;
+    padding: 0.33em 0;
+}
+
+h2.sticky {
+    background-color: var(--background-color-solid);
+    z-index: 999;
+}
+
+h2.sticky.passed {
+    opacity: 0;
+    z-index: 998;
+}
+
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: var(--text-color-link-active);
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}</style>
+        
+	</head>
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+
+		<header>
+			<a href="/" class="home-link">Brendan Innis</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/">Posts</a></li>
+					<li class="nav-item"><a href="/tags.html">Tags</a></li>
+					<li class="nav-item"><a href="/about.html">About Me</a></li>
+				</ul>
+			</nav>
+			<span class="spacer"></span>
+		</header>
+
+		<main id="skip">
+			<h1>Tagged “visionOS”</h1>
+
+
+
+<ol reversed class="postlist">
+
+	<li class="postlist-item">
+		<a href="/building-your-first-app-for-visionos-part-2.html" class="postlist-link">Building Your First App for visionOS: Part 2</a>
+		<time class="postlist-date" datetime="2024-09-25">September 2024</time>
+	</li>
+
+	<li class="postlist-item">
+		<a href="/building-your-first-app-for-visionos-part-1.html" class="postlist-link">Building Your First App for visionOS: Part 1</a>
+		<time class="postlist-date" datetime="2024-09-20">September 2024</time>
+	</li>
+
+</ol>
+
+
+<p>See <a href="/tags.html">all tags</a>.</p>
+
+		</main>
+
+		<footer></footer>
+
+		<!-- This page `/tags/visionos.html` was built on 2024-10-03T04:00:53.542Z -->
+
+        <!-- Scroll to anchors -->
+        <script defer>
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.hash = e.target.hash;
+                    let header = e.target.parentElement
+                    let offset = header.nextElementSibling.offsetTop - header.offsetHeight - 16; // 16px is the margin
+                    window.scrollTo({
+                        top: offset,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        </script>
+
+        <!-- Sticky Headers -->
+        <script defer>
+            let stickyHeaders = [];
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    const header = entry.target;
+                    if (entry.isIntersecting) {
+                        stickyHeaders.forEach(header => {
+                            header.classList.add('passed');
+                        });
+                        stickyHeaders.push(header);
+                        header.classList.add('sticky');
+                    } else {
+                        header.classList.remove('sticky');
+                        stickyHeaders.pop();
+                        if (stickyHeaders.length > 0) {
+                            stickyHeaders[stickyHeaders.length - 1].classList.remove('passed');
+                        }
+                    }
+                });
+            }, {
+                rootMargin: '0px 0px -100% 0px',
+                threshold: 0
+            });
+
+            const headers = document.querySelectorAll('h2:not(.visually-hidden)');
+            headers.forEach(header => {
+                observer.observe(header);
+            });
+        </script>
+
+	</body>
+</html>

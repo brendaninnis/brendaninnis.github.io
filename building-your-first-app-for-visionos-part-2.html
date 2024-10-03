@@ -1,0 +1,1823 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Building Your First App for visionOS: Part 2</title>
+		<meta name="description" content="In part 2 of this tutorial you&#39;ll learn how to use RealityKit and SwiftUI to display and animate a 3D bar chart in a visionOS app.">
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Brendan Innis">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="Brendan Innis">
+		
+		<style>/**
+ * One Light theme for prism.js
+ * Based on Atom's One Light theme: https://github.com/atom/atom/tree/master/packages/one-light-syntax
+ */
+
+/**
+ * One Light colours (accurate as of commit eb064bf on 19 Feb 2021)
+ * From colors.less
+ * --mono-1: hsl(230, 8%, 24%);
+ * --mono-2: hsl(230, 6%, 44%);
+ * --mono-3: hsl(230, 4%, 64%)
+ * --hue-1: hsl(198, 99%, 37%);
+ * --hue-2: hsl(221, 87%, 60%);
+ * --hue-3: hsl(301, 63%, 40%);
+ * --hue-4: hsl(119, 34%, 47%);
+ * --hue-5: hsl(5, 74%, 59%);
+ * --hue-5-2: hsl(344, 84%, 43%);
+ * --hue-6: hsl(35, 99%, 36%);
+ * --hue-6-2: hsl(35, 99%, 40%);
+ * --syntax-fg: hsl(230, 8%, 24%);
+ * --syntax-bg: hsl(230, 1%, 98%);
+ * --syntax-gutter: hsl(230, 1%, 62%);
+ * --syntax-guide: hsla(230, 8%, 24%, 0.2);
+ * --syntax-accent: hsl(230, 100%, 66%);
+ * From syntax-variables.less
+ * --syntax-selection-color: hsl(230, 1%, 90%);
+ * --syntax-gutter-background-color-selected: hsl(230, 1%, 90%);
+ * --syntax-cursor-line: hsla(230, 8%, 24%, 0.05);
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	background: hsl(230, 1%, 98%);
+	color: hsl(230, 8%, 24%);
+	font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	line-height: 1.5;
+	-moz-tab-size: 2;
+	-o-tab-size: 2;
+	tab-size: 2;
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Selection */
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] *::-moz-selection,
+pre[class*="language-"] *::-moz-selection {
+	background: hsl(230, 1%, 90%);
+	color: inherit;
+}
+
+code[class*="language-"]::selection,
+code[class*="language-"] *::selection,
+pre[class*="language-"] *::selection {
+	background: hsl(230, 1%, 90%);
+	color: inherit;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: 0.5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: 0.2em 0.3em;
+	border-radius: 0.3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.cdata {
+	color: hsl(230, 4%, 64%);
+}
+
+.token.doctype,
+.token.punctuation,
+.token.entity {
+	color: hsl(230, 8%, 24%);
+}
+
+.token.attr-name,
+.token.class-name,
+.token.boolean,
+.token.constant,
+.token.number,
+.token.atrule {
+	color: hsl(35, 99%, 36%);
+}
+
+.token.keyword {
+	color: hsl(301, 63%, 40%);
+}
+
+.token.property,
+.token.tag,
+.token.symbol,
+.token.deleted,
+.token.important {
+	color: hsl(5, 74%, 59%);
+}
+
+.token.selector,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted,
+.token.regex,
+.token.attr-value,
+.token.attr-value > .token.punctuation {
+	color: hsl(119, 34%, 47%);
+}
+
+.token.variable,
+.token.operator,
+.token.function {
+	color: hsl(221, 87%, 60%);
+}
+
+.token.url {
+	color: hsl(198, 99%, 37%);
+}
+
+/* HTML overrides */
+.token.attr-value > .token.punctuation.attr-equals,
+.token.special-attr > .token.attr-value > .token.value.css {
+	color: hsl(230, 8%, 24%);
+}
+
+/* CSS overrides */
+.language-css .token.selector {
+	color: hsl(5, 74%, 59%);
+}
+
+.language-css .token.property {
+	color: hsl(230, 8%, 24%);
+}
+
+.language-css .token.function,
+.language-css .token.url > .token.function {
+	color: hsl(198, 99%, 37%);
+}
+
+.language-css .token.url > .token.string.url {
+	color: hsl(119, 34%, 47%);
+}
+
+.language-css .token.important,
+.language-css .token.atrule .token.rule {
+	color: hsl(301, 63%, 40%);
+}
+
+/* JS overrides */
+.language-javascript .token.operator {
+	color: hsl(301, 63%, 40%);
+}
+
+.language-javascript .token.template-string > .token.interpolation > .token.interpolation-punctuation.punctuation {
+	color: hsl(344, 84%, 43%);
+}
+
+/* JSON overrides */
+.language-json .token.operator {
+	color: hsl(230, 8%, 24%);
+}
+
+.language-json .token.null.keyword {
+	color: hsl(35, 99%, 36%);
+}
+
+/* MD overrides */
+.language-markdown .token.url,
+.language-markdown .token.url > .token.operator,
+.language-markdown .token.url-reference.url > .token.string {
+	color: hsl(230, 8%, 24%);
+}
+
+.language-markdown .token.url > .token.content {
+	color: hsl(221, 87%, 60%);
+}
+
+.language-markdown .token.url > .token.url,
+.language-markdown .token.url-reference.url {
+	color: hsl(198, 99%, 37%);
+}
+
+.language-markdown .token.blockquote.punctuation,
+.language-markdown .token.hr.punctuation {
+	color: hsl(230, 4%, 64%);
+	font-style: italic;
+}
+
+.language-markdown .token.code-snippet {
+	color: hsl(119, 34%, 47%);
+}
+
+.language-markdown .token.bold .token.content {
+	color: hsl(35, 99%, 36%);
+}
+
+.language-markdown .token.italic .token.content {
+	color: hsl(301, 63%, 40%);
+}
+
+.language-markdown .token.strike .token.content,
+.language-markdown .token.strike .token.punctuation,
+.language-markdown .token.list.punctuation,
+.language-markdown .token.title.important > .token.punctuation {
+	color: hsl(5, 74%, 59%);
+}
+
+/* General */
+.token.bold {
+	font-weight: bold;
+}
+
+.token.comment,
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+
+.token.namespace {
+	opacity: 0.8;
+}
+
+/* Plugin overrides */
+/* Selectors should have higher specificity than those in the plugins' default stylesheets */
+
+/* Show Invisibles plugin overrides */
+.token.token.tab:not(:empty):before,
+.token.token.cr:before,
+.token.token.lf:before,
+.token.token.space:before {
+	color: hsla(230, 8%, 24%, 0.2);
+}
+
+/* Toolbar plugin overrides */
+/* Space out all buttons and move them away from the right edge of the code block */
+div.code-toolbar > .toolbar.toolbar > .toolbar-item {
+	margin-right: 0.4em;
+}
+
+/* Styling the buttons */
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > button,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > a,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > span {
+	background: hsl(230, 1%, 90%);
+	color: hsl(230, 6%, 44%);
+	padding: 0.1em 0.4em;
+	border-radius: 0.3em;
+}
+
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > button:hover,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > button:focus,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > a:hover,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > a:focus,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:hover,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:focus {
+	background: hsl(230, 1%, 78%); /* custom: darken(--syntax-bg, 20%) */
+	color: hsl(230, 8%, 24%);
+}
+
+/* Line Highlight plugin overrides */
+/* The highlighted line itself */
+.line-highlight.line-highlight {
+	background: hsla(230, 8%, 24%, 0.05);
+}
+
+/* Default line numbers in Line Highlight plugin */
+.line-highlight.line-highlight:before,
+.line-highlight.line-highlight[data-end]:after {
+	background: hsl(230, 1%, 90%);
+	color: hsl(230, 8%, 24%);
+	padding: 0.1em 0.6em;
+	border-radius: 0.3em;
+	box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.2); /* same as Toolbar plugin default */
+}
+
+/* Hovering over a linkable line number (in the gutter area) */
+/* Requires Line Numbers plugin as well */
+pre[id].linkable-line-numbers.linkable-line-numbers span.line-numbers-rows > span:hover:before {
+	background-color: hsla(230, 8%, 24%, 0.05);
+}
+
+/* Line Numbers and Command Line plugins overrides */
+/* Line separating gutter from coding area */
+.line-numbers.line-numbers .line-numbers-rows,
+.command-line .command-line-prompt {
+	border-right-color: hsla(230, 8%, 24%, 0.2);
+}
+
+/* Stuff in the gutter */
+.line-numbers .line-numbers-rows > span:before,
+.command-line .command-line-prompt > span:before {
+	color: hsl(230, 1%, 62%);
+}
+
+/* Match Braces plugin overrides */
+/* Note: Outline colour is inherited from the braces */
+.rainbow-braces .token.token.punctuation.brace-level-1,
+.rainbow-braces .token.token.punctuation.brace-level-5,
+.rainbow-braces .token.token.punctuation.brace-level-9 {
+	color: hsl(5, 74%, 59%);
+}
+
+.rainbow-braces .token.token.punctuation.brace-level-2,
+.rainbow-braces .token.token.punctuation.brace-level-6,
+.rainbow-braces .token.token.punctuation.brace-level-10 {
+	color: hsl(119, 34%, 47%);
+}
+
+.rainbow-braces .token.token.punctuation.brace-level-3,
+.rainbow-braces .token.token.punctuation.brace-level-7,
+.rainbow-braces .token.token.punctuation.brace-level-11 {
+	color: hsl(221, 87%, 60%);
+}
+
+.rainbow-braces .token.token.punctuation.brace-level-4,
+.rainbow-braces .token.token.punctuation.brace-level-8,
+.rainbow-braces .token.token.punctuation.brace-level-12 {
+	color: hsl(301, 63%, 40%);
+}
+
+/* Diff Highlight plugin overrides */
+/* Taken from https://github.com/atom/github/blob/master/styles/variables.less */
+pre.diff-highlight > code .token.token.deleted:not(.prefix),
+pre > code.diff-highlight .token.token.deleted:not(.prefix) {
+	background-color: hsla(353, 100%, 66%, 0.15);
+}
+
+pre.diff-highlight > code .token.token.deleted:not(.prefix)::-moz-selection,
+pre.diff-highlight > code .token.token.deleted:not(.prefix) *::-moz-selection,
+pre > code.diff-highlight .token.token.deleted:not(.prefix)::-moz-selection,
+pre > code.diff-highlight .token.token.deleted:not(.prefix) *::-moz-selection {
+	background-color: hsla(353, 95%, 66%, 0.25);
+}
+
+pre.diff-highlight > code .token.token.deleted:not(.prefix)::selection,
+pre.diff-highlight > code .token.token.deleted:not(.prefix) *::selection,
+pre > code.diff-highlight .token.token.deleted:not(.prefix)::selection,
+pre > code.diff-highlight .token.token.deleted:not(.prefix) *::selection {
+	background-color: hsla(353, 95%, 66%, 0.25);
+}
+
+pre.diff-highlight > code .token.token.inserted:not(.prefix),
+pre > code.diff-highlight .token.token.inserted:not(.prefix) {
+	background-color: hsla(137, 100%, 55%, 0.15);
+}
+
+pre.diff-highlight > code .token.token.inserted:not(.prefix)::-moz-selection,
+pre.diff-highlight > code .token.token.inserted:not(.prefix) *::-moz-selection,
+pre > code.diff-highlight .token.token.inserted:not(.prefix)::-moz-selection,
+pre > code.diff-highlight .token.token.inserted:not(.prefix) *::-moz-selection {
+	background-color: hsla(135, 73%, 55%, 0.25);
+}
+
+pre.diff-highlight > code .token.token.inserted:not(.prefix)::selection,
+pre.diff-highlight > code .token.token.inserted:not(.prefix) *::selection,
+pre > code.diff-highlight .token.token.inserted:not(.prefix)::selection,
+pre > code.diff-highlight .token.token.inserted:not(.prefix) *::selection {
+	background-color: hsla(135, 73%, 55%, 0.25);
+}
+
+/* Previewers plugin overrides */
+/* Based on https://github.com/atom-community/atom-ide-datatip/blob/master/styles/atom-ide-datatips.less and https://github.com/atom/atom/blob/master/packages/one-light-ui */
+/* Border around popup */
+.prism-previewer.prism-previewer:before,
+.prism-previewer-gradient.prism-previewer-gradient div {
+	border-color: hsl(0, 0, 95%);
+}
+
+/* Angle and time should remain as circles and are hence not included */
+.prism-previewer-color.prism-previewer-color:before,
+.prism-previewer-gradient.prism-previewer-gradient div,
+.prism-previewer-easing.prism-previewer-easing:before {
+	border-radius: 0.3em;
+}
+
+/* Triangles pointing to the code */
+.prism-previewer.prism-previewer:after {
+	border-top-color: hsl(0, 0, 95%);
+}
+
+.prism-previewer-flipped.prism-previewer-flipped.after {
+	border-bottom-color: hsl(0, 0, 95%);
+}
+
+/* Background colour within the popup */
+.prism-previewer-angle.prism-previewer-angle:before,
+.prism-previewer-time.prism-previewer-time:before,
+.prism-previewer-easing.prism-previewer-easing {
+	background: hsl(0, 0%, 100%);
+}
+
+/* For angle, this is the positive area (eg. 90deg will display one quadrant in this colour) */
+/* For time, this is the alternate colour */
+.prism-previewer-angle.prism-previewer-angle circle,
+.prism-previewer-time.prism-previewer-time circle {
+	stroke: hsl(230, 8%, 24%);
+	stroke-opacity: 1;
+}
+
+/* Stroke colours of the handle, direction point, and vector itself */
+.prism-previewer-easing.prism-previewer-easing circle,
+.prism-previewer-easing.prism-previewer-easing path,
+.prism-previewer-easing.prism-previewer-easing line {
+	stroke: hsl(230, 8%, 24%);
+}
+
+/* Fill colour of the handle */
+.prism-previewer-easing.prism-previewer-easing circle {
+	fill: transparent;
+}
+
+
+@media (prefers-color-scheme: dark) {
+    /**
+     * One Dark theme for prism.js
+     * Based on Atom's One Dark theme: https://github.com/atom/atom/tree/master/packages/one-dark-syntax
+     */
+
+    /**
+     * One Dark colours (accurate as of commit 8ae45ca on 6 Sep 2018)
+     * From colors.less
+     * --mono-1: hsl(220, 14%, 71%);
+     * --mono-2: hsl(220, 9%, 55%);
+     * --mono-3: hsl(220, 10%, 40%);
+     * --hue-1: hsl(187, 47%, 55%);
+     * --hue-2: hsl(207, 82%, 66%);
+     * --hue-3: hsl(286, 60%, 67%);
+     * --hue-4: hsl(95, 38%, 62%);
+     * --hue-5: hsl(355, 65%, 65%);
+     * --hue-5-2: hsl(5, 48%, 51%);
+     * --hue-6: hsl(29, 54%, 61%);
+     * --hue-6-2: hsl(39, 67%, 69%);
+     * --syntax-fg: hsl(220, 14%, 71%);
+     * --syntax-bg: hsl(220, 13%, 18%);
+     * --syntax-gutter: hsl(220, 14%, 45%);
+     * --syntax-guide: hsla(220, 14%, 71%, 0.15);
+     * --syntax-accent: hsl(220, 100%, 66%);
+     * From syntax-variables.less
+     * --syntax-selection-color: hsl(220, 13%, 28%);
+     * --syntax-gutter-background-color-selected: hsl(220, 13%, 26%);
+     * --syntax-cursor-line: hsla(220, 100%, 80%, 0.04);
+     */
+
+    code[class*="language-"],
+    pre[class*="language-"] {
+        background: hsl(220, 13%, 18%);
+        color: hsl(220, 14%, 71%);
+        text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+        font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+        direction: ltr;
+        text-align: left;
+        white-space: pre;
+        word-spacing: normal;
+        word-break: normal;
+        line-height: 1.5;
+        -moz-tab-size: 2;
+        -o-tab-size: 2;
+        tab-size: 2;
+        -webkit-hyphens: none;
+        -moz-hyphens: none;
+        -ms-hyphens: none;
+        hyphens: none;
+    }
+
+    /* Selection */
+    code[class*="language-"]::-moz-selection,
+    code[class*="language-"] *::-moz-selection,
+    pre[class*="language-"] *::-moz-selection {
+        background: hsl(220, 13%, 28%);
+        color: inherit;
+        text-shadow: none;
+    }
+
+    code[class*="language-"]::selection,
+    code[class*="language-"] *::selection,
+    pre[class*="language-"] *::selection {
+        background: hsl(220, 13%, 28%);
+        color: inherit;
+        text-shadow: none;
+    }
+
+    /* Code blocks */
+    pre[class*="language-"] {
+        padding: 1em;
+        margin: 0.5em 0;
+        overflow: auto;
+        border-radius: 0.3em;
+    }
+
+    /* Inline code */
+    :not(pre) > code[class*="language-"] {
+        padding: 0.2em 0.3em;
+        border-radius: 0.3em;
+        white-space: normal;
+    }
+
+    /* Print */
+    @media print {
+        code[class*="language-"],
+        pre[class*="language-"] {
+            text-shadow: none;
+        }
+    }
+
+    .token.comment,
+    .token.prolog,
+    .token.cdata {
+        color: hsl(220, 10%, 40%);
+    }
+
+    .token.doctype,
+    .token.punctuation,
+    .token.entity {
+        color: hsl(220, 14%, 71%);
+    }
+
+    .token.attr-name,
+    .token.class-name,
+    .token.boolean,
+    .token.constant,
+    .token.number,
+    .token.atrule {
+        color: hsl(29, 54%, 61%);
+    }
+
+    .token.keyword {
+        color: hsl(286, 60%, 67%);
+    }
+
+    .token.property,
+    .token.tag,
+    .token.symbol,
+    .token.deleted,
+    .token.important {
+        color: hsl(355, 65%, 65%);
+    }
+
+    .token.selector,
+    .token.string,
+    .token.char,
+    .token.builtin,
+    .token.inserted,
+    .token.regex,
+    .token.attr-value,
+    .token.attr-value > .token.punctuation {
+        color: hsl(95, 38%, 62%);
+    }
+
+    .token.variable,
+    .token.operator,
+    .token.function {
+        color: hsl(207, 82%, 66%);
+    }
+
+    .token.url {
+        color: hsl(187, 47%, 55%);
+    }
+
+    /* HTML overrides */
+    .token.attr-value > .token.punctuation.attr-equals,
+    .token.special-attr > .token.attr-value > .token.value.css {
+        color: hsl(220, 14%, 71%);
+    }
+
+    /* CSS overrides */
+    .language-css .token.selector {
+        color: hsl(355, 65%, 65%);
+    }
+
+    .language-css .token.property {
+        color: hsl(220, 14%, 71%);
+    }
+
+    .language-css .token.function,
+    .language-css .token.url > .token.function {
+        color: hsl(187, 47%, 55%);
+    }
+
+    .language-css .token.url > .token.string.url {
+        color: hsl(95, 38%, 62%);
+    }
+
+    .language-css .token.important,
+    .language-css .token.atrule .token.rule {
+        color: hsl(286, 60%, 67%);
+    }
+
+    /* JS overrides */
+    .language-javascript .token.operator {
+        color: hsl(286, 60%, 67%);
+    }
+
+    .language-javascript .token.template-string > .token.interpolation > .token.interpolation-punctuation.punctuation {
+        color: hsl(5, 48%, 51%);
+    }
+
+    /* JSON overrides */
+    .language-json .token.operator {
+        color: hsl(220, 14%, 71%);
+    }
+
+    .language-json .token.null.keyword {
+        color: hsl(29, 54%, 61%);
+    }
+
+    /* MD overrides */
+    .language-markdown .token.url,
+    .language-markdown .token.url > .token.operator,
+    .language-markdown .token.url-reference.url > .token.string {
+        color: hsl(220, 14%, 71%);
+    }
+
+    .language-markdown .token.url > .token.content {
+        color: hsl(207, 82%, 66%);
+    }
+
+    .language-markdown .token.url > .token.url,
+    .language-markdown .token.url-reference.url {
+        color: hsl(187, 47%, 55%);
+    }
+
+    .language-markdown .token.blockquote.punctuation,
+    .language-markdown .token.hr.punctuation {
+        color: hsl(220, 10%, 40%);
+        font-style: italic;
+    }
+
+    .language-markdown .token.code-snippet {
+        color: hsl(95, 38%, 62%);
+    }
+
+    .language-markdown .token.bold .token.content {
+        color: hsl(29, 54%, 61%);
+    }
+
+    .language-markdown .token.italic .token.content {
+        color: hsl(286, 60%, 67%);
+    }
+
+    .language-markdown .token.strike .token.content,
+    .language-markdown .token.strike .token.punctuation,
+    .language-markdown .token.list.punctuation,
+    .language-markdown .token.title.important > .token.punctuation {
+        color: hsl(355, 65%, 65%);
+    }
+
+    /* General */
+    .token.bold {
+        font-weight: bold;
+    }
+
+    .token.comment,
+    .token.italic {
+        font-style: italic;
+    }
+
+    .token.entity {
+        cursor: help;
+    }
+
+    .token.namespace {
+        opacity: 0.8;
+    }
+
+    /* Plugin overrides */
+    /* Selectors should have higher specificity than those in the plugins' default stylesheets */
+
+    /* Show Invisibles plugin overrides */
+    .token.token.tab:not(:empty):before,
+    .token.token.cr:before,
+    .token.token.lf:before,
+    .token.token.space:before {
+        color: hsla(220, 14%, 71%, 0.15);
+        text-shadow: none;
+    }
+
+    /* Toolbar plugin overrides */
+    /* Space out all buttons and move them away from the right edge of the code block */
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item {
+        margin-right: 0.4em;
+    }
+
+    /* Styling the buttons */
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > button,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > a,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > span {
+        background: hsl(220, 13%, 26%);
+        color: hsl(220, 9%, 55%);
+        padding: 0.1em 0.4em;
+        border-radius: 0.3em;
+    }
+
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > button:hover,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > button:focus,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > a:hover,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > a:focus,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:hover,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:focus {
+        background: hsl(220, 13%, 28%);
+        color: hsl(220, 14%, 71%);
+    }
+
+    /* Line Highlight plugin overrides */
+    /* The highlighted line itself */
+    .line-highlight.line-highlight {
+        background: hsla(220, 100%, 80%, 0.04);
+    }
+
+    /* Default line numbers in Line Highlight plugin */
+    .line-highlight.line-highlight:before,
+    .line-highlight.line-highlight[data-end]:after {
+        background: hsl(220, 13%, 26%);
+        color: hsl(220, 14%, 71%);
+        padding: 0.1em 0.6em;
+        border-radius: 0.3em;
+        box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.2); /* same as Toolbar plugin default */
+    }
+
+    /* Hovering over a linkable line number (in the gutter area) */
+    /* Requires Line Numbers plugin as well */
+    pre[id].linkable-line-numbers.linkable-line-numbers span.line-numbers-rows > span:hover:before {
+        background-color: hsla(220, 100%, 80%, 0.04);
+    }
+
+    /* Line Numbers and Command Line plugins overrides */
+    /* Line separating gutter from coding area */
+    .line-numbers.line-numbers .line-numbers-rows,
+    .command-line .command-line-prompt {
+        border-right-color: hsla(220, 14%, 71%, 0.15);
+    }
+
+    /* Stuff in the gutter */
+    .line-numbers .line-numbers-rows > span:before,
+    .command-line .command-line-prompt > span:before {
+        color: hsl(220, 14%, 45%);
+    }
+
+    /* Match Braces plugin overrides */
+    /* Note: Outline colour is inherited from the braces */
+    .rainbow-braces .token.token.punctuation.brace-level-1,
+    .rainbow-braces .token.token.punctuation.brace-level-5,
+    .rainbow-braces .token.token.punctuation.brace-level-9 {
+        color: hsl(355, 65%, 65%);
+    }
+
+    .rainbow-braces .token.token.punctuation.brace-level-2,
+    .rainbow-braces .token.token.punctuation.brace-level-6,
+    .rainbow-braces .token.token.punctuation.brace-level-10 {
+        color: hsl(95, 38%, 62%);
+    }
+
+    .rainbow-braces .token.token.punctuation.brace-level-3,
+    .rainbow-braces .token.token.punctuation.brace-level-7,
+    .rainbow-braces .token.token.punctuation.brace-level-11 {
+        color: hsl(207, 82%, 66%);
+    }
+
+    .rainbow-braces .token.token.punctuation.brace-level-4,
+    .rainbow-braces .token.token.punctuation.brace-level-8,
+    .rainbow-braces .token.token.punctuation.brace-level-12 {
+        color: hsl(286, 60%, 67%);
+    }
+
+    /* Diff Highlight plugin overrides */
+    /* Taken from https://github.com/atom/github/blob/master/styles/variables.less */
+    pre.diff-highlight > code .token.token.deleted:not(.prefix),
+    pre > code.diff-highlight .token.token.deleted:not(.prefix) {
+        background-color: hsla(353, 100%, 66%, 0.15);
+    }
+
+    pre.diff-highlight > code .token.token.deleted:not(.prefix)::-moz-selection,
+    pre.diff-highlight > code .token.token.deleted:not(.prefix) *::-moz-selection,
+    pre > code.diff-highlight .token.token.deleted:not(.prefix)::-moz-selection,
+    pre > code.diff-highlight .token.token.deleted:not(.prefix) *::-moz-selection {
+        background-color: hsla(353, 95%, 66%, 0.25);
+    }
+
+    pre.diff-highlight > code .token.token.deleted:not(.prefix)::selection,
+    pre.diff-highlight > code .token.token.deleted:not(.prefix) *::selection,
+    pre > code.diff-highlight .token.token.deleted:not(.prefix)::selection,
+    pre > code.diff-highlight .token.token.deleted:not(.prefix) *::selection {
+        background-color: hsla(353, 95%, 66%, 0.25);
+    }
+
+    pre.diff-highlight > code .token.token.inserted:not(.prefix),
+    pre > code.diff-highlight .token.token.inserted:not(.prefix) {
+        background-color: hsla(137, 100%, 55%, 0.15);
+    }
+
+    pre.diff-highlight > code .token.token.inserted:not(.prefix)::-moz-selection,
+    pre.diff-highlight > code .token.token.inserted:not(.prefix) *::-moz-selection,
+    pre > code.diff-highlight .token.token.inserted:not(.prefix)::-moz-selection,
+    pre > code.diff-highlight .token.token.inserted:not(.prefix) *::-moz-selection {
+        background-color: hsla(135, 73%, 55%, 0.25);
+    }
+
+    pre.diff-highlight > code .token.token.inserted:not(.prefix)::selection,
+    pre.diff-highlight > code .token.token.inserted:not(.prefix) *::selection,
+    pre > code.diff-highlight .token.token.inserted:not(.prefix)::selection,
+    pre > code.diff-highlight .token.token.inserted:not(.prefix) *::selection {
+        background-color: hsla(135, 73%, 55%, 0.25);
+    }
+
+    /* Previewers plugin overrides */
+    /* Based on https://github.com/atom-community/atom-ide-datatip/blob/master/styles/atom-ide-datatips.less and https://github.com/atom/atom/blob/master/packages/one-dark-ui */
+    /* Border around popup */
+    .prism-previewer.prism-previewer:before,
+    .prism-previewer-gradient.prism-previewer-gradient div {
+        border-color: hsl(224, 13%, 17%);
+    }
+
+    /* Angle and time should remain as circles and are hence not included */
+    .prism-previewer-color.prism-previewer-color:before,
+    .prism-previewer-gradient.prism-previewer-gradient div,
+    .prism-previewer-easing.prism-previewer-easing:before {
+        border-radius: 0.3em;
+    }
+
+    /* Triangles pointing to the code */
+    .prism-previewer.prism-previewer:after {
+        border-top-color: hsl(224, 13%, 17%);
+    }
+
+    .prism-previewer-flipped.prism-previewer-flipped.after {
+        border-bottom-color: hsl(224, 13%, 17%);
+    }
+
+    /* Background colour within the popup */
+    .prism-previewer-angle.prism-previewer-angle:before,
+    .prism-previewer-time.prism-previewer-time:before,
+    .prism-previewer-easing.prism-previewer-easing {
+        background: hsl(219, 13%, 22%);
+    }
+
+    /* For angle, this is the positive area (eg. 90deg will display one quadrant in this colour) */
+    /* For time, this is the alternate colour */
+    .prism-previewer-angle.prism-previewer-angle circle,
+    .prism-previewer-time.prism-previewer-time circle {
+        stroke: hsl(220, 14%, 71%);
+        stroke-opacity: 1;
+    }
+
+    /* Stroke colours of the handle, direction point, and vector itself */
+    .prism-previewer-easing.prism-previewer-easing circle,
+    .prism-previewer-easing.prism-previewer-easing path,
+    .prism-previewer-easing.prism-previewer-easing line {
+        stroke: hsl(220, 14%, 71%);
+    }
+
+    /* Fill colour of the handle */
+    .prism-previewer-easing.prism-previewer-easing circle {
+        fill: transparent;
+    }
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+    --token-inserted-color: hsl(126, 80.5%, 92%);
+    --token-deleted-color: hsl(0 100% 95.7%);
+    --token-prefix-background-color: rgba(0,0,0,.1);
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+
+@media (prefers-color-scheme: dark) {
+    pre[class*="language-diff-"] {
+        --token-inserted-color: hsl(126, 22%, 22%);
+        --token-prefix-background-color: rgba(0,0,0,.2);
+        --token-deleted-color: hsl(0, 40%, 26%);
+    }
+}
+
+.token.deleted {
+	background-color: var(--token-deleted-color);
+	color: inherit;
+}
+.token.inserted {
+	background-color: var(--token-inserted-color);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: var(--token-prefix-background-color);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+
+	--horizontal-padding: 3rem;
+}
+@media (max-width: 820px) {
+	:root {
+		--horizontal-padding: 1rem;
+	}
+}
+
+/* Theme colors */
+:root {
+	--color-gray-95: #0d0d0d;
+	--color-gray-90: #1a1a1a;
+    --color-gray-15: #d9d9d9;
+
+	--background-color: #FFFCF786;
+	--background-color-solid: #FFFCF7;
+	--background-image: url(/img/spiration-light.png);
+
+	--theme-background-color: #00030813;
+
+	--text-color: var(--color-gray-95);
+	--text-color-link: #301014;
+	--text-color-link-active: #5f2b48;
+	--text-color-link-visited: #5E555A;
+
+	--syntax-tab-size: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-gray-95: #f2f2f2;
+        --color-gray-90: #e6e6e6;
+        --color-gray-15: #262626;
+
+        --theme-background-color: #FFFCF713;
+
+        /* --text-color is assigned to --color-gray-_ above */
+        --text-color-link: #b5bad0;
+        --text-color-link-active: #FFDD93;
+        --text-color-link-visited: #8594ad;
+
+        --background-color: #06010a86;
+        --background-color-solid: #06010a;
+        --background-image: url(/img/spiration-dark.png);
+    }
+}
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	min-height: 100vh;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	background-image: var(--background-image);
+    scroll-behavior: smooth;
+}
+body {
+	max-width: calc(80ch + var(--horizontal-padding) * 2);
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+a > svg:hover {
+	fill: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem var(--horizontal-padding);
+}
+main :first-child {
+	margin-top: 0;
+}
+
+h1 {
+	margin-top: 0.25em;
+}
+
+header {
+	display: flex;
+	border-bottom: 1px dashed var(--color-gray-90);
+}
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+span.spacer {
+	flex-grow: 1;
+}
+
+.links-nextprev {
+	list-style: none;
+	border-top: 1px dashed var(--color-gray-90);
+	margin: 0 calc(-1 * var(--horizontal-padding));
+	padding: 0;
+}
+.links-nextprev li {
+	margin: 1em 0;
+	padding: 0 var(--horizontal-padding);
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+code {
+    background-color: var(--color-gray-15);
+    padding: 0.15ch 0.5ch;
+    border-radius: 0.5ch;
+}
+
+img {
+	display: block;
+	margin: 0 auto;
+	max-width: 100%;
+	height: auto;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em var(--horizontal-padding);
+}
+a[href]:visited.home-link,
+.nav-item a[href]:visited {
+	color: var(--text-color-link);
+}
+a[href]:hover.home-link,
+a[href]:active.home-link,
+.nav-item a[href]:hover,
+.nav-item a[href]:active {
+	color: var(--text-color-link-active);
+}
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 1em;
+}
+.postlist-date {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+#subscribe-link > svg {
+	vertical-align: bottom;
+	margin-bottom: 0.125em;
+}
+
+/* About */
+#sidebar-icon-links {
+	margin-top: 1em;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+h2 {
+    position: sticky;
+    top: 0;
+	margin-top: 1.5em;
+    padding: 0.33em 0;
+}
+
+h2.sticky {
+    background-color: var(--background-color-solid);
+    z-index: 999;
+}
+
+h2.sticky.passed {
+    opacity: 0;
+    z-index: 998;
+}
+
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: var(--text-color-link-active);
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}</style>
+        
+	</head>
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+
+		<header>
+			<a href="/" class="home-link">Brendan Innis</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/">Posts</a></li>
+					<li class="nav-item"><a href="/tags.html">Tags</a></li>
+					<li class="nav-item"><a href="/about.html">About Me</a></li>
+				</ul>
+			</nav>
+			<span class="spacer"></span>
+		</header>
+
+		<main id="skip">
+			
+
+<ul class="post-metadata">
+	<li><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-color)" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 0 1 1 1v1h4V3a1 1 0 1 1 2 0v1h3a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V3a1 1 0 0 1 1-1zM8 6H5v3h14V6h-3v1a1 1 0 1 1-2 0V6h-4v1a1 1 0 0 1-2 0V6zm11 5H5v8h14v-8z"/></svg></li>
+	<li><time datetime="2024-09-25">25 September 2024</time></li>
+	<li><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-color)" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 0 1 1-1h8a1 1 0 0 1 .707.293l10 10a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-10-10A1 1 0 0 1 2 11V3zm2 1v6.586l9 9L19.586 13l-9-9H4z" /><path d="M9 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" /></svg></li>
+	<li><a href="/tags/visionos/" class="post-tag">visionOS</a>, </li>
+	<li><a href="/tags/realitykit/" class="post-tag">RealityKit</a>, </li>
+	<li><a href="/tags/swiftui/" class="post-tag">SwiftUI</a></li>
+</ul>
+
+<h1>Building Your First App for visionOS: Part 2</h1>
+
+<p>In part 1 of this tutorial, you learned how to set up a new <strong>visionOS</strong> project and create a basic user interface using <strong>SwiftUI</strong>. In this part, you'll learn how to use <strong>RealityKit</strong> and <strong>SwiftUI</strong> to display and animate a 3D bar chart in a <strong>visionOS</strong> app.</p>
+<p>You can pickup this tutorial using the code you wrote in part 1, or download the finished project from part 1 <a href="https://github.com/brendaninnis/3D-Charts-Tutorial/raw/main/part-1.zip">here</a>. After part 1 you should have a project that looks like this:</p>
+<picture>
+			<source type="image/avif" srcset="/img/ApheWpQk_9-400.avif 400w, /img/ApheWpQk_9-600.avif 600w" sizes="null">
+<source type="image/webp" srcset="/img/ApheWpQk_9-400.webp 400w, /img/ApheWpQk_9-600.webp 600w" sizes="null">
+<source type="image/jpeg" srcset="/img/ApheWpQk_9-400.jpeg 400w, /img/ApheWpQk_9-600.jpeg 600w" sizes="null">
+			<img src="/img/ApheWpQk_9-600.avif" width="600" height="300" alt="Part 1 Finished" loading="lazy" decoding="async">
+		</picture>
+<h2 id="adding-a-3d-bar-chart" tabindex="-1">Adding a 3D bar chart <a class="header-anchor" href="#adding-a-3d-bar-chart">#</a></h2>
+<p>When the user toggles the “Show Chart” button we're going to draw a 3D bar chart representing our data in the volumetric window. Since our chart will be made up of a collection of 3D objects, we'll create a root <code>Entity</code> in our <code>AppState</code> that will hold all the chart objects.</p>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token comment">// AppState.swift</span>
+<span class="token prefix unchanged"> </span><span class="token keyword">import</span> <span class="token class-name">Foundation</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span><span class="token keyword">import</span> <span class="token class-name">RealityKit</span>
+</span>
+<span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token attribute atrule">@Observable</span>
+<span class="token prefix unchanged"> </span><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">AppState</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> isShowingChart <span class="token operator">=</span> <span class="token boolean">false</span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> chartTitle <span class="token operator">=</span> <span class="token string-literal"><span class="token string">""</span></span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> chartContent<span class="token punctuation">:</span> <span class="token class-name">ChartContent</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>    <span class="token keyword">var</span> chart <span class="token operator">=</span> <span class="token class-name">Entity</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>
+<span class="token prefix inserted">+</span>    <span class="token keyword">init</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token prefix inserted">+</span>        <span class="token comment">// Position the chart near the bottom of the volume</span>
+<span class="token prefix inserted">+</span>        chart<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>y <span class="token operator">-=</span> <span class="token number">0.23</span>
+<span class="token prefix inserted">+</span>    <span class="token punctuation">}</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token punctuation">}</span>
+</span></code></pre>
+<p>Entity is a holder for 3D objects in <strong>RealityKit</strong>. We're going to make all the entities in our chart children of this root entity, that way we can manipulate the entire chart as a single object. When we first add the <code>chart: Entity</code> to the <code>RealityView</code> it's position (<code>translation</code>) will be in the center of the volume. Since our volume is 0.5 meters in height we move the chart down by 0.23 meters to position it near the bottom of the volume. It's helpful to keep in mind the coordinate space:</p>
+<picture>
+			<source type="image/avif" srcset="/img/KSWF-E2Qda-400.avif 400w, /img/KSWF-E2Qda-800.avif 800w" sizes="100vw">
+<source type="image/webp" srcset="/img/KSWF-E2Qda-400.webp 400w, /img/KSWF-E2Qda-800.webp 800w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/KSWF-E2Qda-400.jpeg 400w, /img/KSWF-E2Qda-800.jpeg 800w" sizes="100vw">
+			<img src="/img/KSWF-E2Qda-800.avif" width="800" height="538" alt="visionOS Coordinate Space" loading="lazy" decoding="async">
+		</picture>
+<p>Next, we'll add the chart to our <code>RealityView</code>:</p>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token comment">// ChartView.swift</span>
+<span class="token prefix unchanged"> </span><span class="token keyword">struct</span> <span class="token class-name">ChartView</span><span class="token punctuation">:</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+</span>
+<span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> body<span class="token punctuation">:</span> <span class="token keyword">some</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>        <span class="token class-name">RealityView</span> <span class="token punctuation">{</span> content <span class="token keyword">in</span>
+</span><span class="token deleted-sign deleted language-swift"><span class="token prefix deleted">-</span>            <span class="token keyword">if</span> <span class="token keyword">let</span> entity <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">loadEntity</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token prefix deleted">-</span>                content<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span>entity<span class="token punctuation">)</span>
+<span class="token prefix deleted">-</span>                entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>y <span class="token operator">-=</span> <span class="token number">0.1</span>
+<span class="token prefix deleted">-</span>            <span class="token punctuation">}</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>            content<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span>appState<span class="token punctuation">.</span>chart<span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>        <span class="token punctuation">}</span> update<span class="token punctuation">:</span> <span class="token punctuation">{</span> content <span class="token keyword">in</span>
+<span class="token prefix inserted">+</span>            appState<span class="token punctuation">.</span><span class="token function">updateChart</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>        <span class="token punctuation">}</span>
+<span class="token prefix unchanged"> </span>        <span class="token punctuation">.</span>toolbar <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>            <span class="token class-name">ToolbarItemGroup</span><span class="token punctuation">(</span>placement<span class="token punctuation">:</span> <span class="token punctuation">.</span>bottomOrnament<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+</span></code></pre>
+<p>We've also added an <code>update</code> block to our <code>RealityView</code>. This allows us to update the chart when the app state changes. Any changes to app state properties within <code>updateChart</code> will cause <code>update</code> to be called. We'll implement <code>updateChart</code> in a moment.</p>
+<h2 id="drawing-the-chart" tabindex="-1">Drawing the chart <a class="header-anchor" href="#drawing-the-chart">#</a></h2>
+<p>Before we draw the chart, we need to add to an <code>Entity</code> to our <code>ChartData</code> to represent each cell as a 3D object. Open <em>ChartContent.swift</em> and add the following code:</p>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token comment">// ChartContent.swift</span>
+<span class="token prefix unchanged"> </span>
+<span class="token prefix unchanged"> </span><span class="token keyword">import</span> <span class="token class-name">Foundation</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span><span class="token keyword">import</span> <span class="token class-name">RealityKit</span>
+</span>
+<span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token comment">/// Represents a cell in the chart</span>
+<span class="token prefix unchanged"> </span><span class="token attribute atrule">@Observable</span>
+<span class="token prefix unchanged"> </span><span class="token keyword">class</span> <span class="token class-name">ChartData</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>    <span class="token comment">/// The value held this cell in the chart</span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> value<span class="token punctuation">:</span> <span class="token class-name">String</span>
+<span class="token prefix unchanged"> </span>    <span class="token comment">/// The value as a `Float` or `0` if not a number</span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> floatValue<span class="token punctuation">:</span> <span class="token class-name">Float</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>        <span class="token class-name">Float</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span> <span class="token operator">??</span> <span class="token number">0</span>
+<span class="token prefix unchanged"> </span>    <span class="token punctuation">}</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>    <span class="token comment">/// Represents the data as a 3D object in a RealityKit scene</span>
+<span class="token prefix inserted">+</span>    <span class="token keyword">var</span> entity<span class="token punctuation">:</span> <span class="token class-name">Entity</span><span class="token operator">?</span>
+</span>
+<span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>    <span class="token keyword">init</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>        <span class="token keyword">self</span><span class="token punctuation">.</span>value <span class="token operator">=</span> value
+</span></code></pre>
+<p><strong>NOTE:</strong> We're going to make some assumptions about our chart:</p>
+<ol>
+<li>We're going to treat the first <code>ChartRow</code> as a row of headings for one axis of the chart.</li>
+<li>The first <code>ChartData</code> in each row will be the headings for the other axis.</li>
+<li>We'll also assume that all the values in the chart are positive numbers.</li>
+</ol>
+<p>Create a new Swift file called <em>AppState+ChartDrawing.swift</em> and add the following code:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// AppState+ChartDrawing.swift</span>
+
+<span class="token keyword">import</span> <span class="token class-name">Foundation</span>
+<span class="token keyword">import</span> <span class="token class-name">UIKit</span>
+<span class="token keyword">import</span> <span class="token class-name">RealityKit</span>
+
+<span class="token keyword">fileprivate</span> <span class="token keyword">extension</span> <span class="token class-name">ChartContent</span> <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> maxChartValue<span class="token punctuation">:</span> <span class="token class-name">Float</span> <span class="token punctuation">{</span>
+        <span class="token keyword">var</span> result<span class="token punctuation">:</span> <span class="token class-name">Float</span> <span class="token operator">=</span> <span class="token number">0</span>
+        <span class="token comment">// Drop headings</span>
+        <span class="token keyword">for</span> row <span class="token keyword">in</span> <span class="token function">dropFirst</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">for</span> col <span class="token keyword">in</span> row<span class="token punctuation">.</span>data<span class="token punctuation">.</span><span class="token function">dropFirst</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                result <span class="token operator">=</span> <span class="token class-name">Swift</span><span class="token punctuation">.</span><span class="token function">max</span><span class="token punctuation">(</span>result<span class="token punctuation">,</span> col<span class="token punctuation">.</span>floatValue<span class="token punctuation">)</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> result <span class="token operator">&lt;=</span> <span class="token number">0</span> <span class="token punctuation">{</span>
+            result <span class="token operator">=</span> <span class="token number">1</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> result
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">fileprivate</span> <span class="token keyword">var</span> chartBoundsDidChange <span class="token operator">=</span> <span class="token boolean">true</span>
+
+<span class="token keyword">extension</span> <span class="token class-name">AppState</span> <span class="token punctuation">{</span>
+    <span class="token comment">/// The width and depth of a bar in meters</span>
+    <span class="token keyword">private</span> <span class="token keyword">var</span> barSize<span class="token punctuation">:</span> <span class="token class-name">Float</span> <span class="token punctuation">{</span> <span class="token number">0.05</span> <span class="token punctuation">}</span>
+    <span class="token comment">/// The height of a bar in meters</span>
+    <span class="token keyword">private</span> <span class="token keyword">var</span> barHeight<span class="token punctuation">:</span> <span class="token class-name">Float</span> <span class="token punctuation">{</span> barSize <span class="token operator">*</span> <span class="token number">5</span> <span class="token punctuation">}</span>
+    <span class="token comment">/// The size of the gutters in between the bars</span>
+    <span class="token keyword">private</span> <span class="token keyword">var</span> barPadding<span class="token punctuation">:</span> <span class="token class-name">Float</span> <span class="token punctuation">{</span> barSize <span class="token operator">*</span> <span class="token number">0.8</span> <span class="token punctuation">}</span>
+    <span class="token comment">/// The minimum height of a bar</span>
+    <span class="token keyword">private</span> <span class="token keyword">var</span> minBarScale<span class="token punctuation">:</span> <span class="token class-name">Float</span> <span class="token punctuation">{</span> <span class="token number">0.042</span> <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">enum</span> <span class="token class-name">ChartColors</span> <span class="token punctuation">{</span>
+        <span class="token keyword">case</span> red
+        <span class="token keyword">case</span> yellow
+        <span class="token keyword">case</span> green
+        <span class="token keyword">case</span> blue
+        
+        <span class="token keyword">var</span> uiColor<span class="token punctuation">:</span> <span class="token class-name">UIColor</span> <span class="token punctuation">{</span>
+            <span class="token keyword">switch</span> <span class="token keyword">self</span> <span class="token punctuation">{</span>
+            <span class="token keyword">case</span> <span class="token punctuation">.</span>red<span class="token punctuation">:</span>
+                <span class="token keyword">return</span> <span class="token punctuation">.</span>red
+            <span class="token keyword">case</span> <span class="token punctuation">.</span>yellow<span class="token punctuation">:</span>
+                <span class="token keyword">return</span> <span class="token punctuation">.</span>yellow
+            <span class="token keyword">case</span> <span class="token punctuation">.</span>green<span class="token punctuation">:</span>
+                <span class="token keyword">return</span> <span class="token punctuation">.</span>green
+            <span class="token keyword">case</span> <span class="token punctuation">.</span>blue<span class="token punctuation">:</span>
+                <span class="token keyword">return</span> <span class="token punctuation">.</span>blue
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+                
+        <span class="token keyword">static</span> <span class="token keyword">var</span> all<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token class-name">ChartColors</span><span class="token punctuation">]</span> <span class="token punctuation">{</span>
+            <span class="token punctuation">[</span>
+                <span class="token punctuation">.</span>red<span class="token punctuation">,</span>
+                <span class="token punctuation">.</span>yellow<span class="token punctuation">,</span>
+                <span class="token punctuation">.</span>green<span class="token punctuation">,</span>
+                <span class="token punctuation">.</span>blue<span class="token punctuation">,</span>
+            <span class="token punctuation">]</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">func</span> <span class="token function-definition function">updateChart</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// Calculate the greatest value to determine the height of the chart</span>
+        <span class="token keyword">let</span> maxChartValue <span class="token operator">=</span> chartContent<span class="token punctuation">.</span>maxChartValue
+        
+        chartContent<span class="token punctuation">.</span><span class="token function">dropFirst</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">enumerated</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>forEach <span class="token punctuation">{</span> rowIndex<span class="token punctuation">,</span> row <span class="token keyword">in</span>
+            <span class="token function">draw</span><span class="token punctuation">(</span>chartRow<span class="token punctuation">:</span> row<span class="token punctuation">,</span>
+                 maxChartValue<span class="token punctuation">:</span> maxChartValue<span class="token punctuation">,</span>
+                 rowIndex<span class="token punctuation">:</span> rowIndex<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token keyword">if</span> chartBoundsDidChange <span class="token punctuation">{</span>
+            <span class="token keyword">let</span> bounds <span class="token operator">=</span> chart<span class="token punctuation">.</span><span class="token function">visualBounds</span><span class="token punctuation">(</span>relativeTo<span class="token punctuation">:</span> <span class="token nil constant">nil</span><span class="token punctuation">)</span><span class="token punctuation">.</span>extents
+                        
+            <span class="token comment">// Position the middle of the chart in the middle of the volumne</span>
+            chart<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>x <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span> <span class="token operator">*</span> bounds<span class="token punctuation">.</span>x <span class="token operator">*</span> <span class="token number">0.5</span>
+            chart<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>z <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span> <span class="token operator">*</span> bounds<span class="token punctuation">.</span>z <span class="token operator">*</span> <span class="token number">0.5</span>
+            
+            chartBoundsDidChange <span class="token operator">=</span> <span class="token boolean">false</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">func</span> <span class="token function-definition function">draw</span><span class="token punctuation">(</span>chartRow row<span class="token punctuation">:</span> <span class="token class-name">ChartRow</span><span class="token punctuation">,</span>
+                      maxChartValue<span class="token punctuation">:</span> <span class="token class-name">Float</span><span class="token punctuation">,</span>
+                      rowIndex<span class="token punctuation">:</span> <span class="token class-name">Int</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">let</span> color <span class="token operator">=</span> <span class="token class-name">ChartColors</span><span class="token punctuation">.</span>all<span class="token punctuation">[</span>rowIndex<span class="token punctuation">]</span><span class="token punctuation">.</span>uiColor
+        
+        row<span class="token punctuation">.</span>data<span class="token punctuation">.</span><span class="token function">dropFirst</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">enumerated</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>forEach <span class="token punctuation">{</span> colIndex<span class="token punctuation">,</span> data <span class="token keyword">in</span>
+            <span class="token comment">// Determines the height of the bar</span>
+            <span class="token keyword">let</span> scale <span class="token operator">=</span> <span class="token function">max</span><span class="token punctuation">(</span>data<span class="token punctuation">.</span>floatValue <span class="token operator">/</span> maxChartValue<span class="token punctuation">,</span> minBarScale<span class="token punctuation">)</span>
+            
+            <span class="token function">drawCell</span><span class="token punctuation">(</span>data<span class="token punctuation">:</span> data<span class="token punctuation">,</span>
+                     scale<span class="token punctuation">:</span> scale<span class="token punctuation">,</span>
+                     color<span class="token punctuation">:</span> color<span class="token punctuation">,</span>
+                     rowIndex<span class="token punctuation">:</span> rowIndex<span class="token punctuation">,</span>
+                     colIndex<span class="token punctuation">:</span> colIndex<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">func</span> <span class="token function-definition function">drawCell</span><span class="token punctuation">(</span>data<span class="token punctuation">:</span> <span class="token class-name">ChartData</span><span class="token punctuation">,</span>
+                          scale<span class="token punctuation">:</span> <span class="token class-name">Float</span><span class="token punctuation">,</span>
+                          color<span class="token punctuation">:</span> <span class="token class-name">UIColor</span><span class="token punctuation">,</span>
+                          rowIndex<span class="token punctuation">:</span> <span class="token class-name">Int</span><span class="token punctuation">,</span>
+                          colIndex<span class="token punctuation">:</span> <span class="token class-name">Int</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// Create the entity if needed</span>
+        <span class="token keyword">let</span> entity <span class="token operator">=</span> data<span class="token punctuation">.</span>entity <span class="token operator">??</span> <span class="token punctuation">{</span>
+            chartBoundsDidChange <span class="token operator">=</span> <span class="token boolean">true</span>
+
+            <span class="token comment">// Create a model entity for the bar</span>
+            <span class="token keyword">let</span> mesh <span class="token operator">=</span> <span class="token class-name">MeshResource</span><span class="token punctuation">.</span><span class="token function">generateBox</span><span class="token punctuation">(</span>width<span class="token punctuation">:</span> barSize<span class="token punctuation">,</span>
+                                                height<span class="token punctuation">:</span> barHeight<span class="token punctuation">,</span>
+                                                depth<span class="token punctuation">:</span> barSize<span class="token punctuation">)</span>
+            <span class="token keyword">let</span> colorMaterial <span class="token operator">=</span> <span class="token class-name">SimpleMaterial</span><span class="token punctuation">(</span>color<span class="token punctuation">:</span> color<span class="token punctuation">,</span>
+                                               roughness<span class="token punctuation">:</span> <span class="token number">0.3</span><span class="token punctuation">,</span>
+                                               isMetallic<span class="token punctuation">:</span> <span class="token boolean">false</span><span class="token punctuation">)</span>
+            <span class="token keyword">let</span> entity <span class="token operator">=</span> <span class="token class-name">ModelEntity</span><span class="token punctuation">(</span>mesh<span class="token punctuation">:</span> mesh<span class="token punctuation">,</span> materials<span class="token punctuation">:</span> <span class="token punctuation">[</span>colorMaterial<span class="token punctuation">]</span><span class="token punctuation">)</span>
+            
+            <span class="token comment">// Set the height of the bar</span>
+            entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>scale<span class="token punctuation">.</span>y <span class="token operator">=</span> scale
+            <span class="token comment">// Align the bars vertically</span>
+            entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>y <span class="token operator">=</span> barHeight <span class="token operator">*</span> scale <span class="token operator">*</span> <span class="token number">0.5</span>
+ 
+            <span class="token comment">// Position the bar in row and column position</span>
+            <span class="token keyword">let</span> x <span class="token operator">=</span> <span class="token punctuation">(</span>barSize <span class="token operator">+</span> barPadding<span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token class-name">Float</span><span class="token punctuation">(</span>colIndex<span class="token punctuation">)</span> <span class="token operator">+</span> barSize <span class="token operator">*</span> <span class="token number">0.5</span>
+            <span class="token keyword">let</span> z <span class="token operator">=</span> <span class="token punctuation">(</span>barSize <span class="token operator">+</span> barPadding<span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token class-name">Float</span><span class="token punctuation">(</span>rowIndex<span class="token punctuation">)</span> <span class="token operator">+</span> barSize <span class="token operator">*</span> <span class="token number">0.5</span>
+            entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>x <span class="token operator">=</span> x
+            entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>z <span class="token operator">=</span> z
+            
+            <span class="token comment">// Add the entity to the chart</span>
+            chart<span class="token punctuation">.</span><span class="token function">addChild</span><span class="token punctuation">(</span>entity<span class="token punctuation">)</span>
+            
+            <span class="token comment">// Store the new entity in this ChartData</span>
+            data<span class="token punctuation">.</span>entity <span class="token operator">=</span> entity
+            
+            <span class="token keyword">return</span> entity
+        <span class="token punctuation">}</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+        <span class="token comment">// Change the height of the bar if needed</span>
+        <span class="token keyword">if</span> entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>scale<span class="token punctuation">.</span>y <span class="token operator">!=</span> scale <span class="token punctuation">{</span>
+            <span class="token keyword">var</span> transform <span class="token operator">=</span> entity<span class="token punctuation">.</span>transform
+            transform<span class="token punctuation">.</span>scale<span class="token punctuation">.</span>y <span class="token operator">=</span> scale
+            transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>y <span class="token operator">=</span> barHeight <span class="token operator">*</span> scale <span class="token operator">*</span> <span class="token number">0.5</span>
+            <span class="token comment">// Animate the bar height changes</span>
+            <span class="token keyword">let</span> anim <span class="token operator">=</span> <span class="token class-name">FromToByAnimation</span><span class="token punctuation">(</span>from<span class="token punctuation">:</span> entity<span class="token punctuation">.</span>transform<span class="token punctuation">,</span>
+                                         to<span class="token punctuation">:</span> transform<span class="token punctuation">,</span>
+                                         bindTarget<span class="token punctuation">:</span> <span class="token punctuation">.</span>transform<span class="token punctuation">)</span>
+            <span class="token keyword">if</span> <span class="token keyword">let</span> res <span class="token operator">=</span> <span class="token keyword">try</span><span class="token operator">?</span> <span class="token class-name">AnimationResource</span><span class="token punctuation">.</span><span class="token function">generate</span><span class="token punctuation">(</span>with<span class="token punctuation">:</span> anim<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                entity<span class="token punctuation">.</span><span class="token function">playAnimation</span><span class="token punctuation">(</span>res<span class="token punctuation">)</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>For each cell we create a <code>ModelEntity</code> representing a bar in the chart using <code>MeshResource</code> to generate a box shape and <code>SimpleMaterial</code> to give it some color. We modify the entity transform to position each bar in row and column position, set it's height and align the bars so that they sit on the floor of the volume. When the height of a bar changes we use a simple <strong>UIKit</strong> animation to animate the change.</p>
+<p>Run the app and you should see a 3D bar chart in the volumetric window. Make changes to the data to see the chart update. The app should look like this:</p>
+<picture>
+			<source type="image/avif" srcset="/img/MlLs2yz9TG-400.avif 400w, /img/MlLs2yz9TG-800.avif 800w" sizes="100vw">
+<source type="image/webp" srcset="/img/MlLs2yz9TG-400.webp 400w, /img/MlLs2yz9TG-800.webp 800w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/MlLs2yz9TG-400.jpeg 400w, /img/MlLs2yz9TG-800.jpeg 800w" sizes="100vw">
+			<img src="/img/MlLs2yz9TG-800.avif" width="800" height="400" alt="Drawing 3D Bars" loading="lazy" decoding="async">
+		</picture>
+<h2 id="drawing-a-base-plate" tabindex="-1">Drawing a base plate <a class="header-anchor" href="#drawing-a-base-plate">#</a></h2>
+<p>The next thing we want is to be able to label the chart. We'll start by adding a base plate to the chart so our text will stand out and the chart will feel more cohesive.</p>
+<p>First, modify the <em>AppState.swift</em> file to include a new stored property for our base plate:</p>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token comment">// AppState.swift</span>
+<span class="token prefix unchanged"> </span><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">AppState</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> chartTitle <span class="token operator">=</span> <span class="token string-literal"><span class="token string">""</span></span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> chartContent<span class="token punctuation">:</span> <span class="token class-name">ChartContent</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> chart <span class="token operator">=</span> <span class="token class-name">Entity</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>    <span class="token keyword">var</span> basePlate<span class="token punctuation">:</span> <span class="token class-name">Entity</span><span class="token operator">?</span>
+</span>
+<span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>    <span class="token keyword">init</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>        <span class="token comment">// Position the chart near the bottom of the volume</span>
+</span></code></pre>
+<p>Next, we'll make a few modifications to <em>AppState+ChartDrawing.swift</em>.</p>
+<p>First we add new properties to the <code>AppState</code> extension for the base plate:</p>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token comment">// AppState+ChartDrawing.swift</span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">private</span> <span class="token keyword">var</span> barPadding<span class="token punctuation">:</span> <span class="token class-name">Float</span> <span class="token punctuation">{</span> barSize <span class="token operator">*</span> <span class="token number">0.8</span> <span class="token punctuation">}</span>
+<span class="token prefix unchanged"> </span>    <span class="token comment">/// The minimum height of a bar</span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">private</span> <span class="token keyword">var</span> minBarScale<span class="token punctuation">:</span> <span class="token class-name">Float</span> <span class="token punctuation">{</span> <span class="token number">0.042</span> <span class="token punctuation">}</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>    <span class="token comment">/// The distance between the edge of the base plate and the chart content</span>
+<span class="token prefix inserted">+</span>    <span class="token keyword">private</span> <span class="token keyword">var</span> basePlatePadding<span class="token punctuation">:</span> <span class="token class-name">Float</span> <span class="token punctuation">{</span> <span class="token number">0.1</span> <span class="token punctuation">}</span>
+<span class="token prefix inserted">+</span>    <span class="token comment">/// The thickness of the base plate</span>
+<span class="token prefix inserted">+</span>    <span class="token keyword">private</span> <span class="token keyword">var</span> basePlateHeight<span class="token punctuation">:</span> <span class="token class-name">Float</span> <span class="token punctuation">{</span> <span class="token number">0.02</span> <span class="token punctuation">}</span>
+</span>
+<span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>    <span class="token keyword">private</span> <span class="token keyword">enum</span> <span class="token class-name">ChartColors</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>        <span class="token keyword">case</span> red
+</span></code></pre>
+<p>Then we'll call a new method in <code>updateChart</code> when the chart bounds change to draw the base plate:</p>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>        <span class="token keyword">if</span> chartBoundsDidChange <span class="token punctuation">{</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>            basePlate<span class="token operator">?</span><span class="token punctuation">.</span><span class="token function">removeFromParent</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</span>
+<span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>            <span class="token keyword">let</span> bounds <span class="token operator">=</span> chart<span class="token punctuation">.</span><span class="token function">visualBounds</span><span class="token punctuation">(</span>relativeTo<span class="token punctuation">:</span> <span class="token nil constant">nil</span><span class="token punctuation">)</span><span class="token punctuation">.</span>extents
+</span>
+<span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>            <span class="token function">drawBasePlate</span><span class="token punctuation">(</span>inBounds<span class="token punctuation">:</span> bounds<span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>            <span class="token comment">// Position the middle of the chart in the middle of the volumne</span>
+<span class="token prefix unchanged"> </span>            chart<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>x <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span> <span class="token operator">*</span> bounds<span class="token punctuation">.</span>x <span class="token operator">*</span> <span class="token number">0.5</span>
+<span class="token prefix unchanged"> </span>            chart<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>z <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span> <span class="token operator">*</span> bounds<span class="token punctuation">.</span>z <span class="token operator">*</span> <span class="token number">0.5</span>
+</span></code></pre>
+<p>We have to remove the base plate from the chart before we calculate the chart bounds, otherwise the base plate will include itself and grow each time the chart bounds change.</p>
+<p>Finally, we'll implement the <code>drawBasePlate</code> method:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token keyword">private</span> <span class="token keyword">func</span> <span class="token function-definition function">drawBasePlate</span><span class="token punctuation">(</span>inBounds bounds<span class="token punctuation">:</span> SIMD3<span class="token operator">&lt;</span><span class="token class-name">Float</span><span class="token operator">></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// Add padding to the chart bounds</span>
+    <span class="token keyword">let</span> basePlateBounds <span class="token operator">=</span> bounds <span class="token operator">+</span> SIMD3<span class="token operator">&lt;</span><span class="token class-name">Float</span><span class="token operator">></span><span class="token punctuation">(</span>repeating<span class="token punctuation">:</span> basePlatePadding<span class="token punctuation">)</span>
+
+    <span class="token keyword">let</span> mesh <span class="token operator">=</span> <span class="token class-name">MeshResource</span><span class="token punctuation">.</span><span class="token function">generateBox</span><span class="token punctuation">(</span>width<span class="token punctuation">:</span> basePlateBounds<span class="token punctuation">.</span>x<span class="token punctuation">,</span>
+                                        height<span class="token punctuation">:</span> basePlateHeight<span class="token punctuation">,</span>
+                                        depth<span class="token punctuation">:</span> basePlateBounds<span class="token punctuation">.</span>z<span class="token punctuation">,</span>
+                                        cornerRadius<span class="token punctuation">:</span> basePlateHeight <span class="token operator">*</span> <span class="token number">0.5</span><span class="token punctuation">)</span>
+    <span class="token keyword">let</span> colorMaterial <span class="token operator">=</span> <span class="token class-name">SimpleMaterial</span><span class="token punctuation">(</span>color<span class="token punctuation">:</span> <span class="token punctuation">.</span>white<span class="token punctuation">,</span>
+                                       roughness<span class="token punctuation">:</span> <span class="token number">0.1</span><span class="token punctuation">,</span>
+                                       isMetallic<span class="token punctuation">:</span> <span class="token boolean">false</span><span class="token punctuation">)</span>
+    <span class="token keyword">let</span> basePlate <span class="token operator">=</span> <span class="token class-name">ModelEntity</span><span class="token punctuation">(</span>mesh<span class="token punctuation">:</span> mesh<span class="token punctuation">,</span> materials<span class="token punctuation">:</span> <span class="token punctuation">[</span>colorMaterial<span class="token punctuation">]</span><span class="token punctuation">)</span>
+    chart<span class="token punctuation">.</span><span class="token function">addChild</span><span class="token punctuation">(</span>basePlate<span class="token punctuation">)</span>
+
+    <span class="token comment">// Position the middle of the base plate in the middle of the chart</span>
+    basePlate<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>x <span class="token operator">+=</span> bounds<span class="token punctuation">.</span>x <span class="token operator">*</span> <span class="token number">0.5</span>
+    basePlate<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>z <span class="token operator">+=</span> bounds<span class="token punctuation">.</span>z <span class="token operator">*</span> <span class="token number">0.5</span>
+
+    <span class="token keyword">self</span><span class="token punctuation">.</span>basePlate <span class="token operator">=</span> basePlate
+<span class="token punctuation">}</span></code></pre>
+<p>We use the <code>chart</code> bounds to calculate the size of the base plate based on the content of the 3D chart. The bounds of the chart include the bounds all it's descendants, so it is convenient to use this to calculate the size required for the base plate.</p>
+<h2 id="labelling-the-rows" tabindex="-1">Labelling the rows <a class="header-anchor" href="#labelling-the-rows">#</a></h2>
+<p>We want to draw 3D text on our chart to label the axes. Remember we are considering the first row of the chart to be the headings for one axis and the first column in each row to be the headings for the other axis. We'll draw the headings for the first row after the other rows so it is toward the user in the z-direction. We'll draw the headings for each row after each row in the x-direction because it makes the chart positions easy to calculate.</p>
+<p>Call a new method called <code>drawHeading</code> for each chart row:</p>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token comment">// AppState+ChartDrawing.swift</span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">private</span> <span class="token keyword">func</span> <span class="token function-definition function">draw</span><span class="token punctuation">(</span>chartRow row<span class="token punctuation">:</span> <span class="token class-name">ChartRow</span><span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                      maxChartValue<span class="token punctuation">:</span> <span class="token class-name">Float</span><span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                      rowIndex<span class="token punctuation">:</span> <span class="token class-name">Int</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>        <span class="token keyword">let</span> color <span class="token operator">=</span> <span class="token class-name">ChartColors</span><span class="token punctuation">.</span>all<span class="token punctuation">[</span>rowIndex<span class="token punctuation">]</span><span class="token punctuation">.</span>uiColor
+</span>
+<span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>        row<span class="token punctuation">.</span>data<span class="token punctuation">.</span><span class="token function">dropFirst</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">enumerated</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>forEach <span class="token punctuation">{</span> colIndex<span class="token punctuation">,</span> data <span class="token keyword">in</span>
+<span class="token prefix unchanged"> </span>            <span class="token comment">// Determines the height of the bar</span>
+<span class="token prefix unchanged"> </span>            <span class="token keyword">let</span> scale <span class="token operator">=</span> <span class="token function">max</span><span class="token punctuation">(</span>data<span class="token punctuation">.</span>floatValue <span class="token operator">/</span> maxChartValue<span class="token punctuation">,</span> minBarScale<span class="token punctuation">)</span>
+</span>
+<span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>            <span class="token function">drawCell</span><span class="token punctuation">(</span>data<span class="token punctuation">:</span> data<span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                     scale<span class="token punctuation">:</span> scale<span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                     color<span class="token punctuation">:</span> color<span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                     rowIndex<span class="token punctuation">:</span> rowIndex<span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                     colIndex<span class="token punctuation">:</span> colIndex<span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>        <span class="token punctuation">}</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>
+<span class="token prefix inserted">+</span>        <span class="token function">drawHeading</span><span class="token punctuation">(</span>forChartRow<span class="token punctuation">:</span> row<span class="token punctuation">,</span> rowIndex<span class="token punctuation">:</span> rowIndex<span class="token punctuation">)</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>    <span class="token punctuation">}</span>
+</span></code></pre>
+<p>Implement the new method to draw the headings:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token keyword">private</span> <span class="token keyword">func</span> <span class="token function-definition function">drawHeading</span><span class="token punctuation">(</span>forChartRow row<span class="token punctuation">:</span> <span class="token class-name">ChartRow</span><span class="token punctuation">,</span> rowIndex<span class="token punctuation">:</span> <span class="token class-name">Int</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">guard</span> <span class="token keyword">let</span> heading <span class="token operator">=</span> row<span class="token punctuation">.</span>data<span class="token punctuation">.</span>first <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token function">assertionFailure</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"ChartRow should have a heading"</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// If the heading value changed, remove the entity and redraw it</span>
+    <span class="token keyword">if</span> <span class="token keyword">let</span> entity <span class="token operator">=</span> heading<span class="token punctuation">.</span>entity<span class="token punctuation">,</span>
+       entity<span class="token punctuation">.</span>name <span class="token operator">!=</span> heading<span class="token punctuation">.</span>value
+    <span class="token punctuation">{</span>
+        chart<span class="token punctuation">.</span><span class="token function">removeChild</span><span class="token punctuation">(</span>entity<span class="token punctuation">)</span>
+        heading<span class="token punctuation">.</span>entity <span class="token operator">=</span> <span class="token nil constant">nil</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// Create a new heading entity if needed</span>
+    <span class="token omit keyword">_</span> <span class="token operator">=</span> heading<span class="token punctuation">.</span>entity <span class="token operator">??</span> <span class="token punctuation">{</span>
+        chartBoundsDidChange <span class="token operator">=</span> <span class="token boolean">true</span>
+        
+        <span class="token keyword">let</span> entity <span class="token operator">=</span> <span class="token function">createLabelEntity</span><span class="token punctuation">(</span>forHeading<span class="token punctuation">:</span> heading<span class="token punctuation">)</span>
+        chart<span class="token punctuation">.</span><span class="token function">addChild</span><span class="token punctuation">(</span>entity<span class="token punctuation">)</span>
+
+        <span class="token comment">// Position the heading after the row</span>
+        <span class="token keyword">let</span> bounds <span class="token operator">=</span> entity<span class="token punctuation">.</span><span class="token function">visualBounds</span><span class="token punctuation">(</span>relativeTo<span class="token punctuation">:</span> <span class="token nil constant">nil</span><span class="token punctuation">)</span><span class="token punctuation">.</span>extents
+        <span class="token keyword">let</span> cellSize <span class="token operator">=</span> barSize <span class="token operator">+</span> barPadding
+        <span class="token keyword">let</span> rowMaxX <span class="token operator">=</span> cellSize <span class="token operator">*</span> <span class="token class-name">Float</span><span class="token punctuation">(</span>row<span class="token punctuation">.</span>data<span class="token punctuation">.</span>count <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">-</span> barPadding
+        <span class="token keyword">let</span> rowZ <span class="token operator">=</span> cellSize <span class="token operator">*</span> <span class="token class-name">Float</span><span class="token punctuation">(</span>rowIndex<span class="token punctuation">)</span>
+        entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>y <span class="token operator">=</span> basePlateHeight <span class="token operator">*</span> <span class="token number">0.5</span>
+        entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>x <span class="token operator">=</span> rowMaxX <span class="token operator">+</span> basePlatePadding <span class="token operator">*</span> <span class="token number">0.25</span>
+        entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>z <span class="token operator">=</span> rowZ <span class="token operator">+</span> barSize <span class="token operator">-</span> bounds<span class="token punctuation">.</span>y
+            
+        <span class="token keyword">return</span> entity
+    <span class="token punctuation">}</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+    
+<span class="token keyword">private</span> <span class="token keyword">func</span> <span class="token function-definition function">createLabelEntity</span><span class="token punctuation">(</span>forHeading heading<span class="token punctuation">:</span> <span class="token class-name">ChartData</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token class-name">Entity</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> mesh <span class="token operator">=</span> <span class="token class-name">MeshResource</span><span class="token punctuation">.</span><span class="token function">generateText</span><span class="token punctuation">(</span>heading<span class="token punctuation">.</span>value<span class="token punctuation">,</span>
+                                         extrusionDepth<span class="token punctuation">:</span> <span class="token number">2</span><span class="token punctuation">)</span>
+    <span class="token keyword">let</span> colorMaterial <span class="token operator">=</span> <span class="token class-name">SimpleMaterial</span><span class="token punctuation">(</span>color<span class="token punctuation">:</span> <span class="token punctuation">.</span>black<span class="token punctuation">,</span>
+                                       isMetallic<span class="token punctuation">:</span> <span class="token boolean">false</span><span class="token punctuation">)</span>
+    <span class="token keyword">let</span> entity <span class="token operator">=</span> <span class="token class-name">ModelEntity</span><span class="token punctuation">(</span>mesh<span class="token punctuation">:</span> mesh<span class="token punctuation">,</span> materials<span class="token punctuation">:</span> <span class="token punctuation">[</span>colorMaterial<span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+    <span class="token comment">// Store the heading value in the name to compare later</span>
+    entity<span class="token punctuation">.</span>name <span class="token operator">=</span> heading<span class="token punctuation">.</span>value
+    <span class="token comment">// Size the text appropriately for the chart</span>
+    entity<span class="token punctuation">.</span>scale <span class="token operator">*=</span> <span class="token number">0.002</span>
+    <span class="token comment">// Rotate the text by 90 degrees to lay flat</span>
+    entity<span class="token punctuation">.</span>orientation <span class="token operator">=</span> <span class="token function">simd_quatf</span><span class="token punctuation">(</span>angle<span class="token punctuation">:</span> <span class="token operator">-</span><span class="token number">1</span> <span class="token operator">*</span> <span class="token punctuation">.</span>pi <span class="token operator">*</span> <span class="token number">0.5</span><span class="token punctuation">,</span>
+                                    axis<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    <span class="token comment">// Store the new entity in this ChartData</span>
+    heading<span class="token punctuation">.</span>entity <span class="token operator">=</span> entity
+
+    <span class="token keyword">return</span> entity
+<span class="token punctuation">}</span></code></pre>
+<p>When we create text mesh using <code>MeshResource.generateText</code> the text will be vertically oriented along the y-axis from the user's perspective. We rotate the text by 90 degrees around the x-axis to lay it flat on the base plate. This can be done in a few ways but here we use a simple quaternion to set the appropriate orientation. When we position the text along the z-axis we are using the y bounds of the text entity since we rotated it.</p>
+<p>Now run the app and you should see the headings appear after each row on the base plate. When you make a change to the row label the 3D chart should update and redraw.</p>
+<h2 id="labelling-the-columns" tabindex="-1">Labelling the columns <a class="header-anchor" href="#labelling-the-columns">#</a></h2>
+<p>Now we're going to draw the headings for the columns contained in the first row of chart data. We'll draw the column headings after the data rows. First, call a new method after the chart rows are drawn:</p>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token comment">// AppState+ChartDrawing.swift</span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">func</span> <span class="token function-definition function">updateChart</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>        <span class="token comment">// Calculate the greatest value to determine the height of the chart</span>
+<span class="token prefix unchanged"> </span>        <span class="token keyword">let</span> maxChartValue <span class="token operator">=</span> chartContent<span class="token punctuation">.</span>maxChartValue
+</span>
+<span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>        chartContent<span class="token punctuation">.</span><span class="token function">dropFirst</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">enumerated</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>forEach <span class="token punctuation">{</span> rowIndex<span class="token punctuation">,</span> row <span class="token keyword">in</span>
+<span class="token prefix unchanged"> </span>            <span class="token function">draw</span><span class="token punctuation">(</span>chartRow<span class="token punctuation">:</span> row<span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                 maxChartValue<span class="token punctuation">:</span> maxChartValue<span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                 rowIndex<span class="token punctuation">:</span> rowIndex<span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>        <span class="token punctuation">}</span>
+</span>
+<span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>        <span class="token function">drawChartHeadings</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>        <span class="token keyword">if</span> chartBoundsDidChange <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>            basePlate<span class="token operator">?</span><span class="token punctuation">.</span><span class="token function">removeFromParent</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</span></code></pre>
+<p>Next we'll draw the column headings, reusing the existing <code>createLabelEntity</code> method:</p>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token keyword">private</span> <span class="token keyword">func</span> <span class="token function-definition function">drawChartHeadings</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">guard</span> <span class="token keyword">let</span> headingsRow <span class="token operator">=</span> chartContent<span class="token punctuation">.</span>first <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token function">assertionFailure</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"A chart should always have at least one row"</span></span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span>
+    <span class="token punctuation">}</span>
+        
+    <span class="token keyword">let</span> rowCount <span class="token operator">=</span> chartContent<span class="token punctuation">.</span>count <span class="token operator">-</span> <span class="token number">1</span>
+    headingsRow<span class="token punctuation">.</span>data<span class="token punctuation">.</span><span class="token function">dropFirst</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">enumerated</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>forEach <span class="token punctuation">{</span> colIndex<span class="token punctuation">,</span> column <span class="token keyword">in</span>
+        <span class="token comment">// If the heading value changed, remove the entity and redraw</span>
+        <span class="token keyword">if</span> <span class="token keyword">let</span> entity <span class="token operator">=</span> column<span class="token punctuation">.</span>entity<span class="token punctuation">,</span> 
+           entity<span class="token punctuation">.</span>name <span class="token operator">!=</span> column<span class="token punctuation">.</span>value
+        <span class="token punctuation">{</span>
+            chart<span class="token punctuation">.</span><span class="token function">removeChild</span><span class="token punctuation">(</span>entity<span class="token punctuation">)</span>
+            column<span class="token punctuation">.</span>entity <span class="token operator">=</span> <span class="token nil constant">nil</span>
+        <span class="token punctuation">}</span>
+            
+        <span class="token comment">// Create a new heading entity if needed</span>
+        <span class="token omit keyword">_</span> <span class="token operator">=</span> column<span class="token punctuation">.</span>entity <span class="token operator">??</span> <span class="token punctuation">{</span>
+            chartBoundsDidChange <span class="token operator">=</span> <span class="token boolean">true</span>
+            <span class="token keyword">let</span> entity <span class="token operator">=</span> <span class="token function">createLabelEntity</span><span class="token punctuation">(</span>forHeading<span class="token punctuation">:</span> column<span class="token punctuation">)</span>
+            chart<span class="token punctuation">.</span><span class="token function">addChild</span><span class="token punctuation">(</span>entity<span class="token punctuation">)</span>
+
+            <span class="token comment">// Position the heading row after the other rows</span>
+            <span class="token keyword">let</span> bounds <span class="token operator">=</span> entity<span class="token punctuation">.</span><span class="token function">visualBounds</span><span class="token punctuation">(</span>relativeTo<span class="token punctuation">:</span> <span class="token nil constant">nil</span><span class="token punctuation">)</span><span class="token punctuation">.</span>extents
+            <span class="token keyword">let</span> cellSize <span class="token operator">=</span> barSize <span class="token operator">+</span> barPadding
+            <span class="token keyword">let</span> colX <span class="token operator">=</span> cellSize <span class="token operator">*</span> <span class="token class-name">Float</span><span class="token punctuation">(</span>colIndex<span class="token punctuation">)</span> <span class="token operator">+</span> barSize <span class="token operator">*</span> <span class="token number">0.5</span>
+            <span class="token keyword">let</span> colMaxZ <span class="token operator">=</span> cellSize <span class="token operator">*</span> <span class="token class-name">Float</span><span class="token punctuation">(</span>rowCount<span class="token punctuation">)</span> <span class="token operator">-</span> barPadding
+            <span class="token keyword">let</span> y <span class="token operator">=</span> basePlateHeight <span class="token operator">*</span> <span class="token number">0.5</span>
+            <span class="token keyword">let</span> x <span class="token operator">=</span> colX <span class="token operator">-</span> bounds<span class="token punctuation">.</span>x <span class="token operator">*</span> <span class="token number">0.5</span>
+            <span class="token keyword">let</span> z <span class="token operator">=</span> colMaxZ <span class="token operator">+</span> barSize <span class="token operator">*</span> <span class="token number">0.5</span> <span class="token operator">+</span> basePlatePadding <span class="token operator">*</span> <span class="token number">0.25</span>
+            entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>y <span class="token operator">=</span> y
+            entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>x <span class="token operator">=</span> x
+            entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>z <span class="token operator">=</span> z
+                
+            <span class="token keyword">return</span> entity
+        <span class="token punctuation">}</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<h2 id="testing-the-3d-chart" tabindex="-1">Testing the 3D chart <a class="header-anchor" href="#testing-the-3d-chart">#</a></h2>
+<p>We now have a functional labelled 3D bar chart that updates when the data changes. Run the app and see what the chart looks like. Play around with it and trying changing various values to see how it behaves. At this point the chart should look like this:</p>
+<picture>
+			<source type="image/avif" srcset="/img/T6B85-qEY0-400.avif 400w, /img/T6B85-qEY0-800.avif 800w" sizes="100vw">
+<source type="image/webp" srcset="/img/T6B85-qEY0-400.webp 400w, /img/T6B85-qEY0-800.webp 800w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/T6B85-qEY0-400.jpeg 400w, /img/T6B85-qEY0-800.jpeg 800w" sizes="100vw">
+			<img src="/img/T6B85-qEY0-800.avif" width="800" height="400" alt="Functional 3D Chart" loading="lazy" decoding="async">
+		</picture>
+<p>You might notice some limitations of the chart. For example, the column headings will quickly run into each other if they contain too much text. If you create a very long row label, then the chart will become too large to fit in the 3D volume and will be clipped by the window. The chart also would represent values very well if one value is much larger than the others. It would also be nice to have a mechanism to add and delete rows and columns from the chart.</p>
+<p>Test out the app yourself and see if you can find any other issues or room for improvement. It's important to continuously run and test your app as well as get feedback from users so your app will consistently improve.</p>
+<h2 id="next-steps" tabindex="-1">Next Steps <a class="header-anchor" href="#next-steps">#</a></h2>
+<p>You've now learned everything you need to know to create a basic <strong>visionOS</strong> app. You've learned how to create flat and volumetric windows and populate them using <strong>SwiftUI</strong> views and <strong>RealityKit</strong> entities. You've learned how to represent your data as app state to keep your UI in sync and animate updates. You've also learned how to create basic meshes and materials and how to manipulate them in a 3D scene. Further tutorials in this series will expand on the capabilities of <strong>visionOS</strong> and add depth to your app.</p>
+<p>You can download the finished project from part 2 of the tutorial <a href="https://github.com/brendaninnis/3D-Charts-Tutorial/raw/main/part-2.zip">here</a>. In part 3 we will add functionality to the app and improve the visuals of the 3D chart.</p>
+
+<ul class="links-nextprev"><li>Previous: <a href="/building-your-first-app-for-visionos-part-1.html">Building Your First App for visionOS: Part 1</a></li>
+</ul>
+
+		</main>
+
+		<footer></footer>
+
+		<!-- This page `/building-your-first-app-for-visionos-part-2.html` was built on 2024-10-03T04:00:53.557Z -->
+
+        <!-- Scroll to anchors -->
+        <script defer>
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.hash = e.target.hash;
+                    let header = e.target.parentElement
+                    let offset = header.nextElementSibling.offsetTop - header.offsetHeight - 16; // 16px is the margin
+                    window.scrollTo({
+                        top: offset,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        </script>
+
+        <!-- Sticky Headers -->
+        <script defer>
+            let stickyHeaders = [];
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    const header = entry.target;
+                    if (entry.isIntersecting) {
+                        stickyHeaders.forEach(header => {
+                            header.classList.add('passed');
+                        });
+                        stickyHeaders.push(header);
+                        header.classList.add('sticky');
+                    } else {
+                        header.classList.remove('sticky');
+                        stickyHeaders.pop();
+                        if (stickyHeaders.length > 0) {
+                            stickyHeaders[stickyHeaders.length - 1].classList.remove('passed');
+                        }
+                    }
+                });
+            }, {
+                rootMargin: '0px 0px -100% 0px',
+                threshold: 0
+            });
+
+            const headers = document.querySelectorAll('h2:not(.visually-hidden)');
+            headers.forEach(header => {
+                observer.observe(header);
+            });
+        </script>
+
+	</body>
+</html>

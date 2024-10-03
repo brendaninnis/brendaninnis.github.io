@@ -1,0 +1,1829 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Building Your First App for visionOS: Part 1</title>
+		<meta name="description" content="In part 1 of this tutorial you&#39;ll learn how to build an interface for visionOS using SwiftUI and display content in a volumetric window using RealityKit.">
+		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Brendan Innis">
+		<link rel="alternate" href="/feed/feed.json" type="application/json" title="Brendan Innis">
+		
+		<style>/**
+ * One Light theme for prism.js
+ * Based on Atom's One Light theme: https://github.com/atom/atom/tree/master/packages/one-light-syntax
+ */
+
+/**
+ * One Light colours (accurate as of commit eb064bf on 19 Feb 2021)
+ * From colors.less
+ * --mono-1: hsl(230, 8%, 24%);
+ * --mono-2: hsl(230, 6%, 44%);
+ * --mono-3: hsl(230, 4%, 64%)
+ * --hue-1: hsl(198, 99%, 37%);
+ * --hue-2: hsl(221, 87%, 60%);
+ * --hue-3: hsl(301, 63%, 40%);
+ * --hue-4: hsl(119, 34%, 47%);
+ * --hue-5: hsl(5, 74%, 59%);
+ * --hue-5-2: hsl(344, 84%, 43%);
+ * --hue-6: hsl(35, 99%, 36%);
+ * --hue-6-2: hsl(35, 99%, 40%);
+ * --syntax-fg: hsl(230, 8%, 24%);
+ * --syntax-bg: hsl(230, 1%, 98%);
+ * --syntax-gutter: hsl(230, 1%, 62%);
+ * --syntax-guide: hsla(230, 8%, 24%, 0.2);
+ * --syntax-accent: hsl(230, 100%, 66%);
+ * From syntax-variables.less
+ * --syntax-selection-color: hsl(230, 1%, 90%);
+ * --syntax-gutter-background-color-selected: hsl(230, 1%, 90%);
+ * --syntax-cursor-line: hsla(230, 8%, 24%, 0.05);
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	background: hsl(230, 1%, 98%);
+	color: hsl(230, 8%, 24%);
+	font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	line-height: 1.5;
+	-moz-tab-size: 2;
+	-o-tab-size: 2;
+	tab-size: 2;
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+/* Selection */
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] *::-moz-selection,
+pre[class*="language-"] *::-moz-selection {
+	background: hsl(230, 1%, 90%);
+	color: inherit;
+}
+
+code[class*="language-"]::selection,
+code[class*="language-"] *::selection,
+pre[class*="language-"] *::selection {
+	background: hsl(230, 1%, 90%);
+	color: inherit;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: 0.5em 0;
+	overflow: auto;
+	border-radius: 0.3em;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: 0.2em 0.3em;
+	border-radius: 0.3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.cdata {
+	color: hsl(230, 4%, 64%);
+}
+
+.token.doctype,
+.token.punctuation,
+.token.entity {
+	color: hsl(230, 8%, 24%);
+}
+
+.token.attr-name,
+.token.class-name,
+.token.boolean,
+.token.constant,
+.token.number,
+.token.atrule {
+	color: hsl(35, 99%, 36%);
+}
+
+.token.keyword {
+	color: hsl(301, 63%, 40%);
+}
+
+.token.property,
+.token.tag,
+.token.symbol,
+.token.deleted,
+.token.important {
+	color: hsl(5, 74%, 59%);
+}
+
+.token.selector,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted,
+.token.regex,
+.token.attr-value,
+.token.attr-value > .token.punctuation {
+	color: hsl(119, 34%, 47%);
+}
+
+.token.variable,
+.token.operator,
+.token.function {
+	color: hsl(221, 87%, 60%);
+}
+
+.token.url {
+	color: hsl(198, 99%, 37%);
+}
+
+/* HTML overrides */
+.token.attr-value > .token.punctuation.attr-equals,
+.token.special-attr > .token.attr-value > .token.value.css {
+	color: hsl(230, 8%, 24%);
+}
+
+/* CSS overrides */
+.language-css .token.selector {
+	color: hsl(5, 74%, 59%);
+}
+
+.language-css .token.property {
+	color: hsl(230, 8%, 24%);
+}
+
+.language-css .token.function,
+.language-css .token.url > .token.function {
+	color: hsl(198, 99%, 37%);
+}
+
+.language-css .token.url > .token.string.url {
+	color: hsl(119, 34%, 47%);
+}
+
+.language-css .token.important,
+.language-css .token.atrule .token.rule {
+	color: hsl(301, 63%, 40%);
+}
+
+/* JS overrides */
+.language-javascript .token.operator {
+	color: hsl(301, 63%, 40%);
+}
+
+.language-javascript .token.template-string > .token.interpolation > .token.interpolation-punctuation.punctuation {
+	color: hsl(344, 84%, 43%);
+}
+
+/* JSON overrides */
+.language-json .token.operator {
+	color: hsl(230, 8%, 24%);
+}
+
+.language-json .token.null.keyword {
+	color: hsl(35, 99%, 36%);
+}
+
+/* MD overrides */
+.language-markdown .token.url,
+.language-markdown .token.url > .token.operator,
+.language-markdown .token.url-reference.url > .token.string {
+	color: hsl(230, 8%, 24%);
+}
+
+.language-markdown .token.url > .token.content {
+	color: hsl(221, 87%, 60%);
+}
+
+.language-markdown .token.url > .token.url,
+.language-markdown .token.url-reference.url {
+	color: hsl(198, 99%, 37%);
+}
+
+.language-markdown .token.blockquote.punctuation,
+.language-markdown .token.hr.punctuation {
+	color: hsl(230, 4%, 64%);
+	font-style: italic;
+}
+
+.language-markdown .token.code-snippet {
+	color: hsl(119, 34%, 47%);
+}
+
+.language-markdown .token.bold .token.content {
+	color: hsl(35, 99%, 36%);
+}
+
+.language-markdown .token.italic .token.content {
+	color: hsl(301, 63%, 40%);
+}
+
+.language-markdown .token.strike .token.content,
+.language-markdown .token.strike .token.punctuation,
+.language-markdown .token.list.punctuation,
+.language-markdown .token.title.important > .token.punctuation {
+	color: hsl(5, 74%, 59%);
+}
+
+/* General */
+.token.bold {
+	font-weight: bold;
+}
+
+.token.comment,
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+
+.token.namespace {
+	opacity: 0.8;
+}
+
+/* Plugin overrides */
+/* Selectors should have higher specificity than those in the plugins' default stylesheets */
+
+/* Show Invisibles plugin overrides */
+.token.token.tab:not(:empty):before,
+.token.token.cr:before,
+.token.token.lf:before,
+.token.token.space:before {
+	color: hsla(230, 8%, 24%, 0.2);
+}
+
+/* Toolbar plugin overrides */
+/* Space out all buttons and move them away from the right edge of the code block */
+div.code-toolbar > .toolbar.toolbar > .toolbar-item {
+	margin-right: 0.4em;
+}
+
+/* Styling the buttons */
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > button,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > a,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > span {
+	background: hsl(230, 1%, 90%);
+	color: hsl(230, 6%, 44%);
+	padding: 0.1em 0.4em;
+	border-radius: 0.3em;
+}
+
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > button:hover,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > button:focus,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > a:hover,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > a:focus,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:hover,
+div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:focus {
+	background: hsl(230, 1%, 78%); /* custom: darken(--syntax-bg, 20%) */
+	color: hsl(230, 8%, 24%);
+}
+
+/* Line Highlight plugin overrides */
+/* The highlighted line itself */
+.line-highlight.line-highlight {
+	background: hsla(230, 8%, 24%, 0.05);
+}
+
+/* Default line numbers in Line Highlight plugin */
+.line-highlight.line-highlight:before,
+.line-highlight.line-highlight[data-end]:after {
+	background: hsl(230, 1%, 90%);
+	color: hsl(230, 8%, 24%);
+	padding: 0.1em 0.6em;
+	border-radius: 0.3em;
+	box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.2); /* same as Toolbar plugin default */
+}
+
+/* Hovering over a linkable line number (in the gutter area) */
+/* Requires Line Numbers plugin as well */
+pre[id].linkable-line-numbers.linkable-line-numbers span.line-numbers-rows > span:hover:before {
+	background-color: hsla(230, 8%, 24%, 0.05);
+}
+
+/* Line Numbers and Command Line plugins overrides */
+/* Line separating gutter from coding area */
+.line-numbers.line-numbers .line-numbers-rows,
+.command-line .command-line-prompt {
+	border-right-color: hsla(230, 8%, 24%, 0.2);
+}
+
+/* Stuff in the gutter */
+.line-numbers .line-numbers-rows > span:before,
+.command-line .command-line-prompt > span:before {
+	color: hsl(230, 1%, 62%);
+}
+
+/* Match Braces plugin overrides */
+/* Note: Outline colour is inherited from the braces */
+.rainbow-braces .token.token.punctuation.brace-level-1,
+.rainbow-braces .token.token.punctuation.brace-level-5,
+.rainbow-braces .token.token.punctuation.brace-level-9 {
+	color: hsl(5, 74%, 59%);
+}
+
+.rainbow-braces .token.token.punctuation.brace-level-2,
+.rainbow-braces .token.token.punctuation.brace-level-6,
+.rainbow-braces .token.token.punctuation.brace-level-10 {
+	color: hsl(119, 34%, 47%);
+}
+
+.rainbow-braces .token.token.punctuation.brace-level-3,
+.rainbow-braces .token.token.punctuation.brace-level-7,
+.rainbow-braces .token.token.punctuation.brace-level-11 {
+	color: hsl(221, 87%, 60%);
+}
+
+.rainbow-braces .token.token.punctuation.brace-level-4,
+.rainbow-braces .token.token.punctuation.brace-level-8,
+.rainbow-braces .token.token.punctuation.brace-level-12 {
+	color: hsl(301, 63%, 40%);
+}
+
+/* Diff Highlight plugin overrides */
+/* Taken from https://github.com/atom/github/blob/master/styles/variables.less */
+pre.diff-highlight > code .token.token.deleted:not(.prefix),
+pre > code.diff-highlight .token.token.deleted:not(.prefix) {
+	background-color: hsla(353, 100%, 66%, 0.15);
+}
+
+pre.diff-highlight > code .token.token.deleted:not(.prefix)::-moz-selection,
+pre.diff-highlight > code .token.token.deleted:not(.prefix) *::-moz-selection,
+pre > code.diff-highlight .token.token.deleted:not(.prefix)::-moz-selection,
+pre > code.diff-highlight .token.token.deleted:not(.prefix) *::-moz-selection {
+	background-color: hsla(353, 95%, 66%, 0.25);
+}
+
+pre.diff-highlight > code .token.token.deleted:not(.prefix)::selection,
+pre.diff-highlight > code .token.token.deleted:not(.prefix) *::selection,
+pre > code.diff-highlight .token.token.deleted:not(.prefix)::selection,
+pre > code.diff-highlight .token.token.deleted:not(.prefix) *::selection {
+	background-color: hsla(353, 95%, 66%, 0.25);
+}
+
+pre.diff-highlight > code .token.token.inserted:not(.prefix),
+pre > code.diff-highlight .token.token.inserted:not(.prefix) {
+	background-color: hsla(137, 100%, 55%, 0.15);
+}
+
+pre.diff-highlight > code .token.token.inserted:not(.prefix)::-moz-selection,
+pre.diff-highlight > code .token.token.inserted:not(.prefix) *::-moz-selection,
+pre > code.diff-highlight .token.token.inserted:not(.prefix)::-moz-selection,
+pre > code.diff-highlight .token.token.inserted:not(.prefix) *::-moz-selection {
+	background-color: hsla(135, 73%, 55%, 0.25);
+}
+
+pre.diff-highlight > code .token.token.inserted:not(.prefix)::selection,
+pre.diff-highlight > code .token.token.inserted:not(.prefix) *::selection,
+pre > code.diff-highlight .token.token.inserted:not(.prefix)::selection,
+pre > code.diff-highlight .token.token.inserted:not(.prefix) *::selection {
+	background-color: hsla(135, 73%, 55%, 0.25);
+}
+
+/* Previewers plugin overrides */
+/* Based on https://github.com/atom-community/atom-ide-datatip/blob/master/styles/atom-ide-datatips.less and https://github.com/atom/atom/blob/master/packages/one-light-ui */
+/* Border around popup */
+.prism-previewer.prism-previewer:before,
+.prism-previewer-gradient.prism-previewer-gradient div {
+	border-color: hsl(0, 0, 95%);
+}
+
+/* Angle and time should remain as circles and are hence not included */
+.prism-previewer-color.prism-previewer-color:before,
+.prism-previewer-gradient.prism-previewer-gradient div,
+.prism-previewer-easing.prism-previewer-easing:before {
+	border-radius: 0.3em;
+}
+
+/* Triangles pointing to the code */
+.prism-previewer.prism-previewer:after {
+	border-top-color: hsl(0, 0, 95%);
+}
+
+.prism-previewer-flipped.prism-previewer-flipped.after {
+	border-bottom-color: hsl(0, 0, 95%);
+}
+
+/* Background colour within the popup */
+.prism-previewer-angle.prism-previewer-angle:before,
+.prism-previewer-time.prism-previewer-time:before,
+.prism-previewer-easing.prism-previewer-easing {
+	background: hsl(0, 0%, 100%);
+}
+
+/* For angle, this is the positive area (eg. 90deg will display one quadrant in this colour) */
+/* For time, this is the alternate colour */
+.prism-previewer-angle.prism-previewer-angle circle,
+.prism-previewer-time.prism-previewer-time circle {
+	stroke: hsl(230, 8%, 24%);
+	stroke-opacity: 1;
+}
+
+/* Stroke colours of the handle, direction point, and vector itself */
+.prism-previewer-easing.prism-previewer-easing circle,
+.prism-previewer-easing.prism-previewer-easing path,
+.prism-previewer-easing.prism-previewer-easing line {
+	stroke: hsl(230, 8%, 24%);
+}
+
+/* Fill colour of the handle */
+.prism-previewer-easing.prism-previewer-easing circle {
+	fill: transparent;
+}
+
+
+@media (prefers-color-scheme: dark) {
+    /**
+     * One Dark theme for prism.js
+     * Based on Atom's One Dark theme: https://github.com/atom/atom/tree/master/packages/one-dark-syntax
+     */
+
+    /**
+     * One Dark colours (accurate as of commit 8ae45ca on 6 Sep 2018)
+     * From colors.less
+     * --mono-1: hsl(220, 14%, 71%);
+     * --mono-2: hsl(220, 9%, 55%);
+     * --mono-3: hsl(220, 10%, 40%);
+     * --hue-1: hsl(187, 47%, 55%);
+     * --hue-2: hsl(207, 82%, 66%);
+     * --hue-3: hsl(286, 60%, 67%);
+     * --hue-4: hsl(95, 38%, 62%);
+     * --hue-5: hsl(355, 65%, 65%);
+     * --hue-5-2: hsl(5, 48%, 51%);
+     * --hue-6: hsl(29, 54%, 61%);
+     * --hue-6-2: hsl(39, 67%, 69%);
+     * --syntax-fg: hsl(220, 14%, 71%);
+     * --syntax-bg: hsl(220, 13%, 18%);
+     * --syntax-gutter: hsl(220, 14%, 45%);
+     * --syntax-guide: hsla(220, 14%, 71%, 0.15);
+     * --syntax-accent: hsl(220, 100%, 66%);
+     * From syntax-variables.less
+     * --syntax-selection-color: hsl(220, 13%, 28%);
+     * --syntax-gutter-background-color-selected: hsl(220, 13%, 26%);
+     * --syntax-cursor-line: hsla(220, 100%, 80%, 0.04);
+     */
+
+    code[class*="language-"],
+    pre[class*="language-"] {
+        background: hsl(220, 13%, 18%);
+        color: hsl(220, 14%, 71%);
+        text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+        font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+        direction: ltr;
+        text-align: left;
+        white-space: pre;
+        word-spacing: normal;
+        word-break: normal;
+        line-height: 1.5;
+        -moz-tab-size: 2;
+        -o-tab-size: 2;
+        tab-size: 2;
+        -webkit-hyphens: none;
+        -moz-hyphens: none;
+        -ms-hyphens: none;
+        hyphens: none;
+    }
+
+    /* Selection */
+    code[class*="language-"]::-moz-selection,
+    code[class*="language-"] *::-moz-selection,
+    pre[class*="language-"] *::-moz-selection {
+        background: hsl(220, 13%, 28%);
+        color: inherit;
+        text-shadow: none;
+    }
+
+    code[class*="language-"]::selection,
+    code[class*="language-"] *::selection,
+    pre[class*="language-"] *::selection {
+        background: hsl(220, 13%, 28%);
+        color: inherit;
+        text-shadow: none;
+    }
+
+    /* Code blocks */
+    pre[class*="language-"] {
+        padding: 1em;
+        margin: 0.5em 0;
+        overflow: auto;
+        border-radius: 0.3em;
+    }
+
+    /* Inline code */
+    :not(pre) > code[class*="language-"] {
+        padding: 0.2em 0.3em;
+        border-radius: 0.3em;
+        white-space: normal;
+    }
+
+    /* Print */
+    @media print {
+        code[class*="language-"],
+        pre[class*="language-"] {
+            text-shadow: none;
+        }
+    }
+
+    .token.comment,
+    .token.prolog,
+    .token.cdata {
+        color: hsl(220, 10%, 40%);
+    }
+
+    .token.doctype,
+    .token.punctuation,
+    .token.entity {
+        color: hsl(220, 14%, 71%);
+    }
+
+    .token.attr-name,
+    .token.class-name,
+    .token.boolean,
+    .token.constant,
+    .token.number,
+    .token.atrule {
+        color: hsl(29, 54%, 61%);
+    }
+
+    .token.keyword {
+        color: hsl(286, 60%, 67%);
+    }
+
+    .token.property,
+    .token.tag,
+    .token.symbol,
+    .token.deleted,
+    .token.important {
+        color: hsl(355, 65%, 65%);
+    }
+
+    .token.selector,
+    .token.string,
+    .token.char,
+    .token.builtin,
+    .token.inserted,
+    .token.regex,
+    .token.attr-value,
+    .token.attr-value > .token.punctuation {
+        color: hsl(95, 38%, 62%);
+    }
+
+    .token.variable,
+    .token.operator,
+    .token.function {
+        color: hsl(207, 82%, 66%);
+    }
+
+    .token.url {
+        color: hsl(187, 47%, 55%);
+    }
+
+    /* HTML overrides */
+    .token.attr-value > .token.punctuation.attr-equals,
+    .token.special-attr > .token.attr-value > .token.value.css {
+        color: hsl(220, 14%, 71%);
+    }
+
+    /* CSS overrides */
+    .language-css .token.selector {
+        color: hsl(355, 65%, 65%);
+    }
+
+    .language-css .token.property {
+        color: hsl(220, 14%, 71%);
+    }
+
+    .language-css .token.function,
+    .language-css .token.url > .token.function {
+        color: hsl(187, 47%, 55%);
+    }
+
+    .language-css .token.url > .token.string.url {
+        color: hsl(95, 38%, 62%);
+    }
+
+    .language-css .token.important,
+    .language-css .token.atrule .token.rule {
+        color: hsl(286, 60%, 67%);
+    }
+
+    /* JS overrides */
+    .language-javascript .token.operator {
+        color: hsl(286, 60%, 67%);
+    }
+
+    .language-javascript .token.template-string > .token.interpolation > .token.interpolation-punctuation.punctuation {
+        color: hsl(5, 48%, 51%);
+    }
+
+    /* JSON overrides */
+    .language-json .token.operator {
+        color: hsl(220, 14%, 71%);
+    }
+
+    .language-json .token.null.keyword {
+        color: hsl(29, 54%, 61%);
+    }
+
+    /* MD overrides */
+    .language-markdown .token.url,
+    .language-markdown .token.url > .token.operator,
+    .language-markdown .token.url-reference.url > .token.string {
+        color: hsl(220, 14%, 71%);
+    }
+
+    .language-markdown .token.url > .token.content {
+        color: hsl(207, 82%, 66%);
+    }
+
+    .language-markdown .token.url > .token.url,
+    .language-markdown .token.url-reference.url {
+        color: hsl(187, 47%, 55%);
+    }
+
+    .language-markdown .token.blockquote.punctuation,
+    .language-markdown .token.hr.punctuation {
+        color: hsl(220, 10%, 40%);
+        font-style: italic;
+    }
+
+    .language-markdown .token.code-snippet {
+        color: hsl(95, 38%, 62%);
+    }
+
+    .language-markdown .token.bold .token.content {
+        color: hsl(29, 54%, 61%);
+    }
+
+    .language-markdown .token.italic .token.content {
+        color: hsl(286, 60%, 67%);
+    }
+
+    .language-markdown .token.strike .token.content,
+    .language-markdown .token.strike .token.punctuation,
+    .language-markdown .token.list.punctuation,
+    .language-markdown .token.title.important > .token.punctuation {
+        color: hsl(355, 65%, 65%);
+    }
+
+    /* General */
+    .token.bold {
+        font-weight: bold;
+    }
+
+    .token.comment,
+    .token.italic {
+        font-style: italic;
+    }
+
+    .token.entity {
+        cursor: help;
+    }
+
+    .token.namespace {
+        opacity: 0.8;
+    }
+
+    /* Plugin overrides */
+    /* Selectors should have higher specificity than those in the plugins' default stylesheets */
+
+    /* Show Invisibles plugin overrides */
+    .token.token.tab:not(:empty):before,
+    .token.token.cr:before,
+    .token.token.lf:before,
+    .token.token.space:before {
+        color: hsla(220, 14%, 71%, 0.15);
+        text-shadow: none;
+    }
+
+    /* Toolbar plugin overrides */
+    /* Space out all buttons and move them away from the right edge of the code block */
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item {
+        margin-right: 0.4em;
+    }
+
+    /* Styling the buttons */
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > button,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > a,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > span {
+        background: hsl(220, 13%, 26%);
+        color: hsl(220, 9%, 55%);
+        padding: 0.1em 0.4em;
+        border-radius: 0.3em;
+    }
+
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > button:hover,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > button:focus,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > a:hover,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > a:focus,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:hover,
+    div.code-toolbar > .toolbar.toolbar > .toolbar-item > span:focus {
+        background: hsl(220, 13%, 28%);
+        color: hsl(220, 14%, 71%);
+    }
+
+    /* Line Highlight plugin overrides */
+    /* The highlighted line itself */
+    .line-highlight.line-highlight {
+        background: hsla(220, 100%, 80%, 0.04);
+    }
+
+    /* Default line numbers in Line Highlight plugin */
+    .line-highlight.line-highlight:before,
+    .line-highlight.line-highlight[data-end]:after {
+        background: hsl(220, 13%, 26%);
+        color: hsl(220, 14%, 71%);
+        padding: 0.1em 0.6em;
+        border-radius: 0.3em;
+        box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.2); /* same as Toolbar plugin default */
+    }
+
+    /* Hovering over a linkable line number (in the gutter area) */
+    /* Requires Line Numbers plugin as well */
+    pre[id].linkable-line-numbers.linkable-line-numbers span.line-numbers-rows > span:hover:before {
+        background-color: hsla(220, 100%, 80%, 0.04);
+    }
+
+    /* Line Numbers and Command Line plugins overrides */
+    /* Line separating gutter from coding area */
+    .line-numbers.line-numbers .line-numbers-rows,
+    .command-line .command-line-prompt {
+        border-right-color: hsla(220, 14%, 71%, 0.15);
+    }
+
+    /* Stuff in the gutter */
+    .line-numbers .line-numbers-rows > span:before,
+    .command-line .command-line-prompt > span:before {
+        color: hsl(220, 14%, 45%);
+    }
+
+    /* Match Braces plugin overrides */
+    /* Note: Outline colour is inherited from the braces */
+    .rainbow-braces .token.token.punctuation.brace-level-1,
+    .rainbow-braces .token.token.punctuation.brace-level-5,
+    .rainbow-braces .token.token.punctuation.brace-level-9 {
+        color: hsl(355, 65%, 65%);
+    }
+
+    .rainbow-braces .token.token.punctuation.brace-level-2,
+    .rainbow-braces .token.token.punctuation.brace-level-6,
+    .rainbow-braces .token.token.punctuation.brace-level-10 {
+        color: hsl(95, 38%, 62%);
+    }
+
+    .rainbow-braces .token.token.punctuation.brace-level-3,
+    .rainbow-braces .token.token.punctuation.brace-level-7,
+    .rainbow-braces .token.token.punctuation.brace-level-11 {
+        color: hsl(207, 82%, 66%);
+    }
+
+    .rainbow-braces .token.token.punctuation.brace-level-4,
+    .rainbow-braces .token.token.punctuation.brace-level-8,
+    .rainbow-braces .token.token.punctuation.brace-level-12 {
+        color: hsl(286, 60%, 67%);
+    }
+
+    /* Diff Highlight plugin overrides */
+    /* Taken from https://github.com/atom/github/blob/master/styles/variables.less */
+    pre.diff-highlight > code .token.token.deleted:not(.prefix),
+    pre > code.diff-highlight .token.token.deleted:not(.prefix) {
+        background-color: hsla(353, 100%, 66%, 0.15);
+    }
+
+    pre.diff-highlight > code .token.token.deleted:not(.prefix)::-moz-selection,
+    pre.diff-highlight > code .token.token.deleted:not(.prefix) *::-moz-selection,
+    pre > code.diff-highlight .token.token.deleted:not(.prefix)::-moz-selection,
+    pre > code.diff-highlight .token.token.deleted:not(.prefix) *::-moz-selection {
+        background-color: hsla(353, 95%, 66%, 0.25);
+    }
+
+    pre.diff-highlight > code .token.token.deleted:not(.prefix)::selection,
+    pre.diff-highlight > code .token.token.deleted:not(.prefix) *::selection,
+    pre > code.diff-highlight .token.token.deleted:not(.prefix)::selection,
+    pre > code.diff-highlight .token.token.deleted:not(.prefix) *::selection {
+        background-color: hsla(353, 95%, 66%, 0.25);
+    }
+
+    pre.diff-highlight > code .token.token.inserted:not(.prefix),
+    pre > code.diff-highlight .token.token.inserted:not(.prefix) {
+        background-color: hsla(137, 100%, 55%, 0.15);
+    }
+
+    pre.diff-highlight > code .token.token.inserted:not(.prefix)::-moz-selection,
+    pre.diff-highlight > code .token.token.inserted:not(.prefix) *::-moz-selection,
+    pre > code.diff-highlight .token.token.inserted:not(.prefix)::-moz-selection,
+    pre > code.diff-highlight .token.token.inserted:not(.prefix) *::-moz-selection {
+        background-color: hsla(135, 73%, 55%, 0.25);
+    }
+
+    pre.diff-highlight > code .token.token.inserted:not(.prefix)::selection,
+    pre.diff-highlight > code .token.token.inserted:not(.prefix) *::selection,
+    pre > code.diff-highlight .token.token.inserted:not(.prefix)::selection,
+    pre > code.diff-highlight .token.token.inserted:not(.prefix) *::selection {
+        background-color: hsla(135, 73%, 55%, 0.25);
+    }
+
+    /* Previewers plugin overrides */
+    /* Based on https://github.com/atom-community/atom-ide-datatip/blob/master/styles/atom-ide-datatips.less and https://github.com/atom/atom/blob/master/packages/one-dark-ui */
+    /* Border around popup */
+    .prism-previewer.prism-previewer:before,
+    .prism-previewer-gradient.prism-previewer-gradient div {
+        border-color: hsl(224, 13%, 17%);
+    }
+
+    /* Angle and time should remain as circles and are hence not included */
+    .prism-previewer-color.prism-previewer-color:before,
+    .prism-previewer-gradient.prism-previewer-gradient div,
+    .prism-previewer-easing.prism-previewer-easing:before {
+        border-radius: 0.3em;
+    }
+
+    /* Triangles pointing to the code */
+    .prism-previewer.prism-previewer:after {
+        border-top-color: hsl(224, 13%, 17%);
+    }
+
+    .prism-previewer-flipped.prism-previewer-flipped.after {
+        border-bottom-color: hsl(224, 13%, 17%);
+    }
+
+    /* Background colour within the popup */
+    .prism-previewer-angle.prism-previewer-angle:before,
+    .prism-previewer-time.prism-previewer-time:before,
+    .prism-previewer-easing.prism-previewer-easing {
+        background: hsl(219, 13%, 22%);
+    }
+
+    /* For angle, this is the positive area (eg. 90deg will display one quadrant in this colour) */
+    /* For time, this is the alternate colour */
+    .prism-previewer-angle.prism-previewer-angle circle,
+    .prism-previewer-time.prism-previewer-time circle {
+        stroke: hsl(220, 14%, 71%);
+        stroke-opacity: 1;
+    }
+
+    /* Stroke colours of the handle, direction point, and vector itself */
+    .prism-previewer-easing.prism-previewer-easing circle,
+    .prism-previewer-easing.prism-previewer-easing path,
+    .prism-previewer-easing.prism-previewer-easing line {
+        stroke: hsl(220, 14%, 71%);
+    }
+
+    /* Fill colour of the handle */
+    .prism-previewer-easing.prism-previewer-easing circle {
+        fill: transparent;
+    }
+}
+/*
+ * New diff- syntax
+ */
+
+pre[class*="language-diff-"] {
+    --token-inserted-color: hsl(126, 80.5%, 92%);
+    --token-deleted-color: hsl(0 100% 95.7%);
+    --token-prefix-background-color: rgba(0,0,0,.1);
+	--eleventy-code-padding: 1.25em;
+	padding-left: var(--eleventy-code-padding);
+	padding-right: var(--eleventy-code-padding);
+}
+
+@media (prefers-color-scheme: dark) {
+    pre[class*="language-diff-"] {
+        --token-inserted-color: hsl(126, 22%, 22%);
+        --token-prefix-background-color: rgba(0,0,0,.2);
+        --token-deleted-color: hsl(0, 40%, 26%);
+    }
+}
+
+.token.deleted {
+	background-color: var(--token-deleted-color);
+	color: inherit;
+}
+.token.inserted {
+	background-color: var(--token-inserted-color);
+	color: inherit;
+}
+
+/* Make the + and - characters unselectable for copy/paste */
+.token.prefix.unchanged,
+.token.prefix.inserted,
+.token.prefix.deleted {
+	-webkit-user-select: none;
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.token.prefix.inserted,
+.token.prefix.deleted {
+	width: var(--eleventy-code-padding);
+	background-color: var(--token-prefix-background-color);
+}
+
+/* Optional: full-width background color */
+.token.inserted:not(.prefix),
+.token.deleted:not(.prefix) {
+	display: block;
+	margin-left: calc(-1 * var(--eleventy-code-padding));
+	margin-right: calc(-1 * var(--eleventy-code-padding));
+	text-decoration: none; /* override del, ins, mark defaults */
+	color: inherit; /* override del, ins, mark defaults */
+}
+* { box-sizing: border-box; }
+/* Defaults */
+:root {
+	--font-family: -apple-system, system-ui, sans-serif;
+	--font-family-monospace: Consolas, Menlo, Monaco, Andale Mono WT, Andale Mono, Lucida Console, Lucida Sans Typewriter, DejaVu Sans Mono, Bitstream Vera Sans Mono, Liberation Mono, Nimbus Mono L, Courier New, Courier, monospace;
+
+	--horizontal-padding: 3rem;
+}
+@media (max-width: 820px) {
+	:root {
+		--horizontal-padding: 1rem;
+	}
+}
+
+/* Theme colors */
+:root {
+	--color-gray-95: #0d0d0d;
+	--color-gray-90: #1a1a1a;
+    --color-gray-15: #d9d9d9;
+
+	--background-color: #FFFCF786;
+	--background-color-solid: #FFFCF7;
+	--background-image: url(/img/spiration-light.png);
+
+	--theme-background-color: #00030813;
+
+	--text-color: var(--color-gray-95);
+	--text-color-link: #301014;
+	--text-color-link-active: #5f2b48;
+	--text-color-link-visited: #5E555A;
+
+	--syntax-tab-size: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-gray-95: #f2f2f2;
+        --color-gray-90: #e6e6e6;
+        --color-gray-15: #262626;
+
+        --theme-background-color: #FFFCF713;
+
+        /* --text-color is assigned to --color-gray-_ above */
+        --text-color-link: #b5bad0;
+        --text-color-link-active: #FFDD93;
+        --text-color-link-visited: #8594ad;
+
+        --background-color: #06010a86;
+        --background-color-solid: #06010a;
+        --background-image: url(/img/spiration-dark.png);
+    }
+}
+
+/* Global stylesheet */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	padding: 0;
+	margin: 0 auto;
+	min-height: 100vh;
+	font-family: var(--font-family);
+	color: var(--text-color);
+	background-color: var(--background-color);
+}
+html {
+	background-image: var(--background-image);
+    scroll-behavior: smooth;
+}
+body {
+	max-width: calc(80ch + var(--horizontal-padding) * 2);
+}
+
+/* https://www.a11yproject.com/posts/how-to-hide-content/ */
+.visually-hidden {
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+
+p:last-child {
+	margin-bottom: 0;
+}
+p {
+	line-height: 1.5;
+}
+
+li {
+	line-height: 1.5;
+}
+
+a[href] {
+	color: var(--text-color-link);
+}
+a[href]:visited {
+	color: var(--text-color-link-visited);
+}
+a[href]:hover,
+a[href]:active {
+	color: var(--text-color-link-active);
+}
+
+a > svg:hover {
+	fill: var(--text-color-link-active);
+}
+
+main {
+	padding: 1rem var(--horizontal-padding);
+}
+main :first-child {
+	margin-top: 0;
+}
+
+h1 {
+	margin-top: 0.25em;
+}
+
+header {
+	display: flex;
+	border-bottom: 1px dashed var(--color-gray-90);
+}
+header:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+span.spacer {
+	flex-grow: 1;
+}
+
+.links-nextprev {
+	list-style: none;
+	border-top: 1px dashed var(--color-gray-90);
+	margin: 0 calc(-1 * var(--horizontal-padding));
+	padding: 0;
+}
+.links-nextprev li {
+	margin: 1em 0;
+	padding: 0 var(--horizontal-padding);
+}
+
+table {
+	margin: 1em 0;
+}
+table td,
+table th {
+	padding-right: 1em;
+}
+
+pre,
+code {
+	font-family: var(--font-family-monospace);
+}
+pre:not([class*="language-"]) {
+	margin: .5em 0;
+	line-height: 1.375; /* 22px /16 */
+	-moz-tab-size: var(--syntax-tab-size);
+	-o-tab-size: var(--syntax-tab-size);
+	tab-size: var(--syntax-tab-size);
+	-webkit-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+}
+code {
+    background-color: var(--color-gray-15);
+    padding: 0.15ch 0.5ch;
+    border-radius: 0.5ch;
+}
+
+img {
+	display: block;
+	margin: 0 auto;
+	max-width: 100%;
+	height: auto;
+}
+
+/* Header */
+header {
+	display: flex;
+	gap: 1em .5em;
+	flex-wrap: wrap;
+	align-items: center;
+	padding: 1em var(--horizontal-padding);
+}
+a[href]:visited.home-link,
+.nav-item a[href]:visited {
+	color: var(--text-color-link);
+}
+a[href]:hover.home-link,
+a[href]:active.home-link,
+.nav-item a[href]:hover,
+.nav-item a[href]:active {
+	color: var(--text-color-link-active);
+}
+.home-link {
+	font-size: 1em; /* 16px /16 */
+	font-weight: 700;
+	margin-right: 2em;
+}
+.home-link:link:not(:hover) {
+	text-decoration: none;
+}
+
+/* Nav */
+.nav {
+	display: flex;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+.nav-item {
+	display: inline-block;
+	margin-right: 1em;
+}
+.nav-item a[href]:not(:hover) {
+	text-decoration: none;
+}
+.nav a[href][aria-current="page"] {
+	text-decoration: underline;
+}
+
+
+/* Posts list */
+.postlist {
+	list-style: none;
+	padding: 0;
+}
+.postlist-item {
+	display: flex;
+	flex-wrap: wrap;
+	margin-bottom: 1em;
+}
+.postlist-date {
+	font-size: 0.8125em; /* 13px /16 */
+	color: var(--color-gray-90);
+}
+.postlist-date {
+	word-spacing: -0.5px;
+}
+.postlist-link {
+	font-size: 1.1875em; /* 19px /16 */
+	font-weight: 700;
+	flex-basis: calc(100% - 1.5rem);
+	text-underline-position: from-font;
+	text-underline-offset: 0;
+	text-decoration-thickness: 1px;
+}
+.postlist-item-active .postlist-link {
+	font-weight: bold;
+}
+
+#subscribe-link > svg {
+	vertical-align: bottom;
+	margin-bottom: 0.125em;
+}
+
+/* About */
+#sidebar-icon-links {
+	margin-top: 1em;
+}
+
+/* Tags */
+.post-tag {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: capitalize;
+	font-style: italic;
+}
+.postlist-item > .post-tag {
+	align-self: center;
+}
+
+/* Tags list */
+.post-metadata {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: .5em;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.post-metadata time {
+	margin-right: 1em;
+}
+
+/* Direct Links / Markdown Headers */
+h2 {
+    position: sticky;
+    top: 0;
+	margin-top: 1.5em;
+    padding: 0.33em 0;
+}
+
+h2.sticky {
+    background-color: var(--background-color-solid);
+    z-index: 999;
+}
+
+h2.sticky.passed {
+    opacity: 0;
+    z-index: 998;
+}
+
+.header-anchor {
+	text-decoration: none;
+	font-style: normal;
+	font-size: 1em;
+	margin-left: .1em;
+}
+a[href].header-anchor,
+a[href].header-anchor:visited {
+	color: transparent;
+}
+a[href].header-anchor:focus,
+a[href].header-anchor:hover {
+	text-decoration: underline;
+}
+a[href].header-anchor:focus,
+:hover > a[href].header-anchor {
+	color: var(--text-color-link-active);
+}
+
+h2 + .header-anchor {
+	font-size: 1.5em;
+}</style>
+        
+	</head>
+	<body>
+		<a href="#skip" class="visually-hidden">Skip to main content</a>
+
+		<header>
+			<a href="/" class="home-link">Brendan Innis</a>
+			<nav>
+				<h2 class="visually-hidden">Top level navigation menu</h2>
+				<ul class="nav">
+					<li class="nav-item"><a href="/">Posts</a></li>
+					<li class="nav-item"><a href="/tags.html">Tags</a></li>
+					<li class="nav-item"><a href="/about.html">About Me</a></li>
+				</ul>
+			</nav>
+			<span class="spacer"></span>
+		</header>
+
+		<main id="skip">
+			
+
+<ul class="post-metadata">
+	<li><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-color)" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 0 1 1 1v1h4V3a1 1 0 1 1 2 0v1h3a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V3a1 1 0 0 1 1-1zM8 6H5v3h14V6h-3v1a1 1 0 1 1-2 0V6h-4v1a1 1 0 0 1-2 0V6zm11 5H5v8h14v-8z"/></svg></li>
+	<li><time datetime="2024-09-20">20 September 2024</time></li>
+	<li><svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-color)" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 0 1 1-1h8a1 1 0 0 1 .707.293l10 10a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-10-10A1 1 0 0 1 2 11V3zm2 1v6.586l9 9L19.586 13l-9-9H4z" /><path d="M9 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" /></svg></li>
+	<li><a href="/tags/visionos/" class="post-tag">visionOS</a>, </li>
+	<li><a href="/tags/realitykit/" class="post-tag">RealityKit</a>, </li>
+	<li><a href="/tags/swiftui/" class="post-tag">SwiftUI</a></li>
+</ul>
+
+<h1>Building Your First App for visionOS: Part 1</h1>
+
+<p>In this tutorial series you will learn how to build a complete app for <strong>visionOS</strong> using <strong>SwiftUI</strong> and <strong>RealityKit</strong>. You will learn how to create a new <strong>visionOS</strong> project, how to build an interface for <strong>visionOS</strong> using <strong>SwiftUI</strong> and how to display and animate 3D content using <strong>RealityKit</strong>. This tutorial will get you started building apps for <strong>visionOS</strong> right away and provide a solid foundation to learn from.</p>
+<p>We will build a spreadsheet app that displays 3D charts. The app will include a spreadsheet like interface and a 3D bar chart. It will look something like this:</p>
+<img src="/img/3d-charts-preview.gif" alt="3D Charts App" />
+<h2 id="new-visionos-project" tabindex="-1">New visionOS project <a class="header-anchor" href="#new-visionos-project">#</a></h2>
+<p>To create a new <strong>visionOS</strong> project, open Xcode and select <em>File/New/Project</em> (⇧⌘N). Select the “visionOS” tab and choose the “App” template.</p>
+<picture>
+			<source type="image/avif" srcset="/img/HC6sjdxJ5M-400.avif 400w, /img/HC6sjdxJ5M-600.avif 600w" sizes="100vw" media="(prefers-color-scheme: dark)">
+<source type="image/webp" srcset="/img/HC6sjdxJ5M-400.webp 400w, /img/HC6sjdxJ5M-600.webp 600w" sizes="100vw" media="(prefers-color-scheme: dark)">
+<source type="image/jpeg" srcset="/img/HC6sjdxJ5M-400.jpeg 400w, /img/HC6sjdxJ5M-600.jpeg 600w" sizes="100vw" media="(prefers-color-scheme: dark)">
+<source type="image/avif" srcset="/img/QrcDKSdZUc-400.avif 400w, /img/QrcDKSdZUc-600.avif 600w" sizes="100vw">
+<source type="image/webp" srcset="/img/QrcDKSdZUc-400.webp 400w, /img/QrcDKSdZUc-600.webp 600w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/QrcDKSdZUc-400.jpeg 400w, /img/QrcDKSdZUc-600.jpeg 600w" sizes="100vw">
+			<img src="/img/QrcDKSdZUc-600.avif" width="600" height="432" alt="New visionOS Project" loading="lazy" decoding="async">
+		</picture>
+<p>Click “Next” and then choose options for your new project:</p>
+<picture>
+			<source type="image/avif" srcset="/img/W3svVEycZx-400.avif 400w, /img/W3svVEycZx-600.avif 600w" sizes="100vw" media="(prefers-color-scheme: dark)">
+<source type="image/webp" srcset="/img/W3svVEycZx-400.webp 400w, /img/W3svVEycZx-600.webp 600w" sizes="100vw" media="(prefers-color-scheme: dark)">
+<source type="image/jpeg" srcset="/img/W3svVEycZx-400.jpeg 400w, /img/W3svVEycZx-600.jpeg 600w" sizes="100vw" media="(prefers-color-scheme: dark)">
+<source type="image/avif" srcset="/img/MtqcqwK2OZ-400.avif 400w, /img/MtqcqwK2OZ-600.avif 600w" sizes="100vw">
+<source type="image/webp" srcset="/img/MtqcqwK2OZ-400.webp 400w, /img/MtqcqwK2OZ-600.webp 600w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/MtqcqwK2OZ-400.jpeg 400w, /img/MtqcqwK2OZ-600.jpeg 600w" sizes="100vw">
+			<img src="/img/MtqcqwK2OZ-600.avif" width="600" height="432" alt="New visionOS Project" loading="lazy" decoding="async">
+		</picture>
+<ul>
+<li><em>Product Name</em>: <strong>3D Charts</strong> (This will be the name of your app)</li>
+<li><em>Team</em>: <strong>[Your Team]</strong> (You will need to sign in with your Apple ID if you haven't already)</li>
+<li><em>Organization Identifier</em>: <strong>[Your reversed domain]</strong> (To uniquely identify your app)</li>
+<li><em>Initial Scene</em>: <strong>Window</strong> (We'll display our spreadsheet using <strong>SwiftUI</strong>)</li>
+<li><em>Immersive Space Renderer</em>: <strong>None</strong> (We're going to display our 3D content in a Volumetric Window)</li>
+<li><em>Immersive Space</em>: <strong>Mixed</strong> (We can introduce a mixed reality space later in the project)</li>
+</ul>
+<h2 id="exploring-the-new-visionos-project" tabindex="-1">Exploring the new visionOS project <a class="header-anchor" href="#exploring-the-new-visionos-project">#</a></h2>
+<p>The template <strong>visionOS</strong> project creates an app that shows a 3D model in a window using <strong>SwiftUI</strong>. The project also includes a <strong>Reality Composer Pro</strong> package called <em>RealityKitContent</em> that includes a scene with a 3D model and texture. <strong>Reality Composer Pro</strong> is a standard way to include 3D content in your <strong>visionOS</strong> app. It can be found by selecting <em>Xcode/Open Developer Tool/Reality Composer Pro</em>.</p>
+<p>The first thing you should do when you create a new project is to run it and understand how the code works. Press “Run” and let Xcode boot up the <strong>visionOS simulator</strong> and launch the app. Once you've launched the app and confirmed that it runs, we can start making changes.</p>
+<h2 id="starting-from-scratch" tabindex="-1">Starting from scratch <a class="header-anchor" href="#starting-from-scratch">#</a></h2>
+<p>Since I chose “3D Charts” as the name of my app, I have to clean up my <code>App</code> file a bit. We can also add a volumetric window that we'll use later to display the 3d charts.</p>
+<ol>
+<li>Select the <code>App</code> file in the project navigator:</li>
+</ol>
+<picture>
+			<source type="image/avif" srcset="/img/Pvv3FoNWCr-400.avif 400w, /img/Pvv3FoNWCr-800.avif 800w" sizes="100vw" media="(prefers-color-scheme: dark)">
+<source type="image/webp" srcset="/img/Pvv3FoNWCr-400.webp 400w, /img/Pvv3FoNWCr-800.webp 800w" sizes="100vw" media="(prefers-color-scheme: dark)">
+<source type="image/jpeg" srcset="/img/Pvv3FoNWCr-400.jpeg 400w, /img/Pvv3FoNWCr-800.jpeg 800w" sizes="100vw" media="(prefers-color-scheme: dark)">
+<source type="image/avif" srcset="/img/w6hOJEKFQB-400.avif 400w, /img/w6hOJEKFQB-800.avif 800w" sizes="100vw">
+<source type="image/webp" srcset="/img/w6hOJEKFQB-400.webp 400w, /img/w6hOJEKFQB-800.webp 800w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/w6hOJEKFQB-400.jpeg 400w, /img/w6hOJEKFQB-800.jpeg 800w" sizes="100vw">
+			<img src="/img/w6hOJEKFQB-800.avif" width="800" height="408" alt="App File" loading="lazy" decoding="async">
+		</picture>
+<ol start="2">
+<li>Make changes to the <code>App</code> file:</li>
+</ol>
+<ul>
+<li>Rename the <code>App</code> struct to <code>ThreeDeeChartsApp</code> and the file to <em>ThreeDeeChartsApp.swift</em>.</li>
+<li>Create a new <code>@State</code> property called <code>appState</code> and set it as the environment for <code>ContentView</code>.</li>
+<li>Create an empty volumetric window that we'll use later to display the 3D charts.</li>
+</ul>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// After</span>
+<span class="token keyword">import</span> <span class="token class-name">SwiftUI</span>
+
+<span class="token attribute atrule">@main</span>
+<span class="token keyword">struct</span> <span class="token class-name">ThreeDeeChartsApp</span><span class="token punctuation">:</span> <span class="token class-name">App</span> <span class="token punctuation">{</span>
+    <span class="token attribute atrule">@State</span> <span class="token keyword">private</span> <span class="token keyword">var</span> appState <span class="token operator">=</span> <span class="token class-name">AppState</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    
+    <span class="token keyword">var</span> body<span class="token punctuation">:</span> <span class="token keyword">some</span> <span class="token class-name">Scene</span> <span class="token punctuation">{</span>
+        <span class="token class-name">WindowGroup</span> <span class="token punctuation">{</span>
+            <span class="token class-name">ContentView</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">environment</span><span class="token punctuation">(</span>appState<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+        <span class="token punctuation">.</span><span class="token function">windowResizability</span><span class="token punctuation">(</span><span class="token punctuation">.</span>contentSize<span class="token punctuation">)</span>
+        
+        <span class="token class-name">WindowGroup</span> <span class="token punctuation">{</span>
+            <span class="token comment">// 3D charts will go here</span>
+        <span class="token punctuation">}</span>
+        <span class="token punctuation">.</span><span class="token function">windowStyle</span><span class="token punctuation">(</span><span class="token punctuation">.</span>volumetric<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<ol start="3">
+<li>Create a new file called <em>AppState.swift</em>. <code>AppState</code> will be an <code>@Observable</code> class to keep track of our app state including the chart data and UI state. For now, we'll add a <code>String</code> to keep track of our chart's title.</li>
+</ol>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// AppState.swift</span>
+<span class="token keyword">import</span> <span class="token class-name">Foundation</span>
+
+<span class="token attribute atrule">@Observable</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">AppState</span> <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> chartTitle <span class="token operator">=</span> <span class="token string-literal"><span class="token string">""</span></span>
+<span class="token punctuation">}</span></code></pre>
+<ol start="4">
+<li>Open the <em>ContentView.swift</em> file.</li>
+</ol>
+<ul>
+<li>Create an <code>@Environment</code> property to access the <code>AppState</code> object.</li>
+<li>We're going to create a vertical stack of the app title, the chart title and the chart data. We'll add some basic styling for now and add a <code>glassBackgroundEffet()</code> to the preview so we can easy see the UI rendered in Xcode canvas.</li>
+<li>We also need to make the <code>appState</code> bindable so the <code>TextField</code> can update the <code>chartTitle</code> property.</li>
+</ul>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// ContentView.swift</span>
+<span class="token keyword">import</span> <span class="token class-name">SwiftUI</span>
+
+<span class="token keyword">struct</span> <span class="token class-name">ContentView</span><span class="token punctuation">:</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+    <span class="token attribute atrule">@Environment</span><span class="token punctuation">(</span><span class="token class-name">AppState</span><span class="token punctuation">.</span><span class="token keyword">self</span><span class="token punctuation">)</span> <span class="token keyword">private</span> <span class="token keyword">var</span> appState
+    
+    <span class="token keyword">var</span> body<span class="token punctuation">:</span> <span class="token keyword">some</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+        <span class="token attribute atrule">@Bindable</span> <span class="token keyword">var</span> appState <span class="token operator">=</span> appState
+        <span class="token class-name">VStack</span><span class="token punctuation">(</span>alignment<span class="token punctuation">:</span> <span class="token punctuation">.</span>leading<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token class-name">Text</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"3D Charts"</span></span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">font</span><span class="token punctuation">(</span><span class="token punctuation">.</span>extraLargeTitle<span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token punctuation">.</span>bottom<span class="token punctuation">,</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">)</span>
+            <span class="token class-name">TextField</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"Chart Title"</span></span><span class="token punctuation">,</span> text<span class="token punctuation">:</span> $appState<span class="token punctuation">.</span>chartTitle<span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">font</span><span class="token punctuation">(</span><span class="token punctuation">.</span>title<span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">frame</span><span class="token punctuation">(</span>maxWidth<span class="token punctuation">:</span> <span class="token number">480</span><span class="token punctuation">)</span>
+                <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token punctuation">.</span>bottom<span class="token punctuation">,</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">)</span>
+
+        <span class="token punctuation">}</span>
+        <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token class-name">EdgeInsets</span><span class="token punctuation">(</span>top<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">,</span>
+                            leading<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>horizontalMargin<span class="token punctuation">,</span>
+                            bottom<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">,</span>
+                            trailing<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>horizontalMargin<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token other-directive property">#Preview</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token class-name">ContentView</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">.</span><span class="token function">glassBackgroundEffect</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">.</span><span class="token function">environment</span><span class="token punctuation">(</span><span class="token class-name">AppState</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code></pre>
+<ol start="5">
+<li>Finally, create a <em>Constants.swift</em> file to store some values we'll reuse throughout the app.</li>
+</ol>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// Constants.swift</span>
+<span class="token keyword">import</span> <span class="token class-name">Foundation</span>
+
+<span class="token keyword">enum</span> <span class="token class-name">Constants</span> <span class="token punctuation">{</span>
+    <span class="token keyword">static</span> <span class="token keyword">let</span> verticalSpacing<span class="token punctuation">:</span> <span class="token class-name">CGFloat</span> <span class="token operator">=</span> <span class="token number">8</span>
+    <span class="token keyword">static</span> <span class="token keyword">let</span> horizontalMargin<span class="token punctuation">:</span> <span class="token class-name">CGFloat</span> <span class="token operator">=</span> <span class="token number">48</span>
+<span class="token punctuation">}</span></code></pre>
+<ol start="6">
+<li>Now switch back to <em>ContentView.swift</em> and enable the Canvas by selecting it from the “Adjust Editor Options” menu in the top right corner of the Xcode window (⌥⌘↩). The Canvas is useful for previewing changes to your <strong>SwiftUI</strong> code as you write it. You can also interact with the “Chart Title” <code>TextField</code> and change it's value.</li>
+</ol>
+<picture>
+			<source type="image/avif" srcset="/img/R1CIVCAeF3-400.avif 400w, /img/R1CIVCAeF3-600.avif 600w" sizes="100vw" media="(prefers-color-scheme: dark)">
+<source type="image/webp" srcset="/img/R1CIVCAeF3-400.webp 400w, /img/R1CIVCAeF3-600.webp 600w" sizes="100vw" media="(prefers-color-scheme: dark)">
+<source type="image/jpeg" srcset="/img/R1CIVCAeF3-400.jpeg 400w, /img/R1CIVCAeF3-600.jpeg 600w" sizes="100vw" media="(prefers-color-scheme: dark)">
+<source type="image/avif" srcset="/img/3hy5V9LKlr-400.avif 400w, /img/3hy5V9LKlr-600.avif 600w" sizes="100vw">
+<source type="image/webp" srcset="/img/3hy5V9LKlr-400.webp 400w, /img/3hy5V9LKlr-600.webp 600w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/3hy5V9LKlr-400.jpeg 400w, /img/3hy5V9LKlr-600.jpeg 600w" sizes="100vw">
+			<img src="/img/3hy5V9LKlr-600.avif" width="600" height="580" alt="Basic UI Preview" loading="lazy" decoding="async">
+		</picture>
+<h2 id="building-the-spreadsheet-ui" tabindex="-1">Building the spreadsheet UI <a class="header-anchor" href="#building-the-spreadsheet-ui">#</a></h2>
+<p>We need a way to enter data for our 3D charts. We're going to create a grid of rows and columns with text fields where the user can enter data and store that data in our <code>AppState</code>.</p>
+<ol>
+<li>First create a new file called <em>ChartContent.swift</em>. We'll create some data structures to contain our chart data. We store the chart data as a string so we can hold values like headings, but we'll add a property to access the value as a <code>Float</code> which we can use to draw our chart. We're going to make the data <code>@Observable</code> so the UI will be updated when the data changes.</li>
+</ol>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// ChartContent.swift</span>
+<span class="token keyword">import</span> <span class="token class-name">Foundation</span>
+
+<span class="token comment">/// Represents a cell in the chart</span>
+<span class="token attribute atrule">@Observable</span>
+<span class="token keyword">class</span> <span class="token class-name">ChartData</span> <span class="token punctuation">{</span>
+    <span class="token comment">/// The value held this cell in the chart</span>
+    <span class="token keyword">var</span> value<span class="token punctuation">:</span> <span class="token class-name">String</span>
+    <span class="token comment">/// The value as a `Float` or `0` if not a number</span>
+    <span class="token keyword">var</span> floatValue<span class="token punctuation">:</span> <span class="token class-name">Float</span> <span class="token punctuation">{</span>
+        <span class="token class-name">Float</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span> <span class="token operator">??</span> <span class="token number">0</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">init</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">self</span><span class="token punctuation">.</span>value <span class="token operator">=</span> value
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/// Represents a row of chart data</span>
+<span class="token attribute atrule">@Observable</span>
+<span class="token keyword">class</span> <span class="token class-name">ChartRow</span> <span class="token punctuation">{</span>
+    <span class="token comment">/// The data held in each column of this row</span>
+    <span class="token keyword">var</span> data<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token class-name">ChartData</span><span class="token punctuation">]</span>
+    
+    <span class="token keyword">init</span><span class="token punctuation">(</span>data<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token class-name">ChartData</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">self</span><span class="token punctuation">.</span>data <span class="token operator">=</span> data
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/// Represents all the data held in the chart</span>
+<span class="token keyword">typealias</span> <span class="token class-name">ChartContent</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token class-name">ChartRow</span><span class="token punctuation">]</span></code></pre>
+<ol start="2">
+<li>Now we're going to add the chart content to our app state. Open <em>AppState.swift</em> and add a new property called <code>chartContent</code> to hold the chart data. We'll also add a method to create some default data for our chart. This will make it easier to debug our UI in the Canvas Preview.</li>
+</ol>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token comment">// AppState.swift</span>
+<span class="token prefix unchanged"> </span><span class="token attribute atrule">@Observable</span>
+<span class="token prefix unchanged"> </span><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">AppState</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> chartTitle <span class="token operator">=</span> <span class="token string-literal"><span class="token string">""</span></span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>    <span class="token keyword">var</span> chartContent<span class="token punctuation">:</span> <span class="token class-name">ChartContent</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token punctuation">}</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>
+<span class="token prefix inserted">+</span><span class="token directive property"><span class="token directive-name">#if</span> DEBUG</span>
+<span class="token prefix inserted">+</span><span class="token keyword">extension</span> <span class="token class-name">AppState</span> <span class="token punctuation">{</span>
+<span class="token prefix inserted">+</span>    <span class="token keyword">func</span> <span class="token function-definition function">preloadAppState</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token prefix inserted">+</span>        chartTitle <span class="token operator">=</span> <span class="token string-literal"><span class="token string">"Favourite Colour by Age"</span></span>
+<span class="token prefix inserted">+</span>        chartContent <span class="token operator">=</span> <span class="token punctuation">[</span>
+<span class="token prefix inserted">+</span>            <span class="token class-name">ChartRow</span><span class="token punctuation">(</span>data<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"Age Range"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"1-20"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"21-40"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"41-60"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"61-80"</span></span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>            <span class="token class-name">ChartRow</span><span class="token punctuation">(</span>data<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"Red"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"15"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"55"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"16"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"12"</span></span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>            <span class="token class-name">ChartRow</span><span class="token punctuation">(</span>data<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"Yellow"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"5"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"15"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"38"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"40"</span></span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>            <span class="token class-name">ChartRow</span><span class="token punctuation">(</span>data<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"Green"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"20"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"20"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"32"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"18"</span></span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>            <span class="token class-name">ChartRow</span><span class="token punctuation">(</span>data<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"Blue"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"60"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"10"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"14"</span></span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>                            <span class="token class-name">ChartData</span><span class="token punctuation">(</span>value<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"30"</span></span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+<span class="token prefix inserted">+</span>        <span class="token punctuation">]</span>
+<span class="token prefix inserted">+</span>    <span class="token punctuation">}</span>
+<span class="token prefix inserted">+</span><span class="token punctuation">}</span>
+<span class="token prefix inserted">+</span><span class="token directive property"><span class="token directive-name">#endif</span></span>
+</span></code></pre>
+<ol start="3">
+<li>Let's build the spreadsheet UI. Create a new <strong>SwiftUI</strong> View file called <em>Spreadsheet.swift</em>. We're going to display our chart content in a <strong>SwiftUI</strong> <code>Grid</code> with the cells as editable <code>TextField</code> views so we can make changes to the data in our chart. We'll also add a divider after the first row to separate the headings from the data. Finally, we'll extend <code>Constants</code> with values that will only be used in the <code>Spreadsheet</code> view and set up a <code>#Preview</code> with our sample data along with some padding and background effect for readability.</li>
+</ol>
+<pre class="language-swift" tabindex="0"><code class="language-swift"><span class="token comment">// Spreadsheet.swift</span>
+<span class="token keyword">import</span> <span class="token class-name">SwiftUI</span>
+
+<span class="token keyword">struct</span> <span class="token class-name">Spreadsheet</span><span class="token punctuation">:</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+    <span class="token attribute atrule">@Environment</span><span class="token punctuation">(</span><span class="token class-name">AppState</span><span class="token punctuation">.</span><span class="token keyword">self</span><span class="token punctuation">)</span> <span class="token keyword">private</span> <span class="token keyword">var</span> appState
+
+    <span class="token keyword">var</span> body<span class="token punctuation">:</span> <span class="token keyword">some</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+        <span class="token class-name">Grid</span><span class="token punctuation">(</span>alignment<span class="token punctuation">:</span> <span class="token punctuation">.</span>leading<span class="token punctuation">,</span>
+             horizontalSpacing<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>cellBorderWidth<span class="token punctuation">,</span>
+             verticalSpacing<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>cellBorderWidth<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            
+            <span class="token class-name">ForEach</span><span class="token punctuation">(</span><span class="token class-name">Array</span><span class="token punctuation">(</span>appState<span class="token punctuation">.</span>chartContent<span class="token punctuation">.</span><span class="token function">enumerated</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+                    id<span class="token punctuation">:</span> <span class="token punctuation">\</span><span class="token punctuation">.</span>offset<span class="token punctuation">)</span> <span class="token punctuation">{</span> rowIndex<span class="token punctuation">,</span> row <span class="token keyword">in</span>
+                
+                <span class="token class-name">GridRow</span> <span class="token punctuation">{</span>
+                    <span class="token class-name">ForEach</span><span class="token punctuation">(</span><span class="token class-name">Array</span><span class="token punctuation">(</span>row<span class="token punctuation">.</span>data<span class="token punctuation">.</span><span class="token function">enumerated</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+                            id<span class="token punctuation">:</span> <span class="token punctuation">\</span><span class="token punctuation">.</span>offset<span class="token punctuation">)</span> <span class="token punctuation">{</span> colIndex<span class="token punctuation">,</span> data <span class="token keyword">in</span>
+                        
+                        <span class="token attribute atrule">@Bindable</span> <span class="token keyword">var</span> data <span class="token operator">=</span> data
+                        <span class="token class-name">TextField</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">""</span></span><span class="token punctuation">,</span> text<span class="token punctuation">:</span> $data<span class="token punctuation">.</span>value<span class="token punctuation">)</span>
+                            <span class="token punctuation">.</span><span class="token function">frame</span><span class="token punctuation">(</span>width<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>cellWidth<span class="token punctuation">,</span>
+                                   height<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>cellHeight<span class="token punctuation">)</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span>
+                
+                <span class="token keyword">if</span> rowIndex <span class="token operator">==</span> <span class="token number">0</span> <span class="token punctuation">{</span>
+                    <span class="token class-name">Divider</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+                        <span class="token punctuation">.</span><span class="token function">gridCellUnsizedAxes</span><span class="token punctuation">(</span><span class="token punctuation">.</span>horizontal<span class="token punctuation">)</span>
+                        <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token class-name">EdgeInsets</span><span class="token punctuation">(</span>top<span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+                                            leading<span class="token punctuation">:</span> <span class="token number">4</span><span class="token punctuation">,</span>
+                                            bottom<span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+                                            trailing<span class="token punctuation">:</span> <span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">fileprivate</span> <span class="token keyword">extension</span> <span class="token class-name">Constants</span> <span class="token punctuation">{</span>
+    <span class="token keyword">static</span> <span class="token keyword">let</span> cellBorderWidth<span class="token punctuation">:</span> <span class="token class-name">CGFloat</span> <span class="token operator">=</span> <span class="token number">4</span>
+    <span class="token keyword">static</span> <span class="token keyword">let</span> cellWidth<span class="token punctuation">:</span> <span class="token class-name">CGFloat</span> <span class="token operator">=</span> <span class="token number">100</span>
+    <span class="token keyword">static</span> <span class="token keyword">let</span> cellHeight<span class="token punctuation">:</span> <span class="token class-name">CGFloat</span> <span class="token operator">=</span> <span class="token number">32</span>
+<span class="token punctuation">}</span>
+
+<span class="token other-directive property">#Preview</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> appState <span class="token operator">=</span> <span class="token class-name">AppState</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    appState<span class="token punctuation">.</span><span class="token function">preloadAppState</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token class-name">Spreadsheet</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token class-name">EdgeInsets</span><span class="token punctuation">(</span>top<span class="token punctuation">:</span> <span class="token number">8</span><span class="token punctuation">,</span> leading<span class="token punctuation">:</span> <span class="token number">48</span><span class="token punctuation">,</span> bottom<span class="token punctuation">:</span> <span class="token number">8</span><span class="token punctuation">,</span> trailing<span class="token punctuation">:</span> <span class="token number">48</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token punctuation">.</span><span class="token function">glassBackgroundEffect</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">.</span><span class="token function">environment</span><span class="token punctuation">(</span>appState<span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code></pre>
+<ol start="4">
+<li>Now add the <code>Spreadsheet</code> to the bottom of the <code>VStack</code> in <em>ContentView.swift</em>. Give it the same bottom vertical padding as the other views and setup the <code>#Preview</code> to preload the app state.</li>
+</ol>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token comment">// ContentView.swift</span>
+<span class="token prefix unchanged"> </span>                <span class="token punctuation">.</span><span class="token function">font</span><span class="token punctuation">(</span><span class="token punctuation">.</span>title<span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>                <span class="token punctuation">.</span><span class="token function">frame</span><span class="token punctuation">(</span>maxWidth<span class="token punctuation">:</span> <span class="token number">480</span><span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>                <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token punctuation">.</span>bottom<span class="token punctuation">,</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">)</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>            <span class="token class-name">Spreadsheet</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>                <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token punctuation">.</span>bottom<span class="token punctuation">,</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">)</span>
+</span>
+<span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>        <span class="token punctuation">}</span>
+<span class="token prefix unchanged"> </span>        <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token class-name">EdgeInsets</span><span class="token punctuation">(</span>top<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                            leading<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>horizontalMargin<span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                            bottom<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                            trailing<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>horizontalMargin<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>    <span class="token punctuation">}</span>
+<span class="token prefix unchanged"> </span><span class="token punctuation">}</span>
+</span>
+<span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token other-directive property">#Preview</span> <span class="token punctuation">{</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>    <span class="token keyword">let</span> appState <span class="token operator">=</span> <span class="token class-name">AppState</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>    appState<span class="token punctuation">.</span><span class="token function">preloadAppState</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>    <span class="token keyword">return</span> <span class="token class-name">ContentView</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>        <span class="token punctuation">.</span><span class="token function">glassBackgroundEffect</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</span><span class="token deleted-sign deleted language-swift"><span class="token prefix deleted">-</span>        <span class="token punctuation">.</span><span class="token function">environment</span><span class="token punctuation">(</span><span class="token class-name">AppState</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>        <span class="token punctuation">.</span><span class="token function">environment</span><span class="token punctuation">(</span>appState<span class="token punctuation">)</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token punctuation">}</span>
+</span></code></pre>
+<p>After that, run the Canvas Preview and your UI should look something like this:</p>
+<picture>
+			<source type="image/avif" srcset="/img/cpNjzYo-xV-400.avif 400w, /img/cpNjzYo-xV-800.avif 800w" sizes="100vw">
+<source type="image/webp" srcset="/img/cpNjzYo-xV-400.webp 400w, /img/cpNjzYo-xV-800.webp 800w" sizes="100vw">
+<source type="image/jpeg" srcset="/img/cpNjzYo-xV-400.jpeg 400w, /img/cpNjzYo-xV-800.jpeg 800w" sizes="100vw">
+			<img src="/img/cpNjzYo-xV-800.avif" width="800" height="400" alt="Spreadsheet UI Preview" loading="lazy" decoding="async">
+		</picture>
+<h2 id="showing-3d-content-in-a-volumetric-window" tabindex="-1">Showing 3D content in a volumetric window <a class="header-anchor" href="#showing-3d-content-in-a-volumetric-window">#</a></h2>
+<p>You can use <strong>RealityKit</strong> to display 3D content in the user's physical space. We're going to use a volumetric window to show our 3D chart alongside other running application windows. We'll use a <code>RealityView</code> to display <strong>RealityKit</strong> content in our <strong>SwiftUI</strong> app.</p>
+<ol>
+<li>First, we need to keep track of whether the 3D chart is showing. Add a property called <code>isShowingChart</code> to <em>AppState.swift</em>.</li>
+</ol>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token comment">// AppState.swift</span>
+<span class="token prefix unchanged"> </span><span class="token attribute atrule">@Observable</span>
+<span class="token prefix unchanged"> </span><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">AppState</span> <span class="token punctuation">{</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>    <span class="token keyword">var</span> isShowingChart <span class="token operator">=</span> <span class="token boolean">false</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> chartTitle <span class="token operator">=</span> <span class="token string-literal"><span class="token string">""</span></span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> chartContent<span class="token punctuation">:</span> <span class="token class-name">ChartContent</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token prefix unchanged"> </span><span class="token punctuation">}</span>
+</span></code></pre>
+<ol start="2">
+<li>Now we can create a toggle button in our UI to show and hide the 3D chart. Open <em>ContentView.swift</em> and add the <code>Toggle</code> in an <code>HStack</code> with the app title. We'll use a <code>Spacer</code> to push the <code>Toggle</code> to the trailing edge of the screen and use a <code>fixedSize()</code> modifier on the parent <code>VStack</code> to keep the <code>Spacer</code> from taking up more space than it needs.</li>
+</ol>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token comment">// ContentView.swift</span>
+<span class="token prefix unchanged"> </span><span class="token keyword">struct</span> <span class="token class-name">ContentView</span><span class="token punctuation">:</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> body<span class="token punctuation">:</span> <span class="token keyword">some</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>        <span class="token attribute atrule">@Bindable</span> <span class="token keyword">var</span> appState <span class="token operator">=</span> appState
+<span class="token prefix unchanged"> </span>        <span class="token class-name">VStack</span><span class="token punctuation">(</span>alignment<span class="token punctuation">:</span> <span class="token punctuation">.</span>leading<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+</span><span class="token deleted-sign deleted language-swift"><span class="token prefix deleted">-</span>            <span class="token class-name">Text</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"3D Charts"</span></span><span class="token punctuation">)</span>
+<span class="token prefix deleted">-</span>                <span class="token punctuation">.</span><span class="token function">font</span><span class="token punctuation">(</span><span class="token punctuation">.</span>extraLargeTitle<span class="token punctuation">)</span>
+<span class="token prefix deleted">-</span>                <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token punctuation">.</span>bottom<span class="token punctuation">,</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">)</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>            <span class="token class-name">HStack</span> <span class="token punctuation">{</span>
+<span class="token prefix inserted">+</span>                <span class="token class-name">Text</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"3D Charts"</span></span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>                    <span class="token punctuation">.</span><span class="token function">font</span><span class="token punctuation">(</span><span class="token punctuation">.</span>extraLargeTitle<span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>                    <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token punctuation">.</span>bottom<span class="token punctuation">,</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>                <span class="token class-name">Spacer</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>                <span class="token class-name">Toggle</span><span class="token punctuation">(</span>isOn<span class="token punctuation">:</span> $appState<span class="token punctuation">.</span>isShowingChart<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token prefix inserted">+</span>                    <span class="token keyword">if</span> appState<span class="token punctuation">.</span>isShowingChart <span class="token punctuation">{</span>
+<span class="token prefix inserted">+</span>                        <span class="token class-name">Text</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"Hide Chart"</span></span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>                            <span class="token punctuation">.</span><span class="token function">frame</span><span class="token punctuation">(</span>minWidth<span class="token punctuation">:</span> <span class="token number">160</span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>                    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+<span class="token prefix inserted">+</span>                        <span class="token class-name">Text</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"Show Chart"</span></span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>                            <span class="token punctuation">.</span><span class="token function">frame</span><span class="token punctuation">(</span>minWidth<span class="token punctuation">:</span> <span class="token number">160</span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>                    <span class="token punctuation">}</span>
+<span class="token prefix inserted">+</span>                <span class="token punctuation">}</span>
+<span class="token prefix inserted">+</span>                <span class="token punctuation">.</span><span class="token function">toggleStyle</span><span class="token punctuation">(</span><span class="token punctuation">.</span>button<span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>            <span class="token punctuation">}</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>            <span class="token class-name">TextField</span><span class="token punctuation">(</span><span class="token string-literal"><span class="token string">"Chart Title"</span></span><span class="token punctuation">,</span> text<span class="token punctuation">:</span> $appState<span class="token punctuation">.</span>chartTitle<span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>                <span class="token punctuation">.</span><span class="token function">font</span><span class="token punctuation">(</span><span class="token punctuation">.</span>title<span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>                <span class="token punctuation">.</span><span class="token function">frame</span><span class="token punctuation">(</span>maxWidth<span class="token punctuation">:</span> <span class="token number">480</span><span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>                <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token punctuation">.</span>bottom<span class="token punctuation">,</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>            <span class="token class-name">Spreadsheet</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>                <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token punctuation">.</span>bottom<span class="token punctuation">,</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>        <span class="token punctuation">}</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>        <span class="token punctuation">.</span><span class="token function">fixedSize</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>        <span class="token punctuation">.</span><span class="token function">padding</span><span class="token punctuation">(</span><span class="token class-name">EdgeInsets</span><span class="token punctuation">(</span>top<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                            leading<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>horizontalMargin<span class="token punctuation">,</span>
+<span class="token prefix unchanged"> </span>                            bottom<span class="token punctuation">:</span> <span class="token class-name">Constants</span><span class="token punctuation">.</span>verticalSpacing<span class="token punctuation">,</span>
+</span></code></pre>
+<ol start="3">
+<li>Open up your <code>App</code> file again. We're going to observe the state of <code>isShowingChart</code> and open and dismiss the volumetric window in response. We need to bring in the <code>.openWindow</code> and <code>.dismissWindow</code> environment actions to show and hide the window. We'll also pre-populate our app state when are running the app in debug, so we can easily see our spreadsheet data.</li>
+</ol>
+<pre class="language-diff-swift" tabindex="0"><code class="language-diff-swift"><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span><span class="token attribute atrule">@main</span>
+<span class="token prefix unchanged"> </span><span class="token keyword">struct</span> <span class="token class-name">ThreeDeeChartsApp</span><span class="token punctuation">:</span> <span class="token class-name">App</span> <span class="token punctuation">{</span>
+</span><span class="token deleted-sign deleted language-swift"><span class="token prefix deleted">-</span>    <span class="token attribute atrule">@State</span> <span class="token keyword">private</span> <span class="token keyword">var</span> appState <span class="token operator">=</span> <span class="token class-name">AppState</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>    <span class="token attribute atrule">@State</span> <span class="token keyword">private</span> <span class="token keyword">var</span> appState<span class="token punctuation">:</span> <span class="token class-name">AppState</span> <span class="token operator">=</span> <span class="token punctuation">{</span>
+<span class="token prefix inserted">+</span>        <span class="token keyword">let</span> appState <span class="token operator">=</span> <span class="token class-name">AppState</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>        <span class="token directive property"><span class="token directive-name">#if</span> DEBUG</span>
+<span class="token prefix inserted">+</span>        appState<span class="token punctuation">.</span><span class="token function">preloadAppState</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>        <span class="token directive property"><span class="token directive-name">#endif</span></span>
+<span class="token prefix inserted">+</span>        <span class="token keyword">return</span> appState
+<span class="token prefix inserted">+</span>    <span class="token punctuation">}</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</span>
+<span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>    <span class="token attribute atrule">@Environment</span><span class="token punctuation">(</span><span class="token punctuation">\</span><span class="token punctuation">.</span>openWindow<span class="token punctuation">)</span> <span class="token keyword">private</span> <span class="token keyword">var</span> openWindow
+<span class="token prefix inserted">+</span>    <span class="token attribute atrule">@Environment</span><span class="token punctuation">(</span><span class="token punctuation">\</span><span class="token punctuation">.</span>dismissWindow<span class="token punctuation">)</span> <span class="token keyword">private</span> <span class="token keyword">var</span> dismissWindow
+<span class="token prefix inserted">+</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>    <span class="token keyword">var</span> body<span class="token punctuation">:</span> <span class="token keyword">some</span> <span class="token class-name">Scene</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>        <span class="token class-name">WindowGroup</span> <span class="token punctuation">{</span>
+<span class="token prefix unchanged"> </span>            <span class="token class-name">ContentView</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token prefix unchanged"> </span>                <span class="token punctuation">.</span><span class="token function">environment</span><span class="token punctuation">(</span>appState<span class="token punctuation">)</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>                <span class="token punctuation">.</span><span class="token function">onChange</span><span class="token punctuation">(</span>of<span class="token punctuation">:</span> appState<span class="token punctuation">.</span>isShowingChart<span class="token punctuation">)</span> <span class="token punctuation">{</span> oldValue<span class="token punctuation">,</span> newValue <span class="token keyword">in</span>
+<span class="token prefix inserted">+</span>                    <span class="token keyword">if</span> newValue <span class="token punctuation">{</span>
+<span class="token prefix inserted">+</span>                        <span class="token function">openWindow</span><span class="token punctuation">(</span>id<span class="token punctuation">:</span> <span class="token punctuation">.</span>chartWindow<span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>                    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+<span class="token prefix inserted">+</span>                        <span class="token function">dismissWindow</span><span class="token punctuation">(</span>id<span class="token punctuation">:</span> <span class="token punctuation">.</span>chartWindow<span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>                    <span class="token punctuation">}</span>
+<span class="token prefix inserted">+</span>                <span class="token punctuation">}</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>        <span class="token punctuation">}</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>        <span class="token punctuation">.</span><span class="token function">windowResizability</span><span class="token punctuation">(</span><span class="token punctuation">.</span>contentSize<span class="token punctuation">)</span>
+</span>
+<span class="token deleted-sign deleted language-swift"><span class="token prefix deleted">-</span>        <span class="token class-name">WindowGroup</span> <span class="token punctuation">{</span>
+<span class="token prefix deleted">-</span>            <span class="token comment">// 3D charts will go here</span>
+<span class="token prefix deleted">-</span>        <span class="token punctuation">}</span><span class="token punctuation">.</span><span class="token function">windowStyle</span><span class="token punctuation">(</span><span class="token punctuation">.</span>volumetric<span class="token punctuation">)</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>        <span class="token class-name">WindowGroup</span><span class="token punctuation">(</span>id<span class="token punctuation">:</span> <span class="token punctuation">.</span>chartWindow<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token prefix inserted">+</span>            <span class="token class-name">ChartView</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>                <span class="token punctuation">.</span><span class="token function">environment</span><span class="token punctuation">(</span>appState<span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>        <span class="token punctuation">}</span>
+<span class="token prefix inserted">+</span>        <span class="token punctuation">.</span><span class="token function">windowStyle</span><span class="token punctuation">(</span><span class="token punctuation">.</span>volumetric<span class="token punctuation">)</span>
+<span class="token prefix inserted">+</span>        <span class="token punctuation">.</span><span class="token function">defaultSize</span><span class="token punctuation">(</span>width<span class="token punctuation">:</span> <span class="token number">0.8</span><span class="token punctuation">,</span> height<span class="token punctuation">:</span> <span class="token number">0.5</span><span class="token punctuation">,</span> depth<span class="token punctuation">:</span> <span class="token number">0.8</span><span class="token punctuation">,</span> <span class="token keyword">in</span><span class="token punctuation">:</span> <span class="token punctuation">.</span>meters<span class="token punctuation">)</span>
+</span><span class="token unchanged language-swift"><span class="token prefix unchanged"> </span>    <span class="token punctuation">}</span>
+<span class="token prefix unchanged"> </span><span class="token punctuation">}</span>
+</span><span class="token inserted-sign inserted language-swift"><span class="token prefix inserted">+</span>
+<span class="token prefix inserted">+</span><span class="token keyword">typealias</span> <span class="token class-name">WindowId</span> <span class="token operator">=</span> <span class="token class-name">String</span>
+<span class="token prefix inserted">+</span>
+<span class="token prefix inserted">+</span><span class="token keyword">extension</span> <span class="token class-name">WindowId</span> <span class="token punctuation">{</span>
+<span class="token prefix inserted">+</span>    <span class="token keyword">static</span> <span class="token keyword">let</span> chartWindow <span class="token operator">=</span> <span class="token string-literal"><span class="token string">"ChartWindow"</span></span>
+<span class="token prefix inserted">+</span><span class="token punctuation">}</span>
+</span></code></pre>
+<ol start="4">
+<li>Finally, we'll create one more <strong>SwiftUI</strong> <code>View</code> file called <em>ChartView.swift</em>. Here, we'll import <strong>RealityKit</strong> as well as our <strong>RealityKitContent</strong> package. For now, we'll just create a <code>RealityView</code> and add the 3D model we still have in our content package to the scene. We will also add a toolbar window ornament to display the chart title. We also need to add an <code>.onDisappear</code> block to track when the 3D chart is hidden.</li>
+</ol>
+<pre class="language-swift" tabindex="0"><code class="language-swift">
+<span class="token keyword">import</span> <span class="token class-name">SwiftUI</span>
+<span class="token keyword">import</span> <span class="token class-name">RealityKit</span>
+<span class="token keyword">import</span> <span class="token class-name">RealityKitContent</span>
+
+<span class="token keyword">struct</span> <span class="token class-name">ChartView</span><span class="token punctuation">:</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+    <span class="token attribute atrule">@Environment</span><span class="token punctuation">(</span><span class="token class-name">AppState</span><span class="token punctuation">.</span><span class="token keyword">self</span><span class="token punctuation">)</span> <span class="token keyword">private</span> <span class="token keyword">var</span> appState
+
+    <span class="token keyword">var</span> body<span class="token punctuation">:</span> <span class="token keyword">some</span> <span class="token class-name">View</span> <span class="token punctuation">{</span>
+        <span class="token class-name">RealityView</span> <span class="token punctuation">{</span> content <span class="token keyword">in</span>
+            <span class="token keyword">if</span> <span class="token keyword">let</span> entity <span class="token operator">=</span> <span class="token keyword">await</span> <span class="token function">loadEntity</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                content<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span>entity<span class="token punctuation">)</span>
+                entity<span class="token punctuation">.</span>transform<span class="token punctuation">.</span>translation<span class="token punctuation">.</span>y <span class="token operator">-=</span> <span class="token number">0.1</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        <span class="token punctuation">.</span>toolbar <span class="token punctuation">{</span>
+            <span class="token class-name">ToolbarItemGroup</span><span class="token punctuation">(</span>placement<span class="token punctuation">:</span> <span class="token punctuation">.</span>bottomOrnament<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token class-name">VStack</span> <span class="token punctuation">(</span>spacing<span class="token punctuation">:</span> <span class="token number">12</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token class-name">Text</span><span class="token punctuation">(</span>appState<span class="token punctuation">.</span>chartTitle<span class="token punctuation">)</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        <span class="token punctuation">.</span>onDisappear <span class="token punctuation">{</span>
+            appState<span class="token punctuation">.</span>isShowingChart <span class="token operator">=</span> <span class="token boolean">false</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">func</span> <span class="token function-definition function">loadEntity</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">async</span> <span class="token operator">-></span> <span class="token class-name">Entity</span><span class="token operator">?</span> <span class="token punctuation">{</span>
+        <span class="token keyword">try</span><span class="token operator">?</span> <span class="token keyword">await</span> <span class="token class-name">Entity</span><span class="token punctuation">(</span>named<span class="token punctuation">:</span> <span class="token string-literal"><span class="token string">"Scene"</span></span><span class="token punctuation">,</span> <span class="token keyword">in</span><span class="token punctuation">:</span> realityKitContentBundle<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token other-directive property">#Preview</span><span class="token punctuation">(</span>windowStyle<span class="token punctuation">:</span> <span class="token punctuation">.</span>volumetric<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">ChartView</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token punctuation">.</span><span class="token function">environment</span><span class="token punctuation">(</span><span class="token class-name">AppState</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Now run the app and try it out! You should be able to toggle the volumetric window to show the 3D content. You can also make changes to the chart title and see it reflected in the toolbar ornament of the volumetric window.</p>
+<h2 id="next-steps" tabindex="-1">Next steps <a class="header-anchor" href="#next-steps">#</a></h2>
+<p>In <a href="/building-your-first-app-for-visionos-part-2.html">part 2</a> of this tutorial series we will learn how to create a 3D bar chart using <strong>RealityKit</strong> and <strong>SwiftUI</strong>. You can download the finished project from this part 1 of the tutorial <a href="https://github.com/brendaninnis/3D-Charts-Tutorial/raw/main/part-1.zip">here</a>.</p>
+
+<ul class="links-nextprev"><li>Previous: <a href="/so-i-rebuilt-my-blog-using-eleventy.html">So I rebuilt my blog using Eleventy</a></li><li>Next: <a href="/building-your-first-app-for-visionos-part-2.html">Building Your First App for visionOS: Part 2</a></li>
+</ul>
+
+		</main>
+
+		<footer></footer>
+
+		<!-- This page `/building-your-first-app-for-visionos-part-1.html` was built on 2024-10-03T04:00:53.557Z -->
+
+        <!-- Scroll to anchors -->
+        <script defer>
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.location.hash = e.target.hash;
+                    let header = e.target.parentElement
+                    let offset = header.nextElementSibling.offsetTop - header.offsetHeight - 16; // 16px is the margin
+                    window.scrollTo({
+                        top: offset,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        </script>
+
+        <!-- Sticky Headers -->
+        <script defer>
+            let stickyHeaders = [];
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    const header = entry.target;
+                    if (entry.isIntersecting) {
+                        stickyHeaders.forEach(header => {
+                            header.classList.add('passed');
+                        });
+                        stickyHeaders.push(header);
+                        header.classList.add('sticky');
+                    } else {
+                        header.classList.remove('sticky');
+                        stickyHeaders.pop();
+                        if (stickyHeaders.length > 0) {
+                            stickyHeaders[stickyHeaders.length - 1].classList.remove('passed');
+                        }
+                    }
+                });
+            }, {
+                rootMargin: '0px 0px -100% 0px',
+                threshold: 0
+            });
+
+            const headers = document.querySelectorAll('h2:not(.visually-hidden)');
+            headers.forEach(header => {
+                observer.observe(header);
+            });
+        </script>
+
+	</body>
+</html>
