@@ -7,7 +7,6 @@ tags:
   - visionOS
   - RealityKit
   - SwiftUI
-draft: true
 ---
 
 In this tutorial series you will learn how to build a complete app for **visionOS** using **SwiftUI** and **RealityKit**. You will learn how to create a new **visionOS** project, how to build an interface for **visionOS** using **SwiftUI** and how to display and animate 3D content using **RealityKit**. This tutorial will get you started building apps for **visionOS** right away and provide a solid foundation to learn from.
@@ -183,50 +182,48 @@ typealias ChartContent = [ChartRow]
 
 2. Now we're going to add the chart content to our app state. Open *AppState.swift* and add a new property called `chartContent` to hold the chart data. We'll also add a method to create some default data for our chart. This will make it easier to debug our UI in the Canvas Preview.
 
-```swift 
-// AppState.swift
-import Foundation
-
-@Observable
-public class AppState {
-    var chartTitle = ""
-    var chartContent: ChartContent = []
-}
-
-#if DEBUG
-extension AppState {
-    func preloadAppState() {
-        chartTitle = "Favourite Colour by Age"
-        chartContent = [
-            ChartRow(data: [ChartData(value: "Age Range"),
-                            ChartData(value: "1-20"),
-                            ChartData(value: "21-40"),
-                            ChartData(value: "41-60"),
-                            ChartData(value: "61-80")]),
-            ChartRow(data: [ChartData(value: "Red"),
-                            ChartData(value: "15"),
-                            ChartData(value: "55"),
-                            ChartData(value: "16"),
-                            ChartData(value: "12")]),
-            ChartRow(data: [ChartData(value: "Yellow"),
-                            ChartData(value: "5"),
-                            ChartData(value: "15"),
-                            ChartData(value: "38"),
-                            ChartData(value: "40")]),
-            ChartRow(data: [ChartData(value: "Green"),
-                            ChartData(value: "20"),
-                            ChartData(value: "20"),
-                            ChartData(value: "32"),
-                            ChartData(value: "18")]),
-            ChartRow(data: [ChartData(value: "Blue"),
-                            ChartData(value: "60"),
-                            ChartData(value: "10"),
-                            ChartData(value: "14"),
-                            ChartData(value: "30")]),
-        ]
-    }
-}
-#endif
+```diff-swift
+ // AppState.swift
+ @Observable
+ public class AppState {
+     var chartTitle = ""
++    var chartContent: ChartContent = []
+ }
++
++#if DEBUG
++extension AppState {
++    func preloadAppState() {
++        chartTitle = "Favourite Colour by Age"
++        chartContent = [
++            ChartRow(data: [ChartData(value: "Age Range"),
++                            ChartData(value: "1-20"),
++                            ChartData(value: "21-40"),
++                            ChartData(value: "41-60"),
++                            ChartData(value: "61-80")]),
++            ChartRow(data: [ChartData(value: "Red"),
++                            ChartData(value: "15"),
++                            ChartData(value: "55"),
++                            ChartData(value: "16"),
++                            ChartData(value: "12")]),
++            ChartRow(data: [ChartData(value: "Yellow"),
++                            ChartData(value: "5"),
++                            ChartData(value: "15"),
++                            ChartData(value: "38"),
++                            ChartData(value: "40")]),
++            ChartRow(data: [ChartData(value: "Green"),
++                            ChartData(value: "20"),
++                            ChartData(value: "20"),
++                            ChartData(value: "32"),
++                            ChartData(value: "18")]),
++            ChartRow(data: [ChartData(value: "Blue"),
++                            ChartData(value: "60"),
++                            ChartData(value: "10"),
++                            ChartData(value: "14"),
++                            ChartData(value: "30")]),
++        ]
++    }
++}
++#endif
 ```
 
 3. Let's build the spreadsheet UI. Create a new **SwiftUI** View file called *Spreadsheet.swift*. We're going to display our chart content in a **SwiftUI** `Grid` with the cells as editable `TextField` views so we can make changes to the data in our chart. We'll also add a divider after the first row to separate the headings from the data. Finally, we'll extend `Constants` with values that will only be used in the `Spreadsheet` view and set up a `#Preview` with our sample data along with some padding and background effect for readability.
@@ -286,15 +283,43 @@ fileprivate extension Constants {
 }
 ```
 
-4. Now add the `Spreadsheet` to the bottom of the `VStack` in *ContentView.swift*. Give it the same bottom vertical padding as the other views and setup the `#Preview` to preload the app state. After that, run the Canvas Preview and your UI should look something like this:
+4. Now add the `Spreadsheet` to the bottom of the `VStack` in *ContentView.swift*. Give it the same bottom vertical padding as the other views and setup the `#Preview` to preload the app state. 
+
+```diff-swift
+ // ContentView.swift
+                 .font(.title)
+                 .frame(maxWidth: 480)
+                 .padding(.bottom, Constants.verticalSpacing)
++            Spreadsheet()
++                .padding(.bottom, Constants.verticalSpacing)
+
+         }
+         .padding(EdgeInsets(top: Constants.verticalSpacing,
+                             leading: Constants.horizontalMargin,
+                             bottom: Constants.verticalSpacing,
+                             trailing: Constants.horizontalMargin))
+     }
+ }
+
+ #Preview {
++    let appState = AppState()
++    appState.preloadAppState()
+     return ContentView()
+         .glassBackgroundEffect()
+-        .environment(AppState())
++        .environment(appState)
+ }
+```
+
+After that, run the Canvas Preview and your UI should look something like this:
 
 {% image "./spreadsheet-ui-preview.png", "Spreadsheet UI Preview" %}
 
 ## Showing 3D content in a volumetric window
 
-You can use **RealityKit** to display 3D content in the user's phsyical space. We're going to use a volumetric window to show our 3D chart alongside other running application windows. We'll use a `RealityView` to display **RealityKit** content in our **SwiftUI** app.
+You can use **RealityKit** to display 3D content in the user's physical space. We're going to use a volumetric window to show our 3D chart alongside other running application windows. We'll use a `RealityView` to display **RealityKit** content in our **SwiftUI** app.
 
-1. First, we need to keep track of wether the 3D chart is showing. Add a property called `isShowingChart` to *AppState.swift*.
+1. First, we need to keep track of whether the 3D chart is showing. Add a property called `isShowingChart` to *AppState.swift*.
 
 ```diff-swift
  // AppState.swift

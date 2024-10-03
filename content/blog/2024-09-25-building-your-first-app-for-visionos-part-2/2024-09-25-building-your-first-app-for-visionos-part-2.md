@@ -7,7 +7,6 @@ tags:
     - visionOS
     - RealityKit
     - SwiftUI
-draft: true
 ---
 
 In part 1 of this tutorial, you learned how to set up a new **visionOS** project and create a basic user interface using **SwiftUI**. In this part, you'll learn how to use **RealityKit** and **SwiftUI** to display and animate a 3D bar chart in a **visionOS** app.
@@ -504,9 +503,11 @@ We now have a functional labelled 3D bar chart that updates when the data change
 
 You might notice some limitations of the chart. For example, the column headings will quickly run into each other if they contain too much text. If you create a very long row label, then the chart will become too large to fit in the 3D volume and will be clipped by the window. The chart also would represent values very well if one value is much larger than the others. It would also be nice to have a mechanism to add and delete rows and columns from the chart.
 
+Test out the app yourself and see if you can find any other issues or room for improvement. It's important to continuously run and test your app as well as get feedback from users so your app will consistently improve.
+
 ## Next Steps
 
-You've now learned everything you need to know to create a basic **visionOS** app. You've learned how to create flat and volumetric windows and populate them using **SwiftUI** views and **RealityKit** entities. You've learned how to represent your data as app state to keep your UI in sync and animate updates. You've also learned how to create basic meshes and materials and how to manipulate them in a 3D scene. Further tutorials in this series will expand on the capabilites of **visionOS** and add depth to your app.
+You've now learned everything you need to know to create a basic **visionOS** app. You've learned how to create flat and volumetric windows and populate them using **SwiftUI** views and **RealityKit** entities. You've learned how to represent your data as app state to keep your UI in sync and animate updates. You've also learned how to create basic meshes and materials and how to manipulate them in a 3D scene. Further tutorials in this series will expand on the capabilities of **visionOS** and add depth to your app.
 
 You can download the finished project from part 2 of the tutorial [here](https://github.com/brendaninnis/3D-Charts-Tutorial/raw/main/part-2.zip). In part 3 we will add functionality to the app and improve the visuals of the 3D chart.
 
