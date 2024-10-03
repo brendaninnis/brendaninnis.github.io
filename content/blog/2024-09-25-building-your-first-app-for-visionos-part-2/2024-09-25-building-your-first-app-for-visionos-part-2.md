@@ -2,7 +2,7 @@
 title: "Building Your First App for visionOS: Part 2"
 description: "In part 2 of this tutorial you'll learn how to use RealityKit and SwiftUI to display and animate a 3D bar chart in a visionOS app."
 permalink: /building-your-first-app-for-visionos-part-2.html
-date: 2024-09-29
+date: 2024-09-25
 tags:
     - visionOS
     - RealityKit
