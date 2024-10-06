@@ -107,17 +107,17 @@
 	</url>
 	
 	<url>
-		<loc>https://brendaninnis.ca/tags/software-engineering.html</loc>
-		<lastmod>2024-10-06</lastmod>
-	</url>
-	
-	<url>
 		<loc>https://brendaninnis.ca/tags/android.html</loc>
 		<lastmod>2024-10-06</lastmod>
 	</url>
 	
 	<url>
 		<loc>https://brendaninnis.ca/tags/kotlin.html</loc>
+		<lastmod>2024-10-06</lastmod>
+	</url>
+	
+	<url>
+		<loc>https://brendaninnis.ca/tags/software-engineering.html</loc>
 		<lastmod>2024-10-06</lastmod>
 	</url>
 	
@@ -137,22 +137,22 @@
 	</url>
 	
 	<url>
-		<loc>https://brendaninnis.ca/tags/swift-ui.html</loc>
-		<lastmod>2024-10-06</lastmod>
-	</url>
-	
-	<url>
-		<loc>https://brendaninnis.ca/tags/app-store.html</loc>
-		<lastmod>2024-10-06</lastmod>
-	</url>
-	
-	<url>
 		<loc>https://brendaninnis.ca/tags/visionos.html</loc>
 		<lastmod>2024-10-06</lastmod>
 	</url>
 	
 	<url>
 		<loc>https://brendaninnis.ca/tags/swiftui.html</loc>
+		<lastmod>2024-10-06</lastmod>
+	</url>
+	
+	<url>
+		<loc>https://brendaninnis.ca/tags/swift-ui.html</loc>
+		<lastmod>2024-10-06</lastmod>
+	</url>
+	
+	<url>
+		<loc>https://brendaninnis.ca/tags/app-store.html</loc>
 		<lastmod>2024-10-06</lastmod>
 	</url>
 </urlset>
