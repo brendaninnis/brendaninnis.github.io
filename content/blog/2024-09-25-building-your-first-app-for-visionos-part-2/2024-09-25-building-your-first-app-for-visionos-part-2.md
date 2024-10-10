@@ -509,5 +509,7 @@ Test out the app yourself and see if you can find any other issues or room for i
 
 You've now learned everything you need to know to create a basic **visionOS** app. You've learned how to create flat and volumetric windows and populate them using **SwiftUI** views and **RealityKit** entities. You've learned how to represent your data as app state to keep your UI in sync and animate updates. You've also learned how to create basic meshes and materials and how to manipulate them in a 3D scene. Further tutorials in this series will expand on the capabilities of **visionOS** and add depth to your app.
 
-You can download the finished project from part 2 of the tutorial [here](https://github.com/brendaninnis/3D-Charts-Tutorial/raw/main/part-2.zip). In part 3 we will add functionality to the app and improve the visuals of the 3D chart.
+You can download the finished project from part 2 of the tutorial [here](https://github.com/brendaninnis/3D-Charts-Tutorial/raw/main/part-2.zip). The full source code for the 3D charts tutorial can be found on [GitHub](https://github.com/brendaninnis/3D-Charts-Tutorial).
+
+In part 3 we will add functionality to the app and improve the visuals of the 3D chart.
 

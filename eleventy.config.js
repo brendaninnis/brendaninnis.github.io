@@ -100,8 +100,7 @@ module.exports = function(eleventyConfig) {
 
     eleventyConfig.addShortcode("googleTag", () => {
         if (process.env.NODE_ENV === 'production') {
-            return `
-            <!-- Google tag (gtag.js) -->
+            return `<!-- Google tag (gtag.js) -->
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-998XX4MGQY"></script>
             <script>
                 window.dataLayer = window.dataLayer || [];
@@ -109,8 +108,7 @@ module.exports = function(eleventyConfig) {
                 gtag('js', new Date());
 
                 gtag('config', 'G-998XX4MGQY');
-            </script>
-            `;
+            </script>`;
         }
     })
 
