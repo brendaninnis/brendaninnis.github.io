@@ -469,7 +469,8 @@
 &lt;p&gt;Test out the app yourself and see if you can find any other issues or room for improvement. It&#39;s important to continuously run and test your app as well as get feedback from users so your app will consistently improve.&lt;/p&gt;
 &lt;h2 id=&quot;next-steps&quot; tabindex=&quot;-1&quot;&gt;Next Steps &lt;a class=&quot;header-anchor&quot; href=&quot;https://brendaninnis.ca/building-your-first-app-for-visionos-part-2.html&quot;&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;You&#39;ve now learned everything you need to know to create a basic &lt;strong&gt;visionOS&lt;/strong&gt; app. You&#39;ve learned how to create flat and volumetric windows and populate them using &lt;strong&gt;SwiftUI&lt;/strong&gt; views and &lt;strong&gt;RealityKit&lt;/strong&gt; entities. You&#39;ve learned how to represent your data as app state to keep your UI in sync and animate updates. You&#39;ve also learned how to create basic meshes and materials and how to manipulate them in a 3D scene. Further tutorials in this series will expand on the capabilities of &lt;strong&gt;visionOS&lt;/strong&gt; and add depth to your app.&lt;/p&gt;
-&lt;p&gt;You can download the finished project from part 2 of the tutorial &lt;a href=&quot;https://github.com/brendaninnis/3D-Charts-Tutorial/raw/main/part-2.zip&quot;&gt;here&lt;/a&gt;. In part 3 we will add functionality to the app and improve the visuals of the 3D chart.&lt;/p&gt;
+&lt;p&gt;You can download the finished project from part 2 of the tutorial &lt;a href=&quot;https://github.com/brendaninnis/3D-Charts-Tutorial/raw/main/part-2.zip&quot;&gt;here&lt;/a&gt;. The full source code for the 3D charts tutorial can be found on &lt;a href=&quot;https://github.com/brendaninnis/3D-Charts-Tutorial&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In part 3 we will add functionality to the app and improve the visuals of the 3D chart.&lt;/p&gt;
 </content>
 	</entry>
 	
